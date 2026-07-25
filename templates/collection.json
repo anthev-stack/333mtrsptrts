@@ -14,7 +14,7 @@
       "settings": {
         "section_width": "page",
         "products_per_page": 24,
-        "columns": "3",
+        "columns": "5",
         "padding_top": 40,
         "padding_bottom": 56
       }
