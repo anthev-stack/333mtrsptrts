@@ -32,13 +32,137 @@
     "settings": [
       {
         "type": "header",
-        "content": "t:general.fonts"
+        "content": "t:general.primary"
       },
       {
         "type": "font_picker",
         "id": "type_primary_font",
         "default": "montserrat_n5",
-        "label": "t:general.primary"
+        "label": "t:labels.font"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_primary_bold",
+        "label": "t:labels.font_bold",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_primary_italic",
+        "label": "t:labels.font_italic",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:general.headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "default": "montserrat_n7",
+        "label": "t:labels.font"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_heading_bold",
+        "label": "t:labels.font_bold",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "type_heading_italic",
+        "label": "t:labels.font_italic",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_heading_underline",
+        "label": "t:labels.font_underline",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:general.paragraph"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_paragraph_font",
+        "default": "montserrat_n4",
+        "label": "t:labels.font"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_paragraph_bold",
+        "label": "t:labels.font_bold",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_paragraph_italic",
+        "label": "t:labels.font_italic",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_paragraph_underline",
+        "label": "t:labels.font_underline",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:general.navigation"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_navigation_font",
+        "default": "montserrat_n6",
+        "label": "t:labels.font"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_navigation_bold",
+        "label": "t:labels.font_bold",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "type_navigation_italic",
+        "label": "t:labels.font_italic",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_navigation_underline",
+        "label": "t:labels.font_underline",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:general.footer"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_footer_font",
+        "default": "montserrat_n4",
+        "label": "t:labels.font"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_footer_bold",
+        "label": "t:labels.font_bold",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_footer_italic",
+        "label": "t:labels.font_italic",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "type_footer_underline",
+        "label": "t:labels.font_underline",
+        "default": false
       }
     ]
   },

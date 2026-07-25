@@ -81,6 +81,41 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-heading--family);
+  font-style: var(--font-heading--style);
+  font-weight: var(--font-heading--weight);
+  text-decoration: var(--font-heading--decoration);
+}
+
+p,
+.font-paragraph {
+  font-family: var(--font-paragraph--family);
+  font-style: var(--font-paragraph--style);
+  font-weight: var(--font-paragraph--weight);
+  text-decoration: var(--font-paragraph--decoration);
+}
+
+.font-navigation {
+  font-family: var(--font-navigation--family);
+  font-style: var(--font-navigation--style);
+  font-weight: var(--font-navigation--weight);
+  text-decoration: var(--font-navigation--decoration);
+}
+
+.font-footer {
+  font-family: var(--font-footer--family);
+  font-style: var(--font-footer--style);
+  font-weight: var(--font-footer--weight);
+  text-decoration: var(--font-footer--decoration);
+}
+
 a {
   color: inherit;
 }

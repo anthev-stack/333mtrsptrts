@@ -103,16 +103,18 @@
     display: inline-flex;
     align-items: center;
     min-height: 1.35rem;
-    padding: 0.2rem 0.45rem;
-    background: #111;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0;
+    background: rgba(80, 80, 80, 0.55);
     color: #fff;
     font-size: 0.65rem;
     letter-spacing: 0.02em;
     line-height: 1.2;
+    backdrop-filter: blur(2px);
   }
 
   .product-card__stock--sold-out {
-    background: #b00000;
+    background: rgba(120, 40, 40, 0.6);
   }
 
   .product-card__image,
@@ -159,11 +161,14 @@
   }
 
   .product-card__title {
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight);
     font-size: 0.82rem;
-    font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     line-height: 1.35;
+    text-decoration: var(--font-heading--decoration);
   }
 
   .product-card__title a {

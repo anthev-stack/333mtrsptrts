@@ -1,14 +1,137 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {% liquid
+    assign primary_font = settings.type_primary_font
+    assign heading_font = settings.type_heading_font | default: settings.type_primary_font
+    assign paragraph_font = settings.type_paragraph_font | default: settings.type_primary_font
+    assign navigation_font = settings.type_navigation_font | default: settings.type_primary_font
+    assign footer_font = settings.type_footer_font | default: settings.type_primary_font
+
+    if settings.type_primary_bold
+      assign primary_weight = 700
+    else
+      assign primary_weight = primary_font.weight
+    endif
+    if settings.type_primary_italic
+      assign primary_style = 'italic'
+    else
+      assign primary_style = primary_font.style
+    endif
+
+    if settings.type_heading_bold
+      assign heading_weight = 700
+    else
+      assign heading_weight = heading_font.weight
+    endif
+    if settings.type_heading_italic
+      assign heading_style = 'italic'
+    else
+      assign heading_style = heading_font.style
+    endif
+    if settings.type_heading_underline
+      assign heading_decoration = 'underline'
+    else
+      assign heading_decoration = 'none'
+    endif
+
+    if settings.type_paragraph_bold
+      assign paragraph_weight = 700
+    else
+      assign paragraph_weight = paragraph_font.weight
+    endif
+    if settings.type_paragraph_italic
+      assign paragraph_style = 'italic'
+    else
+      assign paragraph_style = paragraph_font.style
+    endif
+    if settings.type_paragraph_underline
+      assign paragraph_decoration = 'underline'
+    else
+      assign paragraph_decoration = 'none'
+    endif
+
+    if settings.type_navigation_bold
+      assign navigation_weight = 700
+    else
+      assign navigation_weight = navigation_font.weight
+    endif
+    if settings.type_navigation_italic
+      assign navigation_style = 'italic'
+    else
+      assign navigation_style = navigation_font.style
+    endif
+    if settings.type_navigation_underline
+      assign navigation_decoration = 'underline'
+    else
+      assign navigation_decoration = 'none'
+    endif
+
+    if settings.type_footer_bold
+      assign footer_weight = 700
+    else
+      assign footer_weight = footer_font.weight
+    endif
+    if settings.type_footer_italic
+      assign footer_style = 'italic'
+    else
+      assign footer_style = footer_font.style
+    endif
+    if settings.type_footer_underline
+      assign footer_decoration = 'underline'
+    else
+      assign footer_decoration = 'none'
+    endif
+  %}
+
+  {{ primary_font | font_face: font_display: 'swap' }}
+  {{ primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ heading_font | font_face: font_display: 'swap' }}
+  {{ heading_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ heading_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ heading_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ paragraph_font | font_face: font_display: 'swap' }}
+  {{ paragraph_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ paragraph_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ paragraph_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ navigation_font | font_face: font_display: 'swap' }}
+  {{ navigation_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ navigation_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ navigation_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ footer_font | font_face: font_display: 'swap' }}
+  {{ footer_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ footer_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ footer_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
+    --font-primary--family: {{ primary_font.family }}, {{ primary_font.fallback_families }};
+    --font-primary--style: {{ primary_style }};
+    --font-primary--weight: {{ primary_weight }};
+
+    --font-heading--family: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    --font-heading--style: {{ heading_style }};
+    --font-heading--weight: {{ heading_weight }};
+    --font-heading--decoration: {{ heading_decoration }};
+
+    --font-paragraph--family: {{ paragraph_font.family }}, {{ paragraph_font.fallback_families }};
+    --font-paragraph--style: {{ paragraph_style }};
+    --font-paragraph--weight: {{ paragraph_weight }};
+    --font-paragraph--decoration: {{ paragraph_decoration }};
+
+    --font-navigation--family: {{ navigation_font.family }}, {{ navigation_font.fallback_families }};
+    --font-navigation--style: {{ navigation_style }};
+    --font-navigation--weight: {{ navigation_weight }};
+    --font-navigation--decoration: {{ navigation_decoration }};
+
+    --font-footer--family: {{ footer_font.family }}, {{ footer_font.fallback_families }};
+    --font-footer--style: {{ footer_style }};
+    --font-footer--weight: {{ footer_weight }};
+    --font-footer--decoration: {{ footer_decoration }};
+
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
     --color-background: {{ settings.background_color }};
