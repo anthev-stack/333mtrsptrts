@@ -1,0 +1,134 @@
+<section class="featured-collection">
+  <div class="featured-collection__header">
+    {% if section.settings.title != blank %}
+      <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
+    {% endif %}
+    {% if section.settings.collection != blank %}
+      <a class="featured-collection__view-all" href="{{ section.settings.collection.url }}">
+        {{ section.settings.view_all_label | escape }}
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="featured-collection__grid">
+    {% if section.settings.collection != blank %}
+      {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+        {% render 'product-card', product: product %}
+      {% else %}
+        <p class="featured-collection__empty">{{ 'collections.empty' | t }}</p>
+      {% endfor %}
+    {% else %}
+      {% for i in (1..3) %}
+        <article class="product-card product-card--placeholder">
+          <p class="product-card__stock">{{ 'products.in_stock' | t: count: 10 }}</p>
+          <div class="product-card__media">
+            <div class="product-card__image-link">
+              {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder' }}
+            </div>
+            <div class="product-card__swatch">
+              <span class="product-card__swatch-color product-card__swatch-color--fallback"></span>
+              <span class="product-card__swatch-label">Color</span>
+            </div>
+          </div>
+          <div class="product-card__info">
+            <p class="product-card__vendor">{{ section.settings.title | default: 'Collection' }}</p>
+            <h3 class="product-card__title">{{ 'products.example_product' | t }}</h3>
+            <p class="product-card__price">$29.99</p>
+          </div>
+        </article>
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .featured-collection {
+    padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  }
+
+  .featured-collection__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+    text-align: center;
+  }
+
+  .featured-collection__title {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .featured-collection__view-all {
+    font-size: 0.85rem;
+    color: var(--color-foreground);
+    text-underline-offset: 0.2em;
+  }
+
+  .featured-collection__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .featured-collection__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #666;
+  }
+
+  @media screen and (max-width: 989px) {
+    .featured-collection__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 549px) {
+    .featured-collection__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.featured_collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.heading",
+      "default": "Mitt slide"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "t:labels.view_all_label",
+      "default": "View all"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:labels.collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 3,
+      "label": "t:labels.products_to_show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.featured_collection"
+    }
+  ]
+}
+{% endschema %}

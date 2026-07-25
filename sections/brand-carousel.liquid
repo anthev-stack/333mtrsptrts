@@ -1,0 +1,176 @@
+<section class="brand-carousel" aria-label="{{ section.settings.title | escape }}">
+  {% if section.blocks.size > 0 %}
+    <div class="brand-carousel__track" data-brand-carousel>
+      <button type="button" class="brand-carousel__nav" data-brand-prev aria-label="{{ 'general.previous' | t }}">
+        <span aria-hidden="true">&lt;</span>
+      </button>
+
+      <div class="brand-carousel__viewport">
+        {% for block in section.blocks %}
+          <div
+            class="brand-carousel__slide{% if forloop.first %} is-active{% endif %}"
+            data-brand-slide
+            {{ block.shopify_attributes }}
+          >
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="brand-carousel__name">
+                {{ block.settings.name | escape }}
+              </a>
+            {% else %}
+              <span class="brand-carousel__name">{{ block.settings.name | escape }}</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <button type="button" class="brand-carousel__nav" data-brand-next aria-label="{{ 'general.next' | t }}">
+        <span aria-hidden="true">&gt;</span>
+      </button>
+    </div>
+  {% endif %}
+</section>
+
+{% javascript %}
+  const root = document.querySelector('[data-brand-carousel]');
+  if (root) {
+    const slides = Array.from(root.querySelectorAll('[data-brand-slide]'));
+    const prev = root.querySelector('[data-brand-prev]');
+    const next = root.querySelector('[data-brand-next]');
+    let index = 0;
+
+    const show = (nextIndex) => {
+      index = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+      });
+    };
+
+    prev?.addEventListener('click', () => show(index - 1));
+    next?.addEventListener('click', () => show(index + 1));
+  }
+{% endjavascript %}
+
+{% stylesheet %}
+  .brand-carousel {
+    padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(2.5rem, 6vw, 4rem);
+    border-top: 1px solid rgba(17, 17, 17, 0.08);
+  }
+
+  .brand-carousel__track {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+
+  .brand-carousel__viewport {
+    position: relative;
+    min-height: 2.5rem;
+  }
+
+  .brand-carousel__slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .brand-carousel__slide.is-active {
+    position: relative;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .brand-carousel__name {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+
+  .brand-carousel__nav {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--color-foreground);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .brand-carousel__nav:hover {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.brand_carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.heading",
+      "default": "Brands"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "t:general.brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:labels.brand_name",
+          "default": "Motul"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:labels.link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.brand_carousel",
+      "blocks": [
+        {
+          "type": "brand",
+          "settings": {
+            "name": "Motul"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "name": "Castrol"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "name": "Mobil 1"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

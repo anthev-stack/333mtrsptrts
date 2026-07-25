@@ -17,7 +17,14 @@
     "footer": "Footer",
     "group": "Group",
     "header": "Header",
+    "announcement_bar": "Announcement bar",
+    "promo_banners": "Promo banners",
+    "banner": "Banner",
+    "featured_collection": "Featured collection",
+    "brand_carousel": "Brand carousel",
+    "brand": "Brand",
     "layout": "Layout",
+    "logo": "Logo",
     "main": "Main",
     "page": "Page",
     "password": "Password",
@@ -36,19 +43,36 @@
   "labels": {
     "alignment": "Alignment",
     "background": "Background",
+    "brand_name": "Brand name",
+    "button_label": "Button label",
+    "collection": "Collection",
+    "facebook_url": "Facebook URL",
     "foreground": "Foreground",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
+    "heading": "Heading",
+    "image": "Image",
     "input_corner_radius": "Input corner radius",
+    "instagram_url": "Instagram URL",
     "layout_direction": "Layout direction",
+    "link": "Link",
+    "link_left": "Left link",
+    "link_right": "Right link",
+    "logo": "Logo image",
+    "logo_width": "Logo width",
     "menu": "Menu",
+    "message_left": "Left message",
+    "message_right": "Right message",
     "customer_account_menu": "Customer account menu",
     "padding": "Padding",
     "page_margin": "Page margin",
     "page_width": "Page width",
+    "products_to_show": "Products to show",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
-    "text": "Text"
+    "text": "Text",
+    "title": "Title",
+    "view_all_label": "View all label"
   },
   "options": {
     "alignment": {
@@ -72,6 +96,6 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
-    },
+    }
   }
 }

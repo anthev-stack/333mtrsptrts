@@ -1,0 +1,104 @@
+{% if section.settings.message_left != blank or section.settings.message_right != blank %}
+  <div class="announcement-bar full-width" role="region" aria-label="Announcements">
+    <div class="announcement-bar__inner">
+      {% if section.settings.message_left != blank %}
+        <p class="announcement-bar__message">
+          {% if section.settings.link_left != blank %}
+            <a href="{{ section.settings.link_left }}">{{ section.settings.message_left | escape }}</a>
+          {% else %}
+            {{ section.settings.message_left | escape }}
+          {% endif %}
+        </p>
+      {% endif %}
+      {% if section.settings.message_right != blank %}
+        <p class="announcement-bar__message">
+          {% if section.settings.link_right != blank %}
+            <a href="{{ section.settings.link_right }}">{{ section.settings.message_right | escape }}</a>
+          {% else %}
+            {{ section.settings.message_right | escape }}
+          {% endif %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .announcement-bar {
+    background: #111;
+    color: #fff;
+  }
+
+  .announcement-bar__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 2.35rem;
+  }
+
+  .announcement-bar__message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.55rem 1rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .announcement-bar__message + .announcement-bar__message {
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .announcement-bar__message a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .announcement-bar__message a:hover {
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 749px) {
+    .announcement-bar__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .announcement-bar__message + .announcement-bar__message {
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.announcement_bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "message_left",
+      "label": "t:labels.message_left",
+      "default": "Buy now. Pay later. Options available at checkout."
+    },
+    {
+      "type": "url",
+      "id": "link_left",
+      "label": "t:labels.link_left"
+    },
+    {
+      "type": "text",
+      "id": "message_right",
+      "label": "t:labels.message_right",
+      "default": "Free domestic shipping on orders over $150. Conditions apply."
+    },
+    {
+      "type": "url",
+      "id": "link_right",
+      "label": "t:labels.link_right"
+    }
+  ]
+}
+{% endschema %}

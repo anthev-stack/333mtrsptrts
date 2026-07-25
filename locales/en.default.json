@@ -28,7 +28,22 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "empty": "No products in this collection yet."
+  },
+  "general": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "header": {
+    "search": "Search",
+    "cart": "Cart"
+  },
+  "products": {
+    "available": "In stock",
+    "example_product": "Example product",
+    "in_stock": "{{ count }} in stock",
+    "sold_out": "Sold out"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

@@ -13,10 +13,22 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "main-menu",
+        "facebook_url": "https://facebook.com",
+        "instagram_url": "https://instagram.com"
+      }
+    },
+    "announcement_bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "message_left": "Buy now. Pay later. Options available at checkout.",
+        "message_right": "Free domestic shipping on orders over $150. Conditions apply."
+      }
     }
   },
   "order": [
-    "header"
-  ],
+    "header",
+    "announcement_bar"
+  ]
 }

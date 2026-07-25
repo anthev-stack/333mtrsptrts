@@ -9,12 +9,73 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "promo_banners": {
+      "type": "promo-banners",
+      "blocks": {
+        "banner_car_care": {
+          "type": "banner",
+          "settings": {
+            "title": "Car care",
+            "button_label": "Shop now"
+          }
+        },
+        "banner_maintenance": {
+          "type": "banner",
+          "settings": {
+            "title": "Maintenance",
+            "button_label": "Shop now"
+          }
+        }
+      },
+      "block_order": [
+        "banner_car_care",
+        "banner_maintenance"
+      ],
       "settings": {}
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Mitt slide",
+        "view_all_label": "View all",
+        "products_to_show": 3
+      }
+    },
+    "brand_carousel": {
+      "type": "brand-carousel",
+      "blocks": {
+        "brand_motul": {
+          "type": "brand",
+          "settings": {
+            "name": "Motul"
+          }
+        },
+        "brand_castrol": {
+          "type": "brand",
+          "settings": {
+            "name": "Castrol"
+          }
+        },
+        "brand_mobil": {
+          "type": "brand",
+          "settings": {
+            "name": "Mobil 1"
+          }
+        }
+      },
+      "block_order": [
+        "brand_motul",
+        "brand_castrol",
+        "brand_mobil"
+      ],
+      "settings": {
+        "title": "Brands"
+      }
     }
   },
   "order": [
-    "main"
+    "promo_banners",
+    "featured_collection",
+    "brand_carousel"
   ]
 }
