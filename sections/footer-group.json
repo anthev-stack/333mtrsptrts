@@ -14,8 +14,20 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "section_width": "page",
+        "background_color": "#F5F5F5",
+        "brand_heading": "333 Motorsports",
+        "brand_text": "<p>Your home of top-quality products. Car care, maintenance and more, we aim to offer everything you need to keep your vehicle in mint condition. With a passion for quality, performance and reliability, we strive to deliver the best products and customer service to car enthusiasts like you.</p>",
+        "facebook_url": "https://facebook.com",
+        "instagram_url": "https://instagram.com",
+        "links_heading": "Quick links",
+        "menu": "footer",
+        "newsletter_heading": "Newsletter",
+        "newsletter_text": "<p>Sign up to our newsletter for exclusive offers, products, events and more.</p>",
+        "newsletter_placeholder": "Your email",
+        "newsletter_button": "Subscribe",
+        "padding_top": 56,
+        "padding_bottom": 28
       }
     }
   },

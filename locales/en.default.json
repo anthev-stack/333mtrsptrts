@@ -61,6 +61,10 @@
     "expires_on": "Expires on {{ expires_on }}",
     "use_at_checkout": "Use this gift card at checkout"
   },
+  "newsletter": {
+    "email": "Email",
+    "success": "Thanks for subscribing."
+  },
   "password": {
     "title": "This shop is private",
     "password": "Password",
