@@ -16,14 +16,16 @@
           "type": "banner",
           "settings": {
             "title": "Car care",
-            "button_label": "Shop now"
+            "button_label": "Shop now",
+            "link": ""
           }
         },
         "banner_maintenance": {
           "type": "banner",
           "settings": {
             "title": "Maintenance",
-            "button_label": "Shop now"
+            "button_label": "Shop now",
+            "link": ""
           }
         }
       },
@@ -38,6 +40,7 @@
       "settings": {
         "title": "Mitt slide",
         "view_all_label": "View all",
+        "collection": "test-collection",
         "products_to_show": 3
       }
     },
@@ -47,19 +50,22 @@
         "brand_motul": {
           "type": "brand",
           "settings": {
-            "name": "Motul"
+            "name": "Motul",
+            "link": ""
           }
         },
         "brand_castrol": {
           "type": "brand",
           "settings": {
-            "name": "Castrol"
+            "name": "Castrol",
+            "link": ""
           }
         },
         "brand_mobil": {
           "type": "brand",
           "settings": {
-            "name": "Mobil 1"
+            "name": "Mobil 1",
+            "link": ""
           }
         }
       },
