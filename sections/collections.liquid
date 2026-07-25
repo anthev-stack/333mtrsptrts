@@ -1,55 +1,196 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+{% liquid
+  assign section_width = section.settings.section_width | default: 'page'
+  assign columns = section.settings.columns | default: 4 | plus: 0
+  assign width_class = ''
+  if section_width == 'full'
+    assign width_class = 'full-width'
+  endif
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+{% render 'section-padding' %}
 
-<h1>{{ 'collections.title' | t }}</h1>
-
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
+<section
+  class="brands-page brands-page--{{ section_width }} {{ width_class }}"
+  style="--brands-columns: {{ columns }};"
 >
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
+  {% if section.settings.title != blank %}
+    <header class="brands-page__header">
+      <h1 class="brands-page__title">{{ section.settings.title | escape }}</h1>
+    </header>
+  {% endif %}
+
+  <div class="brands-page__grid">
+    {% for collection in collections %}
+      {% if collection.handle == 'frontpage' or collection.handle == 'all' %}
+        {% continue %}
       {% endif %}
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+      <a class="brand-card" href="{{ collection.url }}">
+        <div class="brand-card__media">
+          {% if collection.featured_image %}
+            {{
+              collection.featured_image
+              | image_url: width: 600
+              | image_tag:
+                class: 'brand-card__image',
+                widths: '200, 300, 400, 600',
+                sizes: '(min-width: 990px) 18vw, (min-width: 750px) 30vw, 45vw',
+                loading: 'lazy',
+                alt: collection.title
+            }}
+          {% elsif collection.image %}
+            {{
+              collection.image
+              | image_url: width: 600
+              | image_tag:
+                class: 'brand-card__image',
+                widths: '200, 300, 400, 600',
+                sizes: '(min-width: 990px) 18vw, (min-width: 750px) 30vw, 45vw',
+                loading: 'lazy',
+                alt: collection.title
+            }}
+          {% elsif settings.logo != blank %}
+            {{
+              settings.logo
+              | image_url: width: 400
+              | image_tag:
+                class: 'brand-card__image brand-card__image--logo',
+                loading: 'lazy',
+                alt: collection.title
+            }}
+          {% else %}
+            <span class="brand-card__placeholder">{{ collection.title | slice: 0 }}</span>
+          {% endif %}
+        </div>
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
+        <div class="brand-card__content">
+          <h2 class="brand-card__name">{{ collection.title | escape }}</h2>
+          <p class="brand-card__count">
+            {{ 'collections.product_count' | t: count: collection.all_products_count }}
+          </p>
+        </div>
+      </a>
+    {% else %}
+      <p class="brands-page__empty">{{ 'collections.no_collections' | t }}</p>
+    {% endfor %}
+  </div>
+</section>
 
 {% stylesheet %}
-  .collections {
+  .brands-page {
+    --brands-columns: 4;
+  }
+
+  .brands-page--full {
+    padding-inline: var(--page-margin);
+  }
+
+  .brands-page__header {
+    text-align: center;
+    margin-bottom: clamp(2rem, 5vw, 3.25rem);
+  }
+
+  .brands-page__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .brands-page__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+    grid-template-columns: repeat(var(--brands-columns), minmax(0, 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem) clamp(1.25rem, 3vw, 2.5rem);
+    justify-items: center;
   }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
+
+  .brand-card {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
     width: 100%;
+    max-width: 12rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+
+  .brand-card__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .brand-card__image {
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .brand-card__image--logo {
+    max-width: 70%;
+    max-height: 70%;
+  }
+
+  .brand-card__placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(17, 17, 17, 0.15);
+  }
+
+  .brand-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .brand-card__name {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .brand-card__count {
+    margin: 0;
+    color: #666;
+    font-size: 0.85rem;
+  }
+
+  .brand-card:hover .brand-card__name {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .brands-page__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #666;
+  }
+
+  @media screen and (max-width: 989px) {
+    .brands-page__grid {
+      grid-template-columns: repeat(min(3, var(--brands-columns)), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 549px) {
+    .brands-page__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 {% endstylesheet %}
 
@@ -59,25 +200,72 @@
   "settings": [
     {
       "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
+      "id": "section_width",
+      "label": "t:labels.section_width",
       "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
       ],
-      "default": "collections--full"
+      "default": "page"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.heading",
+      "default": "Brands"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "t:labels.columns",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" },
+        { "value": "6", "label": "6" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
     },
     {
       "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
+      "id": "padding_top",
       "min": 0,
-      "max": 50,
-      "step": 5,
+      "max": 120,
+      "step": 4,
       "unit": "px",
-      "default": 10
+      "label": "t:labels.padding_top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
     }
   ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  "presets": [
+    {
+      "name": "t:general.collections_grid",
+      "settings": {
+        "title": "Brands",
+        "columns": "4"
+      }
+    }
+  ]
 }
 {% endschema %}

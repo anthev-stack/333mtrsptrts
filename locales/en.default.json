@@ -39,6 +39,7 @@
   "collections": {
     "title": "Collections",
     "empty": "No products in this collection yet.",
+    "no_collections": "No collections yet.",
     "product_count": {
       "one": "{{ count }} product",
       "other": "{{ count }} products"
