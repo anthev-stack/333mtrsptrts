@@ -15,6 +15,7 @@
         "banner_car_care": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/MUGENBANNER_02.webp",
             "title": "Car care",
             "button_label": "Shop now",
             "link": ""
@@ -23,6 +24,7 @@
         "banner_maintenance": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/MUGENBANNER_02.webp",
             "title": "Maintenance",
             "button_label": "Shop now",
             "link": ""
