@@ -14,8 +14,8 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "section_width": "page",
-        "background_color": "#F5F5F5",
+        "section_width": "full",
+        "background_color": "#f5f5f5",
         "brand_heading": "333 Motorsports",
         "brand_text": "<p>Your home of top-quality products. Car care, maintenance and more, we aim to offer everything you need to keep your vehicle in mint condition. With a passion for quality, performance and reliability, we strive to deliver the best products and customer service to car enthusiasts like you.</p>",
         "facebook_url": "https://facebook.com",
