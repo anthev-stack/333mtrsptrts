@@ -1,11 +1,12 @@
 {% liquid
   assign logo_width = settings.logo_width | default: 120
   assign logo_width_2x = logo_width | times: 2
+  assign section_width = section.settings.section_width | default: 'page'
 %}
 
 {% render 'section-padding' %}
 
-<div class="header-social full-width">
+<div class="header-social header-social--{{ section_width }} full-width">
   <div class="header-social__inner">
     {% if section.settings.facebook_url != blank %}
       <a
@@ -36,7 +37,7 @@
   </div>
 </div>
 
-<header class="site-header full-width">
+<header class="site-header site-header--{{ section_width }} full-width">
   <div class="site-header__inner">
     <nav class="site-header__nav" aria-label="Primary">
       {% if section.settings.menu != blank %}
@@ -112,6 +113,10 @@
     box-sizing: border-box;
   }
 
+  .header-social--full .header-social__inner {
+    width: 100%;
+  }
+
   .header-social__link {
     display: inline-flex;
     color: #fff;
@@ -137,6 +142,10 @@
     margin-inline: auto;
     padding: 0.65rem var(--page-margin);
     box-sizing: border-box;
+  }
+
+  .site-header--full .site-header__inner {
+    width: 100%;
   }
 
   .site-header__menu {
@@ -260,6 +269,22 @@
 {
   "name": "t:general.header",
   "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:labels.section_width",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
+      ],
+      "default": "page"
+    },
     {
       "type": "link_list",
       "id": "menu",
