@@ -1,0 +1,10 @@
+{% doc %}
+  Applies section top/bottom padding to the section wrapper.
+  Expects section.settings.padding_top and section.settings.padding_bottom.
+{% enddoc %}
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+  }
+{% endstyle %}

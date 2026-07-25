@@ -1,3 +1,5 @@
+{% render 'section-padding' %}
+
 <section class="brand-carousel" aria-label="{{ section.settings.title | escape }}">
   {% if section.blocks.size > 0 %}
     <div class="brand-carousel__track" data-brand-carousel>
@@ -52,7 +54,6 @@
 
 {% stylesheet %}
   .brand-carousel {
-    padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(2.5rem, 6vw, 4rem);
     border-top: 1px solid rgba(17, 17, 17, 0.08);
   }
 
@@ -126,6 +127,30 @@
       "id": "title",
       "label": "t:labels.heading",
       "default": "Brands"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 40
     }
   ],
   "blocks": [

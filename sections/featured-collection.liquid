@@ -7,6 +7,8 @@
   endif
 %}
 
+{% render 'section-padding' %}
+
 <section
   class="featured-collection featured-collection--{{ section_width }} {{ width_class }}"
   style="--featured-columns: {{ columns }};"
@@ -56,7 +58,6 @@
 {% stylesheet %}
   .featured-collection {
     --featured-columns: 3;
-    padding: clamp(2.5rem, 6vw, 4.5rem) 0;
   }
 
   .featured-collection--full {
@@ -180,6 +181,30 @@
         }
       ],
       "default": "3"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 48
     }
   ],
   "presets": [
@@ -187,7 +212,9 @@
       "name": "t:general.featured_collection",
       "settings": {
         "section_width": "page",
-        "columns": "3"
+        "columns": "3",
+        "padding_top": 48,
+        "padding_bottom": 48
       }
     }
   ]

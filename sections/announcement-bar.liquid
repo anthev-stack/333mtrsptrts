@@ -1,3 +1,5 @@
+{% render 'section-padding' %}
+
 {% if section.settings.message_left != blank or section.settings.message_right != blank %}
   <div class="announcement-bar full-width" role="region" aria-label="Announcements">
     <div class="announcement-bar__inner">
@@ -98,6 +100,30 @@
       "type": "url",
       "id": "link_right",
       "label": "t:labels.link_right"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 0
     }
   ]
 }

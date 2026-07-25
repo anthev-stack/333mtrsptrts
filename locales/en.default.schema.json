@@ -75,6 +75,8 @@
     "message_right": "Right message",
     "customer_account_menu": "Customer account menu",
     "padding": "Padding",
+    "padding_top": "Top padding",
+    "padding_bottom": "Bottom padding",
     "page_margin": "Page margin",
     "page_width": "Page width",
     "products_to_show": "Products to show",

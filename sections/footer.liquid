@@ -1,3 +1,5 @@
+{% render 'section-padding' %}
+
 <footer>
   <div class="footer__copyright">
     &copy;
@@ -24,7 +26,6 @@
   footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 2rem;
   }
   footer a {
     text-decoration: none;
@@ -51,6 +52,30 @@
       "id": "show_payment_icons",
       "label": "t:labels.show_payment_icons",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 32
     }
   ]
 }
