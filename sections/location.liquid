@@ -1,0 +1,204 @@
+{% liquid
+  assign section_width = section.settings.section_width | default: 'page'
+  assign width_class = ''
+  if section_width == 'full'
+    assign width_class = 'full-width'
+  endif
+%}
+
+{% render 'section-padding' %}
+
+<section class="location location--{{ section_width }} {{ width_class }}">
+  <div class="location__content">
+    {% if section.settings.heading != blank %}
+      <h2 class="location__heading">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.text != blank %}
+      <div class="location__text">
+        {{ section.settings.text }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="location__map">
+    {% if section.settings.map_embed != blank %}
+      {{ section.settings.map_embed }}
+    {% elsif section.settings.map_address != blank %}
+      <iframe
+        title="{{ section.settings.heading | default: 'Location' | escape }}"
+        src="https://maps.google.com/maps?q={{ section.settings.map_address | url_encode }}&z={{ section.settings.map_zoom }}&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    {% else %}
+      <div class="location__map-placeholder" aria-hidden="true"></div>
+    {% endif %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .location {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  .location--full {
+    padding-inline: var(--page-margin);
+  }
+
+  .location__heading {
+    margin: 0 0 1rem;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .location__text {
+    max-width: 28rem;
+    color: #444;
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  .location__text p {
+    margin: 0 0 0.85rem;
+  }
+
+  .location__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .location__map {
+    position: relative;
+    width: 100%;
+    min-height: 16rem;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #ececec;
+  }
+
+  .location__map iframe,
+  .location__map-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .location__map-placeholder {
+    background:
+      linear-gradient(135deg, #f0f0f0, #dcdcdc);
+  }
+
+  @media screen and (max-width: 749px) {
+    .location {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .location__map {
+      min-height: 14rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.location",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:labels.section_width",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Location"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:labels.text",
+      "default": "<p>An online e-commerce store with no physical brick-and-mortar location at this stage.</p><p>We offer local delivery to surrounding suburbs.</p>"
+    },
+    {
+      "type": "text",
+      "id": "map_address",
+      "label": "t:labels.map_address",
+      "default": "Ormeau QLD Australia",
+      "info": "t:labels.map_address_info"
+    },
+    {
+      "type": "range",
+      "id": "map_zoom",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "label": "t:labels.map_zoom"
+    },
+    {
+      "type": "html",
+      "id": "map_embed",
+      "label": "t:labels.map_embed",
+      "info": "t:labels.map_embed_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.location",
+      "settings": {
+        "section_width": "page",
+        "heading": "Location",
+        "map_address": "Ormeau QLD Australia",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    }
+  ]
+}
+{% endschema %}
