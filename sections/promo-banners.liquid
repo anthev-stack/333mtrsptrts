@@ -1,4 +1,12 @@
-<div class="promo-banners full-width">
+{% liquid
+  assign section_width = section.settings.section_width | default: 'page'
+  assign width_class = ''
+  if section_width == 'full'
+    assign width_class = 'full-width'
+  endif
+%}
+
+<div class="promo-banners promo-banners--{{ section_width }} {{ width_class }}">
   {% for block in section.blocks %}
     <a
       class="promo-banner"
@@ -35,7 +43,14 @@
   .promo-banners {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .promo-banners--full {
     gap: 0;
+  }
+
+  .promo-banners--page {
+    gap: 0.75rem;
   }
 
   .promo-banner {
@@ -133,6 +148,24 @@
 {
   "name": "t:general.promo_banners",
   "max_blocks": 2,
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:labels.section_width",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
+      ],
+      "default": "page"
+    }
+  ],
   "blocks": [
     {
       "type": "banner",
@@ -166,6 +199,9 @@
   "presets": [
     {
       "name": "t:general.promo_banners",
+      "settings": {
+        "section_width": "page"
+      },
       "blocks": [
         {
           "type": "banner",

@@ -31,7 +31,9 @@
         "banner_car_care",
         "banner_maintenance"
       ],
-      "settings": {}
+      "settings": {
+        "section_width": "page"
+      }
     },
     "featured_collection": {
       "type": "featured-collection",

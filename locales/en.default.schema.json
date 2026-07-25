@@ -68,6 +68,7 @@
     "page_margin": "Page margin",
     "page_width": "Page width",
     "products_to_show": "Products to show",
+    "section_width": "Section width",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
     "text": "Text",
@@ -87,6 +88,10 @@
     "page_width": {
       "narrow": "Narrow",
       "wide": "Wide"
+    },
+    "section_width": {
+      "page": "Page width",
+      "full": "Full width"
     },
     "size": {
       "large": "Large",
