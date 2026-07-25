@@ -6,7 +6,10 @@
 
 {% render 'section-padding' %}
 
-<footer class="site-footer site-footer--{{ section_width }} {{ width_class }}">
+<footer
+  class="site-footer site-footer--{{ section_width }} {{ width_class }}"
+  style="background-color: {{ section.settings.background_color }};"
+>
   <div class="site-footer__inner">
     <div class="site-footer__grid">
       <div class="site-footer__col site-footer__col--brand">
@@ -122,7 +125,6 @@
 
 {% stylesheet %}
   .site-footer {
-    background: {{ section.settings.background_color }};
     color: var(--color-foreground);
   }
 
