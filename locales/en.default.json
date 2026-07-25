@@ -38,7 +38,17 @@
   },
   "collections": {
     "title": "Collections",
-    "empty": "No products in this collection yet."
+    "empty": "No products in this collection yet.",
+    "product_count": {
+      "one": "{{ count }} product",
+      "other": "{{ count }} products"
+    },
+    "filter": "Filter",
+    "sort_by": "Sort by",
+    "apply": "Apply",
+    "filter_from": "From",
+    "filter_to": "To",
+    "pagination": "Pagination"
   },
   "general": {
     "previous": "Previous",

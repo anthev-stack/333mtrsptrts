@@ -34,9 +34,9 @@
     {% else %}
       {% for i in (1..columns) %}
         <article class="product-card product-card--placeholder">
-          <p class="product-card__stock">{{ 'products.in_stock' | t: count: 10 }}</p>
           <div class="product-card__media">
             <div class="product-card__image-link">
+              <span class="product-card__stock">{{ 'products.in_stock' | t: count: 10 }}</span>
               {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder' }}
             </div>
             <div class="product-card__swatch">
@@ -45,7 +45,6 @@
             </div>
           </div>
           <div class="product-card__info">
-            <p class="product-card__vendor">{{ section.settings.title | default: 'Collection' }}</p>
             <h3 class="product-card__title">{{ 'products.example_product' | t }}</h3>
             <p class="product-card__price">$29.99</p>
           </div>
