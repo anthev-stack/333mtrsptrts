@@ -15,15 +15,19 @@
         "banner_car_care": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/MUGENBANNER_02.webp",
             "title": "Car care",
-            "button_label": "Shop now"
+            "button_label": "Shop now",
+            "link": ""
           }
         },
         "banner_maintenance": {
           "type": "banner",
           "settings": {
+            "image": "shopify://shop_images/MUGENBANNER_02.webp",
             "title": "Maintenance",
-            "button_label": "Shop now"
+            "button_label": "Shop now",
+            "link": ""
           }
         }
       },
@@ -40,6 +44,7 @@
       "settings": {
         "title": "Mitt slide",
         "view_all_label": "View all",
+        "collection": "test-collection",
         "products_to_show": 3
       }
     },
@@ -49,19 +54,22 @@
         "brand_motul": {
           "type": "brand",
           "settings": {
-            "name": "Motul"
+            "name": "Motul",
+            "link": ""
           }
         },
         "brand_castrol": {
           "type": "brand",
           "settings": {
-            "name": "Castrol"
+            "name": "Castrol",
+            "link": ""
           }
         },
         "brand_mobil": {
           "type": "brand",
           "settings": {
-            "name": "Mobil 1"
+            "name": "Mobil 1",
+            "link": ""
           }
         }
       },
