@@ -1,4 +1,16 @@
-<section class="featured-collection">
+{% liquid
+  assign section_width = section.settings.section_width | default: 'page'
+  assign columns = section.settings.columns | default: 3 | plus: 0
+  assign width_class = ''
+  if section_width == 'full'
+    assign width_class = 'full-width'
+  endif
+%}
+
+<section
+  class="featured-collection featured-collection--{{ section_width }} {{ width_class }}"
+  style="--featured-columns: {{ columns }};"
+>
   <div class="featured-collection__header">
     {% if section.settings.title != blank %}
       <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
@@ -18,7 +30,7 @@
         <p class="featured-collection__empty">{{ 'collections.empty' | t }}</p>
       {% endfor %}
     {% else %}
-      {% for i in (1..3) %}
+      {% for i in (1..columns) %}
         <article class="product-card product-card--placeholder">
           <p class="product-card__stock">{{ 'products.in_stock' | t: count: 10 }}</p>
           <div class="product-card__media">
@@ -43,7 +55,12 @@
 
 {% stylesheet %}
   .featured-collection {
+    --featured-columns: 3;
     padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  }
+
+  .featured-collection--full {
+    padding-inline: var(--page-margin);
   }
 
   .featured-collection__header {
@@ -71,7 +88,7 @@
 
   .featured-collection__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--featured-columns), minmax(0, 1fr));
     gap: clamp(1.25rem, 3vw, 2.5rem);
   }
 
@@ -83,7 +100,7 @@
 
   @media screen and (max-width: 989px) {
     .featured-collection__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(min(2, var(--featured-columns)), minmax(0, 1fr));
     }
   }
 
@@ -98,6 +115,22 @@
 {
   "name": "t:general.featured_collection",
   "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:labels.section_width",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
+      ],
+      "default": "page"
+    },
     {
       "type": "text",
       "id": "title",
@@ -119,15 +152,43 @@
       "type": "range",
       "id": "products_to_show",
       "min": 2,
-      "max": 12,
+      "max": 30,
       "step": 1,
       "default": 3,
       "label": "t:labels.products_to_show"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "t:labels.columns",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        },
+        {
+          "value": "5",
+          "label": "5"
+        },
+        {
+          "value": "6",
+          "label": "6"
+        }
+      ],
+      "default": "3"
     }
   ],
   "presets": [
     {
-      "name": "t:general.featured_collection"
+      "name": "t:general.featured_collection",
+      "settings": {
+        "section_width": "page",
+        "columns": "3"
+      }
     }
   ]
 }

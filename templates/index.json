@@ -45,7 +45,9 @@
         "title": "Mitt slide",
         "view_all_label": "View all",
         "collection": "test-collection",
-        "products_to_show": 3
+        "products_to_show": 3,
+        "section_width": "page",
+        "columns": "3"
       }
     },
     "brand_carousel": {
