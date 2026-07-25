@@ -14,14 +14,22 @@
     "header": {
       "type": "header",
       "settings": {
-        "menu": "main-menu"
+        "menu": "main-menu",
+        "facebook_url": "https://facebook.com/333mtrsprts",
+        "instagram_url": "https://instagram.com/333mtrsprts",
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     },
     "announcement_bar": {
       "type": "announcement-bar",
       "settings": {
         "message_left": "Buy now. Pay later. Options available at checkout.",
-        "message_right": "Free domestic shipping on orders over $150. Conditions apply."
+        "link_left": "",
+        "message_right": "Free domestic shipping on orders over $150. Conditions apply.",
+        "link_right": "",
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     }
   },

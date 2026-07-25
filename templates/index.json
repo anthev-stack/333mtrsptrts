@@ -36,7 +36,9 @@
         "banner_maintenance"
       ],
       "settings": {
-        "section_width": "page"
+        "section_width": "page",
+        "padding_top": 40,
+        "padding_bottom": 0
       }
     },
     "featured_collection": {
@@ -47,7 +49,9 @@
         "view_all_label": "View all",
         "collection": "test-collection",
         "products_to_show": 30,
-        "columns": "5"
+        "columns": "5",
+        "padding_top": 20,
+        "padding_bottom": 20
       }
     },
     "brand_carousel": {
@@ -81,7 +85,9 @@
         "brand_mobil"
       ],
       "settings": {
-        "title": "Brands"
+        "title": "Brands",
+        "padding_top": 36,
+        "padding_bottom": 40
       }
     },
     "location": {
