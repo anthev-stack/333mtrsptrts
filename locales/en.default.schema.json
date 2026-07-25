@@ -96,7 +96,8 @@
       "vertical": "Vertical"
     },
     "page_width": {
-      "narrow": "Narrow",
+      "slim": "Slim",
+      "narrow": "Medium",
       "wide": "Wide"
     },
     "section_width": {

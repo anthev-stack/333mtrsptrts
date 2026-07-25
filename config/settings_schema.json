@@ -51,25 +51,29 @@
         "label": "t:labels.page_width",
         "options": [
           {
-            "value": "90rem",
+            "value": "60rem",
+            "label": "t:options.page_width.slim"
+          },
+          {
+            "value": "70rem",
             "label": "t:options.page_width.narrow"
           },
           {
-            "value": "110rem",
+            "value": "90rem",
             "label": "t:options.page_width.wide"
           }
         ],
-        "default": "110rem"
+        "default": "60rem"
       },
       {
         "type": "range",
         "id": "min_page_margin",
-        "min": 10,
-        "max": 100,
-        "step": 1,
+        "min": 16,
+        "max": 120,
+        "step": 4,
         "unit": "px",
         "label": "t:labels.page_margin",
-        "default": 40
+        "default": 64
       }
     ]
   },

@@ -50,13 +50,13 @@
   }
 
   .promo-banners--page {
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .promo-banner {
     position: relative;
     display: block;
-    min-height: clamp(16rem, 32vw, 24rem);
+    min-height: clamp(12rem, 22vw, 16.5rem);
     overflow: hidden;
     color: #fff;
     text-decoration: none;
@@ -83,9 +83,9 @@
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.35) 0%,
-      rgba(0, 0, 0, 0.15) 40%,
-      rgba(0, 0, 0, 0.45) 100%
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.15) 45%,
+      rgba(0, 0, 0, 0.4) 100%
     );
   }
 
@@ -94,17 +94,19 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.75rem;
     height: 100%;
     min-height: inherit;
-    padding: clamp(1.25rem, 3vw, 2rem);
+    padding: clamp(1rem, 2.2vw, 1.5rem);
   }
 
   .promo-banner__title {
     margin: 0;
-    font-size: clamp(1.35rem, 2.4vw, 2rem);
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
@@ -113,11 +115,11 @@
     align-self: flex-start;
     align-items: center;
     justify-content: center;
-    min-height: 2.5rem;
-    padding: 0.65rem 1.35rem;
+    min-height: 2.15rem;
+    padding: 0.55rem 1.1rem;
     background: #111;
     color: #fff;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
