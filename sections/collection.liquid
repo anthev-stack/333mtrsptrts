@@ -1,58 +1,56 @@
 {% liquid
   assign section_width = section.settings.section_width | default: 'page'
   assign columns = section.settings.columns | default: 3 | plus: 0
-  assign width_class = ''
-  if section_width == 'full'
-    assign width_class = 'full-width'
-  endif
   assign sort_by = collection.sort_by | default: collection.default_sort_by
 %}
 
 {% render 'section-padding' %}
 
 <section
-  class="collection-page collection-page--{{ section_width }} {{ width_class }}"
+  class="collection-page collection-page--{{ section_width }} full-width"
   style="--collection-columns: {{ columns }};"
 >
-  <header class="collection-page__header">
-    <h1 class="collection-page__title">{{ collection.title | escape }}</h1>
-    <p class="collection-page__count">
-      {{ 'collections.product_count' | t: count: collection.products_count }}
-    </p>
-  </header>
+  <div class="collection-page__intro">
+    <header class="collection-page__header">
+      <h1 class="collection-page__title">{{ collection.title | escape }}</h1>
+      <p class="collection-page__count">
+        {{ 'collections.product_count' | t: count: collection.products_count }}
+      </p>
+    </header>
 
-  <div class="collection-page__toolbar">
-    <button
-      type="button"
-      class="collection-page__filter-toggle"
-      data-filter-toggle
-      aria-expanded="true"
-      aria-controls="CollectionFilters-{{ section.id }}"
-    >
-      <span>{{ 'collections.filter' | t }}</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-        <path d="M4 6h16M7 12h10M10 18h4"></path>
-      </svg>
-      <span class="collection-page__filter-chevron" aria-hidden="true"></span>
-    </button>
-
-    <div class="collection-page__sort">
-      <label class="visually-hidden" for="SortBy-{{ section.id }}">{{ 'collections.sort_by' | t }}</label>
-      <select
-        name="sort_by"
-        id="SortBy-{{ section.id }}"
-        class="collection-page__sort-select"
-        data-collection-sort
+    <div class="collection-page__toolbar">
+      <button
+        type="button"
+        class="collection-page__filter-toggle"
+        data-filter-toggle
+        aria-expanded="true"
+        aria-controls="CollectionFilters-{{ section.id }}"
       >
-        {% for option in collection.sort_options %}
-          <option
-            value="{{ option.value }}"
-            {% if option.value == sort_by %}selected{% endif %}
-          >
-            {{ option.name | escape }}
-          </option>
-        {% endfor %}
-      </select>
+        <span>{{ 'collections.filter' | t }}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <path d="M4 6h16M7 12h10M10 18h4"></path>
+        </svg>
+        <span class="collection-page__filter-chevron" aria-hidden="true"></span>
+      </button>
+
+      <div class="collection-page__sort">
+        <label class="visually-hidden" for="SortBy-{{ section.id }}">{{ 'collections.sort_by' | t }}</label>
+        <select
+          name="sort_by"
+          id="SortBy-{{ section.id }}"
+          class="collection-page__sort-select"
+          data-collection-sort
+        >
+          {% for option in collection.sort_options %}
+            <option
+              value="{{ option.value }}"
+              {% if option.value == sort_by %}selected{% endif %}
+            >
+              {{ option.name | escape }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
   </div>
 
@@ -169,10 +167,21 @@
 {% stylesheet %}
   .collection-page {
     --collection-columns: 3;
+    --collection-content-width: min(
+      calc(var(--page-width) - var(--page-margin) * 2),
+      calc(100% - var(--page-margin) * 2)
+    );
+    --collection-sidebar-width: 12.5rem;
   }
 
-  .collection-page--full {
-    padding-inline: var(--page-margin);
+  .collection-page__intro {
+    width: var(--collection-content-width);
+    margin-inline: auto;
+  }
+
+  .collection-page--full .collection-page__intro {
+    width: auto;
+    margin-inline: var(--page-margin);
   }
 
   .collection-page__header {
@@ -246,18 +255,47 @@
     cursor: pointer;
   }
 
-  .collection-page__layout {
+  /* Page width: products align to content column, filters sit in the left gutter */
+  .collection-page--page .collection-page__layout {
     display: grid;
-    grid-template-columns: 14rem minmax(0, 1fr);
-    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns:
+      minmax(0, 1fr)
+      var(--collection-content-width)
+      minmax(0, 1fr);
     align-items: start;
   }
 
-  .collection-page__layout.is-filters-collapsed {
+  .collection-page--page .collection-page__sidebar {
+    grid-column: 1;
+    justify-self: end;
+    width: min(var(--collection-sidebar-width), calc(100% - var(--page-margin)));
+    margin-right: 1.25rem;
+    padding-left: var(--page-margin);
+    box-sizing: border-box;
+  }
+
+  .collection-page--page .collection-page__main {
+    grid-column: 2;
+  }
+
+  .collection-page--page .collection-page__layout.is-filters-collapsed .collection-page__sidebar {
+    display: none;
+  }
+
+  /* Full width: filters + products share the full row */
+  .collection-page--full .collection-page__layout {
+    display: grid;
+    grid-template-columns: var(--collection-sidebar-width) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    padding-inline: var(--page-margin);
+  }
+
+  .collection-page--full .collection-page__layout.is-filters-collapsed {
     grid-template-columns: 1fr;
   }
 
-  .collection-page__layout.is-filters-collapsed .collection-page__sidebar {
+  .collection-page--full .collection-page__layout.is-filters-collapsed .collection-page__sidebar {
     display: none;
   }
 
@@ -297,15 +335,30 @@
   }
 
   @media screen and (max-width: 989px) {
-    .collection-page__layout {
+    .collection-page--page .collection-page__layout,
+    .collection-page--full .collection-page__layout {
       grid-template-columns: 1fr;
+      padding-inline: var(--page-margin);
     }
 
-    .collection-page__sidebar {
-      order: 2;
+    .collection-page--page .collection-page__intro {
+      width: auto;
+      margin-inline: var(--page-margin);
     }
 
-    .collection-page__main {
+    .collection-page--page .collection-page__sidebar,
+    .collection-page--full .collection-page__sidebar {
+      grid-column: 1;
+      justify-self: stretch;
+      width: auto;
+      margin-right: 0;
+      padding-left: 0;
+      order: 0;
+    }
+
+    .collection-page--page .collection-page__main,
+    .collection-page--full .collection-page__main {
+      grid-column: 1;
       order: 1;
     }
 
@@ -319,7 +372,6 @@
 
     .collection-page__layout:not(.is-filters-collapsed) .collection-page__sidebar {
       display: block;
-      order: 0;
       margin-bottom: 1rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid rgba(17, 17, 17, 0.1);
