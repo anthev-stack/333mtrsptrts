@@ -4,11 +4,19 @@
   assign width_class = 'full-width'
 %}
 
-{% render 'section-padding' %}
+{% style %}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+{% endstyle %}
 
 <footer
   class="site-footer site-footer--{{ section_width }} {{ width_class }}"
-  style="background-color: {{ section.settings.background_color }};"
+  style="
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+  "
 >
   <div class="site-footer__inner">
     <div class="site-footer__grid">
@@ -126,6 +134,7 @@
 {% stylesheet %}
   .site-footer {
     color: var(--color-foreground);
+    border-top: 1px solid #d6d6d6;
   }
 
   .site-footer__inner {
