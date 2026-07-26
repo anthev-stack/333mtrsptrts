@@ -220,8 +220,8 @@
         "type": "color",
         "id": "accent_color",
         "default": "#F5C518",
-        "label": "t:labels.accent",
-        "info": "t:labels.accent_info"
+        "label": "Accent",
+        "info": "Used for vehicle search, PL8SRCH, and other highlights."
       },
       {
         "type": "range",
@@ -236,104 +236,103 @@
     ]
   },
   {
-    "name": "t:general.partbot",
+    "name": "Partbot",
     "settings": [
       {
         "type": "checkbox",
         "id": "partbot_demo_mode",
-        "label": "t:labels.partbot_demo_mode",
-        "default": false,
-        "info": "t:labels.partbot_demo_mode_info"
+        "label": "Demo preview mode",
+        "default": true,
+        "info": "Shows a non-functional vehicle search and PL8SRCH preview so you can judge layout. Disables live Partbot while enabled."
       },
       {
         "type": "checkbox",
         "id": "partbot_enable",
-        "label": "t:labels.partbot_enable",
+        "label": "Enable Partbot",
         "default": false,
-        "info": "t:labels.partbot_enable_info"
+        "info": "Turns on live vehicle search and product Partbot integrations. Ignored while Demo preview mode is on. Requires the Partbot app and API key."
       },
       {
         "type": "text",
         "id": "partbot_api_key",
-        "label": "t:labels.partbot_api_key",
-        "info": "t:labels.partbot_api_key_info"
+        "label": "Partbot API key",
+        "info": "Find your public API key in Partbot account settings. Only works on approved domains."
       },
       {
         "type": "url",
         "id": "partbot_callback_url",
-        "label": "t:labels.partbot_callback_url",
-        "info": "t:labels.partbot_callback_url_info"
+        "label": "Search redirect URL",
+        "info": "Collection customers land on after searching from non-collection pages. Usually your All products collection."
       },
       {
         "type": "text",
         "id": "partbot_field_prefix",
-        "label": "t:labels.partbot_field_prefix",
-        "default": "",
-        "info": "t:labels.partbot_field_prefix_info"
+        "label": "Field prefix",
+        "info": "Must match the Field Prefix in Partbot admin if set (e.g. pb_). Leave blank if unused."
       },
       {
         "type": "text",
         "id": "partbot_fields",
-        "label": "t:labels.partbot_fields",
+        "label": "Extra fields",
         "default": "body,series",
-        "info": "t:labels.partbot_fields_info"
+        "info": "Comma-separated extras beyond Make/Model/Year. Options: body, series, variant, engine, engine_capacity"
       },
       {
         "type": "text",
         "id": "partbot_button_label",
-        "label": "t:labels.partbot_button_label",
+        "label": "Search button label",
         "default": "Search"
       },
       {
         "type": "checkbox",
         "id": "partbot_show_labels",
-        "label": "t:labels.partbot_show_labels",
+        "label": "Show field labels",
         "default": false
       },
       {
         "type": "header",
-        "content": "t:labels.partbot_product_features"
+        "content": "Product page features"
       },
       {
         "type": "checkbox",
         "id": "partbot_show_fitment",
-        "label": "t:labels.partbot_show_fitment",
+        "label": "Show vehicle fitment check",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_applications",
-        "label": "t:labels.partbot_show_applications",
+        "label": "Show vehicle applications table",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_attributes",
-        "label": "t:labels.partbot_show_attributes",
+        "label": "Show product attributes",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_documents",
-        "label": "t:labels.partbot_show_documents",
+        "label": "Show product documents",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_brand_logo",
-        "label": "t:labels.partbot_show_brand_logo",
+        "label": "Show brand logo",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_catalogue_notes",
-        "label": "t:labels.partbot_show_catalogue_notes",
+        "label": "Show catalogue notes",
         "default": true
       },
       {
         "type": "checkbox",
         "id": "partbot_show_cross_sell",
-        "label": "t:labels.partbot_show_cross_sell",
+        "label": "Show cross-sell products",
         "default": true
       }
     ]
