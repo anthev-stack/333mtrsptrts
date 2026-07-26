@@ -59,7 +59,8 @@
     "partnered_with_html": "Partnered with <a class=\"site-footer__partner-link\" href=\"https://use.partbot.io/\" target=\"_blank\" rel=\"noopener noreferrer\">Partbot</a> IO"
   },
   "accessibility": {
-    "side_promotions": "Promotional banners"
+    "side_promotions": "Promotional banners",
+    "close": "Close"
   },
   "header": {
     "search": "Search",
@@ -90,6 +91,11 @@
     "select_vehicle": "Select Vehicle",
     "demo_vehicle_search": "Vehicle search preview",
     "demo_plate_search": "Plate search preview",
+    "plate_search_title": "Number Plate Search",
+    "plate_search_intro": "Enter your Number Plate and select your State or Territory to find your vehicle.",
+    "number_plate": "Number plate",
+    "state_or_territory": "State or Territory",
+    "find_your_vehicle": "Find your vehicle",
     "specifications": "Specifications",
     "documents": "Documents",
     "download_instructions": "Download instructions for {{ sku }}",

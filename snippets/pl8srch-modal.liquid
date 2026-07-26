@@ -1,0 +1,241 @@
+{% doc %}
+  Demo Number Plate Search modal for Partbot preview mode.
+{% enddoc %}
+
+<div
+  id="Pl8srchModal"
+  class="pl8srch-modal"
+  data-pl8srch-modal
+  hidden
+  aria-hidden="true"
+>
+  <div class="pl8srch-modal__backdrop" data-pl8srch-close></div>
+
+  <div
+    class="pl8srch-modal__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="Pl8srchModalTitle-{{ section.id }}"
+    tabindex="-1"
+    data-pl8srch-dialog
+  >
+    <button
+      type="button"
+      class="pl8srch-modal__close"
+      aria-label="{{ 'accessibility.close' | t }}"
+      data-pl8srch-close
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+    <h2 id="Pl8srchModalTitle-{{ section.id }}" class="pl8srch-modal__title">
+      {{ 'partbot.plate_search_title' | t }}
+    </h2>
+    <p class="pl8srch-modal__text">
+      {{ 'partbot.plate_search_intro' | t }}
+    </p>
+
+    <label class="pl8srch-modal__plate-field">
+      <span class="visually-hidden">{{ 'partbot.number_plate' | t }}</span>
+      <input
+        type="text"
+        class="pl8srch-modal__plate-input"
+        value="333MTR"
+        maxlength="8"
+        autocomplete="off"
+        spellcheck="false"
+        data-pl8srch-plate
+      >
+    </label>
+
+    <div class="pl8srch-modal__states" role="group" aria-label="{{ 'partbot.state_or_territory' | t }}">
+      {% assign states = 'ACT,NSW,NT,QLD,SA,TAS,VIC,WA' | split: ',' %}
+      {% for state in states %}
+        <button
+          type="button"
+          class="pl8srch-modal__state{% if state == 'QLD' %} is-selected{% endif %}"
+          data-pl8srch-state="{{ state }}"
+          aria-pressed="{% if state == 'QLD' %}true{% else %}false{% endif %}"
+        >
+          {{ state }}
+        </button>
+      {% endfor %}
+    </div>
+
+    <button type="button" class="pl8srch-modal__submit" data-pl8srch-submit>
+      {{ 'partbot.find_your_vehicle' | t }}
+    </button>
+  </div>
+</div>
+
+  {% style %}
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .pl8srch-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+  }
+
+  .pl8srch-modal[hidden] {
+    display: none;
+  }
+
+  .pl8srch-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .pl8srch-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(26rem, 100%);
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    border-radius: 0;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    box-sizing: border-box;
+  }
+
+  .pl8srch-modal__close {
+    appearance: none;
+    position: absolute;
+    top: 0.55rem;
+    right: 0.65rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #111;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .pl8srch-modal__title {
+    margin: 0 0 0.55rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #111;
+  }
+
+  .pl8srch-modal__text {
+    margin: 0 0 1.15rem;
+    color: #777;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .pl8srch-modal__plate-field {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .pl8srch-modal__plate-input {
+    appearance: none;
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.65rem 0.85rem;
+    border: 3px solid var(--color-accent, #f5c518);
+    border-radius: 0;
+    background: #fff;
+    color: #111;
+    font-family: var(--font-paragraph--family);
+    font-size: clamp(1.4rem, 4vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .pl8srch-modal__plate-input:focus {
+    border-color: var(--color-accent, #f5c518);
+    box-shadow: none;
+  }
+
+  .pl8srch-modal__states {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.45rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .pl8srch-modal__state {
+    appearance: none;
+    min-height: 2.35rem;
+    padding: 0.4rem 0.35rem;
+    border: 1px solid #d5d5d5;
+    border-radius: 0;
+    background: #fff;
+    color: #111;
+    font-family: var(--font-paragraph--family);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .pl8srch-modal__state.is-selected,
+  .pl8srch-modal__state[aria-pressed='true'] {
+    border-color: var(--color-accent, #f5c518);
+    background: color-mix(in srgb, var(--color-accent, #f5c518) 16%, #fff);
+  }
+
+  .pl8srch-modal__submit {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 2.85rem;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-accent, #f5c518);
+    color: var(--color-accent-contrast, #111);
+    font-family: var(--font-paragraph--family);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+
+  .pl8srch-modal__submit:hover {
+    filter: brightness(0.96);
+  }
+
+  body.pl8srch-modal-open {
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 549px) {
+    .pl8srch-modal__states {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .pl8srch-modal__dialog {
+      padding: 1.5rem 1.1rem 1.2rem;
+    }
+  }
+{% endstyle %}
