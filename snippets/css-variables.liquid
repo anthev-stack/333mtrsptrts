@@ -151,10 +151,13 @@
       assign accent_brightness = accent | color_brightness
       if accent_brightness > 140
         assign partbot_label_color = '0 0 0'
+        assign accent_contrast = '#111111'
       else
         assign partbot_label_color = '255 255 255'
+        assign accent_contrast = '#FFFFFF'
       endif
     %}
+    --color-accent-contrast: {{ accent_contrast }};
     --partbot-button-color: {{ accent_r }} {{ accent_g }} {{ accent_b }};
     --partbot-button-hover-color: {{ accent_hover_r }} {{ accent_hover_g }} {{ accent_hover_b }};
     --partbot-button-label-color: {{ partbot_label_color }};
