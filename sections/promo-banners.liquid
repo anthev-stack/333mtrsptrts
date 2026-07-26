@@ -4,51 +4,135 @@
   if section_width == 'full'
     assign width_class = 'full-width'
   endif
+
+  assign show_side_promo = false
+  if section_width == 'page' and settings.side_promo_enable
+    if settings.side_promo_1_image != blank or settings.side_promo_2_image != blank or settings.side_promo_3_image != blank
+      assign show_side_promo = true
+    endif
+  endif
+
+  assign side_promo_position = settings.side_promo_position | default: 'left'
 %}
 
 {% render 'section-padding' %}
 
-<div class="promo-banners promo-banners--{{ section_width }} {{ width_class }}">
-  {% for block in section.blocks %}
-    {% liquid
-      assign banner_ratio = 16.0 | divided_by: 9.0
-      if block.settings.image != blank
-        assign banner_ratio = block.settings.image.aspect_ratio
-      endif
-    %}
-    <a
-      class="promo-banner"
-      href="{{ block.settings.link | default: routes.all_products_collection_url }}"
-      style="--banner-ratio: {{ banner_ratio }};"
-      {{ block.shopify_attributes }}
-    >
-      {% if block.settings.image != blank %}
-        {{
-          block.settings.image
-          | image_url: width: 1600
-          | image_tag:
-            class: 'promo-banner__image',
-            widths: '600, 900, 1200, 1600',
-            sizes: '(min-width: 750px) 50vw, 100vw',
-            loading: 'eager',
-            alt: block.settings.title
-        }}
-      {% else %}
-        <div class="promo-banner__placeholder" aria-hidden="true"></div>
-      {% endif %}
-      <div class="promo-banner__content">
-        {% if block.settings.title != blank %}
-          <h2 class="promo-banner__title">{{ block.settings.title | escape }}</h2>
+<div
+  class="promo-banners-shell full-width{% if show_side_promo %} promo-banners-shell--has-side promo-banners-shell--{{ side_promo_position }}{% endif %}"
+>
+  {% if show_side_promo and side_promo_position == 'left' %}
+    {% render 'side-promo-banners' %}
+  {% endif %}
+
+  <div class="promo-banners promo-banners--{{ section_width }} {{ width_class }}">
+    {% for block in section.blocks %}
+      {% liquid
+        assign banner_ratio = 16.0 | divided_by: 9.0
+        if block.settings.image != blank
+          assign banner_ratio = block.settings.image.aspect_ratio
+        endif
+      %}
+      <a
+        class="promo-banner"
+        href="{{ block.settings.link | default: routes.all_products_collection_url }}"
+        style="--banner-ratio: {{ banner_ratio }};"
+        {{ block.shopify_attributes }}
+      >
+        {% if block.settings.image != blank %}
+          {{
+            block.settings.image
+            | image_url: width: 1600
+            | image_tag:
+              class: 'promo-banner__image',
+              widths: '600, 900, 1200, 1600',
+              sizes: '(min-width: 750px) 50vw, 100vw',
+              loading: 'eager',
+              alt: block.settings.title
+          }}
+        {% else %}
+          <div class="promo-banner__placeholder" aria-hidden="true"></div>
         {% endif %}
-        {% if block.settings.button_label != blank %}
-          <span class="promo-banner__button">{{ block.settings.button_label | escape }}</span>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
+        <div class="promo-banner__content">
+          {% if block.settings.title != blank %}
+            <h2 class="promo-banner__title">{{ block.settings.title | escape }}</h2>
+          {% endif %}
+          {% if block.settings.button_label != blank %}
+            <span class="promo-banner__button">{{ block.settings.button_label | escape }}</span>
+          {% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if show_side_promo and side_promo_position == 'right' %}
+    {% render 'side-promo-banners' %}
+  {% endif %}
 </div>
 
 {% stylesheet %}
+  .promo-banners-shell {
+    --promo-gap: 0.5rem;
+    display: grid;
+    grid-template-columns: var(--content-grid);
+    width: 100%;
+    align-items: start;
+  }
+
+  .promo-banners-shell .promo-banners--page {
+    grid-column: 2;
+    width: 100%;
+  }
+
+  .promo-banners-shell .promo-banners--full {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .promo-banners-shell .side-promo {
+    display: none;
+    width: min(var(--side-promo-width, 140px), 100%);
+    max-width: 100%;
+    align-self: start;
+  }
+
+  .promo-banners-shell--left .side-promo {
+    grid-column: 1;
+    justify-self: end;
+    padding-right: var(--promo-gap);
+    box-sizing: content-box;
+  }
+
+  .promo-banners-shell--right .side-promo {
+    grid-column: 3;
+    justify-self: start;
+    padding-left: var(--promo-gap);
+    box-sizing: content-box;
+  }
+
+  .side-promo__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--promo-gap);
+  }
+
+  .side-promo__item {
+    display: block;
+    line-height: 0;
+    text-decoration: none;
+    background: #f3f3f3;
+    transition: opacity 0.2s ease;
+  }
+
+  .side-promo__item:hover {
+    opacity: 0.92;
+  }
+
+  .side-promo__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   .promo-banners {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -60,7 +144,7 @@
   }
 
   .promo-banners--page {
-    gap: 0.5rem;
+    gap: var(--promo-gap, 0.5rem);
   }
 
   .promo-banner {
@@ -148,6 +232,12 @@
 
   .promo-banner:hover .promo-banner__image {
     transform: scale(1.04);
+  }
+
+  @media screen and (min-width: 990px) {
+    .promo-banners-shell--has-side .side-promo {
+      display: block;
+    }
   }
 
   @media screen and (max-width: 749px) {

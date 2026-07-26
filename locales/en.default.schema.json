@@ -102,7 +102,7 @@
     "section_width": "Section width",
     "show_payment_icons": "Show payment icons",
     "side_promo_enable": "Enable side promotion banners",
-    "side_promo_enable_info": "Shows up to 3 clickable image banners in the homepage side gutter (outside page width). Hidden on smaller screens.",
+    "side_promo_enable_info": "Shows up to 3 clickable image banners beside the homepage promo banners, outside page width. Uses the same gap as the middle banners.",
     "side_promo_position": "Banner side",
     "side_promo_width": "Banner width",
     "side_promo_1": "Banner 1",

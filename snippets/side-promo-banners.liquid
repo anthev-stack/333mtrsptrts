@@ -1,6 +1,6 @@
 {% doc %}
-  Renders sticky promotional banners in the homepage page-width side gutter.
-  Controlled by Theme settings → Side promotion banners.
+  Renders side promotional banner images from Theme settings.
+  Intended to sit in the promo-banners gutter layout.
 {% enddoc %}
 
 {% liquid
@@ -48,7 +48,7 @@
                 | image_tag:
                   class: 'side-promo__image',
                   widths: '140, 200, 280, 400, 600',
-                  sizes: '(min-width: 1200px) 140px, 0px',
+                  sizes: '(min-width: 990px) 140px, 0px',
                   loading: 'lazy',
                   alt: promo_alt
               }}
@@ -61,7 +61,7 @@
                 | image_tag:
                   class: 'side-promo__image',
                   widths: '140, 200, 280, 400, 600',
-                  sizes: '(min-width: 1200px) 140px, 0px',
+                  sizes: '(min-width: 990px) 140px, 0px',
                   loading: 'lazy',
                   alt: promo_alt
               }}
@@ -71,62 +71,4 @@
       {% endfor %}
     </div>
   </aside>
-
-  {% style %}
-    .side-promo {
-      --side-promo-gap: 0.75rem;
-      --side-promo-inset: 0.75rem;
-      position: fixed;
-      top: 7.5rem;
-      z-index: 20;
-      display: none;
-      width: var(--side-promo-width);
-      max-height: calc(100vh - 9rem);
-      overflow: auto;
-      scrollbar-width: thin;
-    }
-
-    .side-promo--left {
-      left: var(--side-promo-inset);
-    }
-
-    .side-promo--right {
-      right: var(--side-promo-inset);
-    }
-
-    .side-promo__list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--side-promo-gap);
-    }
-
-    .side-promo__item {
-      display: block;
-      line-height: 0;
-      text-decoration: none;
-      background: #f3f3f3;
-      transition: opacity 0.2s ease;
-    }
-
-    .side-promo__item:hover {
-      opacity: 0.92;
-    }
-
-    .side-promo__image {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    /* Only show when there is space outside the centered page-width column */
-    @media screen and (min-width: 1200px) {
-      .side-promo {
-        display: block;
-        width: min(
-          var(--side-promo-width),
-          max(0px, calc((100vw - min(var(--page-width), 100vw)) / 2 - var(--side-promo-inset) * 2))
-        );
-      }
-    }
-  {% endstyle %}
 {% endif %}
