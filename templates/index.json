@@ -13,6 +13,7 @@
       "type": "vehicle-search",
       "settings": {
         "section_width": "full",
+        "text_case": "uppercase",
         "padding_top": 0,
         "padding_bottom": 8
       }

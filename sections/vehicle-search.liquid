@@ -5,6 +5,8 @@
     assign width_class = 'full-width'
   endif
 
+  assign text_case = section.settings.text_case | default: 'uppercase'
+
   assign show_vehicle_search = false
   if settings.partbot_demo_mode
     assign show_vehicle_search = true
@@ -17,7 +19,7 @@
   {% render 'section-padding' %}
 
   <section class="vehicle-search-section vehicle-search-section--{{ section_width }} {{ width_class }}">
-    {% render 'vehicle-search-bar' %}
+    {% render 'vehicle-search-bar', text_case: text_case %}
   </section>
 {% endif %}
 
@@ -52,6 +54,23 @@
       "default": "page"
     },
     {
+      "type": "select",
+      "id": "text_case",
+      "label": "Text case",
+      "options": [
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "sentence",
+          "label": "Sentence case"
+        }
+      ],
+      "default": "uppercase",
+      "info": "Applies to demo vehicle search labels and options."
+    },
+    {
       "type": "header",
       "content": "t:labels.padding"
     },
@@ -80,7 +99,8 @@
     {
       "name": "t:general.vehicle_search",
       "settings": {
-        "section_width": "page"
+        "section_width": "page",
+        "text_case": "uppercase"
       }
     }
   ]

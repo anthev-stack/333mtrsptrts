@@ -1,51 +1,163 @@
 {% doc %}
   Non-functional vehicle search preview for judging layout.
   Shown when Theme settings → Partbot → Demo preview mode is enabled.
+
+  @param {string} [text_case] - "uppercase" or "sentence"
 {% enddoc %}
 
-<div class="vehicle-search-demo" aria-label="{{ 'partbot.demo_vehicle_search' | t }}">
+{% liquid
+  assign text_case = text_case | default: 'uppercase'
+  if text_case != 'sentence'
+    assign text_case = 'uppercase'
+  endif
+
+  assign label_make = 'partbot.make' | t
+  assign label_model = 'partbot.model' | t
+  assign label_year = 'partbot.year' | t
+  assign label_body = 'partbot.body' | t
+  assign label_series = 'partbot.series' | t
+  assign label_engine = 'partbot.engine_capacity' | t
+  assign label_button = 'partbot.select_vehicle' | t
+
+  if text_case == 'uppercase'
+    assign label_make = label_make | upcase
+    assign label_model = label_model | upcase
+    assign label_year = label_year | upcase
+    assign label_body = label_body | upcase
+    assign label_series = label_series | upcase
+    assign label_engine = label_engine | upcase
+    assign label_button = label_button | upcase
+  endif
+%}
+
+<div
+  class="vehicle-search-demo vehicle-search-demo--{{ text_case }}"
+  aria-label="{{ 'partbot.demo_vehicle_search' | t }}"
+  data-vehicle-search-demo
+>
   <div class="vehicle-search-demo__fields">
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.make' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.make' | t }}</option>
+      <span class="visually-hidden">{{ label_make }}</span>
+      <select class="vehicle-search-demo__select" data-demo-make>
+        <option value="" selected disabled>{{ label_make }}</option>
+        <option value="honda">{% if text_case == 'uppercase' %}HONDA{% else %}Honda{% endif %}</option>
+        <option value="suzuki">{% if text_case == 'uppercase' %}SUZUKI{% else %}Suzuki{% endif %}</option>
+        <option value="ford">{% if text_case == 'uppercase' %}FORD{% else %}Ford{% endif %}</option>
       </select>
     </label>
+
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.model' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.model' | t }}</option>
+      <span class="visually-hidden">{{ label_model }}</span>
+      <select class="vehicle-search-demo__select" data-demo-model disabled>
+        <option value="" selected disabled>{{ label_model }}</option>
       </select>
     </label>
+
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.year' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.year' | t }}</option>
+      <span class="visually-hidden">{{ label_year }}</span>
+      <select class="vehicle-search-demo__select">
+        <option value="" selected disabled>{{ label_year }}</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
       </select>
     </label>
+
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.body' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.body' | t }}</option>
+      <span class="visually-hidden">{{ label_body }}</span>
+      <select class="vehicle-search-demo__select">
+        <option value="" selected disabled>{{ label_body }}</option>
+        <option value="sedan">{% if text_case == 'uppercase' %}SEDAN{% else %}Sedan{% endif %}</option>
+        <option value="suv">{% if text_case == 'uppercase' %}SUV{% else %}SUV{% endif %}</option>
+        <option value="ute">{% if text_case == 'uppercase' %}UTE{% else %}Ute{% endif %}</option>
       </select>
     </label>
+
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.series' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.series' | t }}</option>
+      <span class="visually-hidden">{{ label_series }}</span>
+      <select class="vehicle-search-demo__select">
+        <option value="" selected disabled>{{ label_series }}</option>
+        <option value="series-1">{% if text_case == 'uppercase' %}SERIES 1{% else %}Series 1{% endif %}</option>
+        <option value="series-2">{% if text_case == 'uppercase' %}SERIES 2{% else %}Series 2{% endif %}</option>
+        <option value="series-3">{% if text_case == 'uppercase' %}SERIES 3{% else %}Series 3{% endif %}</option>
       </select>
     </label>
+
     <label class="vehicle-search-demo__field">
-      <span class="visually-hidden">{{ 'partbot.engine_capacity' | t }}</span>
-      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
-        <option selected>{{ 'partbot.engine_capacity' | t }}</option>
+      <span class="visually-hidden">{{ label_engine }}</span>
+      <select class="vehicle-search-demo__select">
+        <option value="" selected disabled>{{ label_engine }}</option>
+        <option value="1-5">1.5L</option>
+        <option value="2-0">2.0L</option>
+        <option value="2-5">2.5L</option>
+        <option value="3-0">3.0L</option>
       </select>
     </label>
-    <button type="button" class="vehicle-search-demo__button" tabindex="-1" aria-disabled="true">
-      {{ 'partbot.select_vehicle' | t }}
+
+    <button type="button" class="vehicle-search-demo__button">
+      {{ label_button }}
     </button>
   </div>
 </div>
+
+<script>
+  (() => {
+    const roots = document.querySelectorAll('[data-vehicle-search-demo]');
+    if (!roots.length) return;
+
+    const modelsByMake = {
+      honda: [
+        { value: 'civic', label: 'Civic' },
+        { value: 'accord', label: 'Accord' },
+        { value: 'cr-v', label: 'CR-V' },
+      ],
+      suzuki: [
+        { value: 'swift', label: 'Swift' },
+        { value: 'jimny', label: 'Jimny' },
+        { value: 'vitara', label: 'Vitara' },
+      ],
+      ford: [
+        { value: 'ranger', label: 'Ranger' },
+        { value: 'mustang', label: 'Mustang' },
+        { value: 'focus', label: 'Focus' },
+      ],
+    };
+
+    roots.forEach((root) => {
+      const makeSelect = root.querySelector('[data-demo-make]');
+      const modelSelect = root.querySelector('[data-demo-model]');
+      if (!makeSelect || !modelSelect) return;
+
+      const uppercase = root.classList.contains('vehicle-search-demo--uppercase');
+      const modelPlaceholder = modelSelect.options[0]?.textContent || 'Model';
+
+      const resetModels = () => {
+        modelSelect.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        placeholder.textContent = modelPlaceholder;
+        modelSelect.appendChild(placeholder);
+        modelSelect.disabled = true;
+      };
+
+      makeSelect.addEventListener('change', () => {
+        const make = makeSelect.value;
+        resetModels();
+        const models = modelsByMake[make] || [];
+        models.forEach((model) => {
+          const option = document.createElement('option');
+          option.value = model.value;
+          option.textContent = uppercase ? model.label.toUpperCase() : model.label;
+          modelSelect.appendChild(option);
+        });
+        modelSelect.disabled = models.length === 0;
+      });
+    });
+  })();
+</script>
 
 {% style %}
   .visually-hidden {
@@ -83,11 +195,12 @@
 
   .vehicle-search-demo__select {
     appearance: none;
+    -webkit-appearance: none;
     width: 100%;
     min-height: 2.6rem;
     padding: 0.55rem 2rem 0.55rem 0.75rem;
-    border: 0;
-    border-radius: 0;
+    border: 1px solid transparent;
+    border-radius: 0 !important;
     background-color: #fff;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -96,7 +209,28 @@
     font-family: var(--font-paragraph--family);
     font-size: 0.85rem;
     line-height: 1.2;
-    pointer-events: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .vehicle-search-demo__select:not([disabled]):valid,
+  .vehicle-search-demo__select:not([disabled]):has(option:checked:not([disabled])) {
+    color: #111;
+  }
+
+  .vehicle-search-demo__select:focus,
+  .vehicle-search-demo__select:focus-visible,
+  .vehicle-search-demo__select:active {
+    outline: none !important;
+    border-radius: 0 !important;
+    border-color: #111;
+    box-shadow: none;
+  }
+
+  .vehicle-search-demo__select:disabled {
+    opacity: 1;
+    color: #9a9a9a;
+    cursor: not-allowed;
   }
 
   .vehicle-search-demo__button {
@@ -106,8 +240,8 @@
     justify-content: center;
     min-height: 2.6rem;
     padding: 0.55rem 1.15rem;
-    border: 0;
-    border-radius: 0;
+    border: 1px solid transparent;
+    border-radius: 0 !important;
     background: var(--color-accent, #f5c518);
     color: #111;
     font-family: var(--font-paragraph--family);
@@ -115,7 +249,25 @@
     font-weight: 700;
     letter-spacing: 0.02em;
     white-space: nowrap;
-    pointer-events: none;
+    cursor: default;
+    outline: none;
+  }
+
+  .vehicle-search-demo__button:focus,
+  .vehicle-search-demo__button:focus-visible {
+    outline: none;
+    border-radius: 0 !important;
+    border-color: #111;
+  }
+
+  .vehicle-search-demo--uppercase .vehicle-search-demo__select,
+  .vehicle-search-demo--uppercase .vehicle-search-demo__button {
+    text-transform: uppercase;
+  }
+
+  .vehicle-search-demo--sentence .vehicle-search-demo__select,
+  .vehicle-search-demo--sentence .vehicle-search-demo__button {
+    text-transform: none;
   }
 
   .collection-page__vehicle-search {

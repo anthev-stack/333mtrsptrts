@@ -1,10 +1,16 @@
 {% doc %}
   Renders demo or live Partbot vehicle search based on theme settings.
   Demo mode always wins and disables live Partbot output.
+
+  @param {string} [text_case] - "uppercase" or "sentence"
 {% enddoc %}
 
+{% liquid
+  assign text_case = text_case | default: 'uppercase'
+%}
+
 {% if settings.partbot_demo_mode %}
-  {% render 'vehicle-search-demo' %}
+  {% render 'vehicle-search-demo', text_case: text_case %}
 {% elsif settings.partbot_enable and settings.partbot_api_key != blank %}
   {% render 'partbot-vehicle-search' %}
 {% endif %}
