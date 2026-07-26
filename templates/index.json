@@ -12,7 +12,7 @@
     "vehicle_search": {
       "type": "vehicle-search",
       "settings": {
-        "section_width": "page",
+        "section_width": "full",
         "padding_top": 24,
         "padding_bottom": 8
       }

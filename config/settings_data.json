@@ -22,13 +22,14 @@
     "min_page_margin": 80,
     "background_color": "#FFFFFF",
     "foreground_color": "#111111",
-    "accent_color": "#F5C518",
-    "partbot_demo_mode": true,
+    "input_corner_radius": 0,
     "side_promo_enable": true,
     "side_promo_position": "right",
     "side_promo_width": 180,
     "side_promo_1_image": "shopify://shop_images/MADE-TO-FORGET.png",
     "side_promo_2_image": "shopify://shop_images/MADE-TO-FORGET.png",
+    "accent_color": "#F5C518",
+    "partbot_demo_mode": true,
     "content_for_index": [],
     "blocks": {
       "4075766218980289344": {
