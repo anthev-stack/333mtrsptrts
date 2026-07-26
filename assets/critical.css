@@ -27,6 +27,12 @@ svg {
   height: auto;
 }
 
+/* Header logo size is controlled by theme settings — do not force height: auto. */
+img.site-header__logo-image {
+  max-width: none;
+  height: unset;
+}
+
 input,
 textarea,
 select {

@@ -17,25 +17,14 @@
       },
       {
         "type": "range",
-        "id": "logo_width",
-        "min": 40,
-        "max": 400,
-        "step": 4,
-        "unit": "px",
-        "label": "Logo width",
-        "default": 160,
-        "info": "Displayed logo width."
-      },
-      {
-        "type": "range",
-        "id": "logo_height",
-        "min": 24,
-        "max": 160,
-        "step": 2,
-        "unit": "px",
-        "label": "Logo height",
-        "default": 56,
-        "info": "Displayed logo height. Image stays sharp and fits inside the width/height box."
+        "id": "logo_scale",
+        "min": 20,
+        "max": 100,
+        "step": 5,
+        "unit": "%",
+        "label": "Logo scale",
+        "default": 100,
+        "info": "Scale the logo from 20% to 100% of its full header size."
       }
     ]
   },
