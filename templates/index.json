@@ -25,7 +25,7 @@
         "banner_car_care": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/MUGENBANNER_02.webp",
+            "image": "shopify://shop_images/333fk8.png",
             "title": "Car care",
             "button_label": "Shop now",
             "link": ""
@@ -34,8 +34,8 @@
         "banner_maintenance": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/MUGENBANNER_02.webp",
-            "title": "Maintenance",
+            "image": "shopify://shop_images/333merch.png",
+            "title": "Merchandise",
             "button_label": "Shop now",
             "link": ""
           }
@@ -55,9 +55,22 @@
       "type": "featured-collection",
       "settings": {
         "section_width": "page",
-        "title": "TEST COLLECTION",
+        "title": "MOTUL",
         "view_all_label": "View all",
-        "collection": "test-collection",
+        "collection": "motul",
+        "products_to_show": 30,
+        "columns": "5",
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "featured_collection_n6C4GE": {
+      "type": "featured-collection",
+      "settings": {
+        "section_width": "page",
+        "title": "MITT SLIDE",
+        "view_all_label": "View all",
+        "collection": "mitt-slide",
         "products_to_show": 30,
         "columns": "5",
         "padding_top": 20,
@@ -119,6 +132,7 @@
     "vehicle_search",
     "promo_banners",
     "featured_collection",
+    "featured_collection_n6C4GE",
     "brand_carousel",
     "location"
   ]
