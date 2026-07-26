@@ -1,0 +1,63 @@
+{% doc %}
+  Renders the Partbot MMY vehicle search web component.
+  Only outputs when Partbot is enabled and an API key is set.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_api_key != blank %}
+  {% liquid
+    assign callback_url = settings.partbot_callback_url | default: routes.all_products_collection_url
+    assign fields = settings.partbot_fields | default: 'body,series' | strip
+    assign button_label = settings.partbot_button_label | default: 'Search'
+    assign field_prefix = settings.partbot_field_prefix | strip
+    assign show_labels = settings.partbot_show_labels
+  %}
+
+  <div class="partbot-vehicle-search">
+    <vehicle-search
+      data-api-key="{{ settings.partbot_api_key | escape }}"
+      data-callback="true"
+      data-callback-url="{{ callback_url }}"
+      data-fields="{{ fields | escape }}"
+      {% if field_prefix != blank %}data-field-prefix="{{ field_prefix | escape }}"{% endif %}
+      data-layout="row"
+      data-show-labels="{% if show_labels %}true{% else %}false{% endif %}"
+      data-show-button="true"
+      data-button-label="{{ button_label | escape }}"
+      data-modify-query-string="true"
+    ></vehicle-search>
+  </div>
+
+  {% style %}
+    .partbot-vehicle-search {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background:
+        linear-gradient(rgba(17, 17, 17, 0.92), rgba(17, 17, 17, 0.92)),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 11px,
+          rgba(255, 255, 255, 0.04) 11px,
+          rgba(255, 255, 255, 0.04) 12px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 11px,
+          rgba(255, 255, 255, 0.04) 11px,
+          rgba(255, 255, 255, 0.04) 12px
+        );
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-sizing: border-box;
+    }
+
+    .partbot-vehicle-search vehicle-search {
+      display: block;
+      width: 100%;
+    }
+
+    .collection-page__vehicle-search {
+      margin-bottom: 1.25rem;
+    }
+  {% endstyle %}
+{% endif %}

@@ -11,6 +11,12 @@
   style="--collection-columns: {{ columns }};"
 >
   <div class="collection-page__intro">
+    {% if settings.partbot_enable and settings.partbot_api_key != blank %}
+      <div class="collection-page__vehicle-search">
+        {% render 'partbot-vehicle-search' %}
+      </div>
+    {% endif %}
+
     <header class="collection-page__header">
       <h1 class="collection-page__title">{{ collection.title | escape }}</h1>
       <p class="collection-page__count">

@@ -1,0 +1,104 @@
+{% doc %}
+  Partbot cross-sell products.
+  @param {string} [cross_sell_types] - Comma-separated relationship types
+  @param {number} [max_columns] - Grid columns on desktop
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_cross_sell %}
+  {% liquid
+    assign max_columns = max_columns | default: 3
+    assign cross_sell_types = cross_sell_types | default: 'required,related,compatible,alternate' | split: ','
+    assign variant = product.selected_or_first_available_variant
+  %}
+
+  {% if variant.metafields.partbot.cross_sell_products != blank %}
+    {% assign cross_sell_products = variant.metafields.partbot.cross_sell_products.value %}
+    {% if cross_sell_products == blank %}
+      {% assign cross_sell_products = variant.metafields.partbot.cross_sell_products %}
+    {% endif %}
+
+    {% assign filtered_cross_sell_products = '' | split: '' %}
+    {% for type in cross_sell_types %}
+      {% assign type_key = type | strip %}
+      {% assign type_products = cross_sell_products.products | where: 'relationship_type', type_key %}
+      {% assign filtered_cross_sell_products = filtered_cross_sell_products | concat: type_products %}
+    {% endfor %}
+
+    {% if filtered_cross_sell_products.size > 0 %}
+      <div class="partbot-cross-sell" style="--partbot-cross-sell-columns: {{ max_columns }};">
+        <h2 class="partbot-cross-sell__heading">{{ 'partbot.cross_sell_heading' | t }}</h2>
+        <div class="partbot-cross-sell__grid">
+          {% for item in filtered_cross_sell_products %}
+            {% assign csp = all_products[item.shopify_product.handle] %}
+            {% if csp.id != blank %}
+              {% assign csp_alt = csp.featured_image.alt | default: csp.title %}
+              <article class="partbot-cross-sell__card">
+                <a href="{{ csp.url }}" class="partbot-cross-sell__media">
+                  {% if csp.featured_image != blank %}
+                    {{
+                      csp.featured_image
+                      | image_url: width: 400
+                      | image_tag:
+                        class: 'partbot-cross-sell__image',
+                        loading: 'lazy',
+                        widths: '200, 300, 400',
+                        sizes: '(min-width: 750px) 20vw, 45vw',
+                        alt: csp_alt
+                    }}
+                  {% endif %}
+                  <span class="partbot-cross-sell__badge partbot-cross-sell__badge--{{ item.relationship_type }}">
+                    {{ item.relationship_type | capitalize | escape }}
+                  </span>
+                </a>
+                <a href="{{ csp.url }}" class="partbot-cross-sell__title">{{ csp.title | escape }}</a>
+                <p class="partbot-cross-sell__price">
+                  {% if csp.price_varies %}
+                    {{ 'products.from' | t }} {{ csp.price | money }}
+                  {% else %}
+                    {{ csp.price | money }}
+                  {% endif %}
+                </p>
+                {% if csp.available %}
+                  <button
+                    type="button"
+                    class="partbot-cross-sell__button"
+                    data-partbot-cross-sell
+                    data-variant-id="{{ item.shopify_variant.id }}"
+                  >
+                    {{ 'products.add_to_cart' | t }}
+                  </button>
+                {% else %}
+                  <button type="button" class="partbot-cross-sell__button" disabled>
+                    {{ 'products.sold_out' | t }}
+                  </button>
+                {% endif %}
+              </article>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <script>
+        document.querySelectorAll('[data-partbot-cross-sell]').forEach((button) => {
+          button.addEventListener('click', async () => {
+            const variantId = button.dataset.variantId;
+            if (!variantId) return;
+
+            button.disabled = true;
+            try {
+              await fetch(window.Shopify?.routes?.root ? `${window.Shopify.routes.root}cart/add.js` : '/cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] }),
+              });
+              window.location.href = window.Shopify?.routes?.root ? `${window.Shopify.routes.root}cart` : '/cart';
+            } catch (error) {
+              console.error('Partbot cross-sell add to cart failed', error);
+              button.disabled = false;
+            }
+          });
+        });
+      </script>
+    {% endif %}
+  {% endif %}
+{% endif %}

@@ -1,0 +1,59 @@
+{% doc %}
+  Partbot vehicle application / fitment table.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_applications %}
+  {% assign variant = product.selected_or_first_available_variant %}
+  {% assign vehicle_applications = variant.metafields.partbot.vehicle_applications.value %}
+
+  {% if vehicle_applications != blank %}
+    <div id="partbot-vehicle-applications" class="partbot-applications">
+      <h2 class="partbot-applications__heading">{{ 'partbot.vehicle_applications' | t }}</h2>
+
+      {% for application in vehicle_applications %}
+        <div class="partbot-applications__group">
+          {% if application.title != blank %}
+            <h3 class="partbot-applications__title">{{ application.title | escape }}</h3>
+          {% endif %}
+
+          {% if application.catalogue_notes != blank and application.catalogue_notes != 'undefined' %}
+            <p class="partbot-applications__notes">{{ application.catalogue_notes | escape }}</p>
+          {% endif %}
+
+          <div class="partbot-applications__table-wrap">
+            <table class="partbot-applications__table">
+              <thead>
+                <tr>
+                  <th>{{ 'partbot.make' | t }}</th>
+                  <th>{{ 'partbot.model' | t }}</th>
+                  <th>{{ 'partbot.from' | t }}</th>
+                  <th>{{ 'partbot.to' | t }}</th>
+                  <th>{{ 'partbot.body' | t }}</th>
+                  <th>{{ 'partbot.series' | t }}</th>
+                  <th>{{ 'partbot.engine' | t }}</th>
+                  <th>{{ 'partbot.variant' | t }}</th>
+                  <th>{{ 'partbot.drivetrain' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for vehicle in application.vehicles %}
+                  <tr>
+                    <td>{{ vehicle.make | escape }}</td>
+                    <td>{{ vehicle.model | escape }}</td>
+                    <td>{{ vehicle.from | escape }}</td>
+                    <td>{{ vehicle.to | default: '-' | escape }}</td>
+                    <td>{{ vehicle.body | escape }}</td>
+                    <td>{{ vehicle.series | escape }}</td>
+                    <td>{{ vehicle.engine | escape }}</td>
+                    <td>{{ vehicle.variant | escape }}</td>
+                    <td>{{ vehicle.drivetrain | escape }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endif %}

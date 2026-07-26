@@ -1,0 +1,81 @@
+{% liquid
+  assign section_width = section.settings.section_width | default: 'page'
+  assign width_class = ''
+  if section_width == 'full'
+    assign width_class = 'full-width'
+  endif
+%}
+
+{% if settings.partbot_enable and settings.partbot_api_key != blank %}
+  {% render 'section-padding' %}
+
+  <section class="vehicle-search-section vehicle-search-section--{{ section_width }} {{ width_class }}">
+    {% render 'partbot-vehicle-search' %}
+  </section>
+{% endif %}
+
+{% stylesheet %}
+  .vehicle-search-section {
+    width: 100%;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.vehicle_search",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:labels.vehicle_search_section_info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:labels.section_width",
+      "options": [
+        {
+          "value": "page",
+          "label": "t:options.section_width.page"
+        },
+        {
+          "value": "full",
+          "label": "t:options.section_width.full"
+        }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.vehicle_search",
+      "settings": {
+        "section_width": "page"
+      }
+    }
+  ]
+}
+{% endschema %}

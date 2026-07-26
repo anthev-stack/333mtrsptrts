@@ -217,6 +217,13 @@
         "label": "t:labels.foreground"
       },
       {
+        "type": "color",
+        "id": "accent_color",
+        "default": "#F5C518",
+        "label": "t:labels.accent",
+        "info": "t:labels.accent_info"
+      },
+      {
         "type": "range",
         "id": "input_corner_radius",
         "min": 0,
@@ -225,6 +232,102 @@
         "unit": "px",
         "label": "t:labels.input_corner_radius",
         "default": 0
+      }
+    ]
+  },
+  {
+    "name": "t:general.partbot",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "partbot_enable",
+        "label": "t:labels.partbot_enable",
+        "default": false,
+        "info": "t:labels.partbot_enable_info"
+      },
+      {
+        "type": "text",
+        "id": "partbot_api_key",
+        "label": "t:labels.partbot_api_key",
+        "info": "t:labels.partbot_api_key_info"
+      },
+      {
+        "type": "url",
+        "id": "partbot_callback_url",
+        "label": "t:labels.partbot_callback_url",
+        "info": "t:labels.partbot_callback_url_info"
+      },
+      {
+        "type": "text",
+        "id": "partbot_field_prefix",
+        "label": "t:labels.partbot_field_prefix",
+        "default": "",
+        "info": "t:labels.partbot_field_prefix_info"
+      },
+      {
+        "type": "text",
+        "id": "partbot_fields",
+        "label": "t:labels.partbot_fields",
+        "default": "body,series",
+        "info": "t:labels.partbot_fields_info"
+      },
+      {
+        "type": "text",
+        "id": "partbot_button_label",
+        "label": "t:labels.partbot_button_label",
+        "default": "Search"
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_labels",
+        "label": "t:labels.partbot_show_labels",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:labels.partbot_product_features"
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_fitment",
+        "label": "t:labels.partbot_show_fitment",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_applications",
+        "label": "t:labels.partbot_show_applications",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_attributes",
+        "label": "t:labels.partbot_show_attributes",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_documents",
+        "label": "t:labels.partbot_show_documents",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_brand_logo",
+        "label": "t:labels.partbot_show_brand_logo",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_catalogue_notes",
+        "label": "t:labels.partbot_show_catalogue_notes",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "partbot_show_cross_sell",
+        "label": "t:labels.partbot_show_cross_sell",
+        "default": true
       }
     ]
   },

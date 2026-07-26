@@ -1,0 +1,36 @@
+{% doc %}
+  Partbot manufacturer document download links.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_documents %}
+  {% assign has_documents = false %}
+  {% for variant in product.variants %}
+    {% if variant.metafields.partbot.document.value != blank %}
+      {% assign has_documents = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% if has_documents %}
+    <div class="partbot-documents">
+      <h2 class="partbot-documents__heading">{{ 'partbot.documents' | t }}</h2>
+      <ul class="partbot-documents__list">
+        {% for variant in product.variants %}
+          {% if variant.metafields.partbot.document.value != blank %}
+            <li>
+              <a
+                href="{{ variant.metafields.partbot.document.value }}"
+                class="partbot-documents__link"
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                {{ 'partbot.download_instructions' | t: sku: variant.sku }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,15 @@
+{% doc %}
+  Partbot product vehicle fitment confirmation.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_fitment %}
+  {% assign vehicle_ids = product.metafields.partbot.vehicle_ids %}
+  {% assign vehicle_years = product.metafields.partbot.vehicle_years %}
+
+  <script src="{{ 'partbot-vehicle-fitment.js' | asset_url }}" defer="defer"></script>
+  <partbot-vehicle-fitment
+    class="partbot-vehicle-fitment is-hidden"
+    data-vehicle-ids="{{ vehicle_ids }}"
+    data-vehicle-years="{{ vehicle_years | escape }}"
+  ></partbot-vehicle-fitment>
+{% endif %}

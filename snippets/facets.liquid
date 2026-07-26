@@ -9,6 +9,11 @@
     {% endif %}
 
     {% for filter in collection.filters %}
+      {% comment %} Hide Partbot Vehicle Filters {% endcomment %}
+      {%- if filter.param_name contains 'partbot.vehicle_' -%}
+        {% continue %}
+      {%- endif -%}
+
       {% case filter.type %}
         {% when 'boolean' %}
           <div class="facets__group">

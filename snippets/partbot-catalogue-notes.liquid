@@ -1,0 +1,16 @@
+{% doc %}
+  Partbot catalogue notes for the selected variant.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_catalogue_notes %}
+  {% assign catalogue_notes = product.selected_or_first_available_variant.metafields.partbot.catalogue_notes %}
+
+  {% if catalogue_notes != blank %}
+    <section class="partbot-catalogue-notes">
+      <p class="partbot-catalogue-notes__label">{{ 'partbot.catalogue_notes' | t }}</p>
+      <div class="partbot-catalogue-notes__content">
+        {{ catalogue_notes }}
+      </div>
+    </section>
+  {% endif %}
+{% endif %}

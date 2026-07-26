@@ -1,0 +1,21 @@
+{% doc %}
+  Partbot synced product attributes / tech specs.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_attributes %}
+  {% assign variant = product.selected_or_first_available_variant %}
+
+  {% if variant.metafields.partbot.attributes != blank %}
+    <div class="partbot-attributes">
+      <h2 class="partbot-attributes__heading">{{ 'partbot.specifications' | t }}</h2>
+      <ul class="partbot-attributes__list">
+        {% for attribute in variant.metafields.partbot.attributes.value %}
+          <li class="partbot-attributes__item">
+            <span class="partbot-attributes__label">{{ attribute.first | replace: '_', ' ' | escape }}</span>
+            <span class="partbot-attributes__value">{{ attribute.last | escape }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endif %}

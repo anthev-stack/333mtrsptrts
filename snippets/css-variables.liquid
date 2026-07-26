@@ -136,6 +136,28 @@
     --page-margin: {{ settings.min_page_margin }}px;
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
+    --color-accent: {{ settings.accent_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+
+    {% liquid
+      assign accent = settings.accent_color | default: '#F5C518'
+      assign accent_hover = accent | color_darken: 8
+      assign accent_r = accent | color_extract: 'red'
+      assign accent_g = accent | color_extract: 'green'
+      assign accent_b = accent | color_extract: 'blue'
+      assign accent_hover_r = accent_hover | color_extract: 'red'
+      assign accent_hover_g = accent_hover | color_extract: 'green'
+      assign accent_hover_b = accent_hover | color_extract: 'blue'
+      assign accent_brightness = accent | color_brightness
+      if accent_brightness > 140
+        assign partbot_label_color = '0 0 0'
+      else
+        assign partbot_label_color = '255 255 255'
+      endif
+    %}
+    --partbot-button-color: {{ accent_r }} {{ accent_g }} {{ accent_b }};
+    --partbot-button-hover-color: {{ accent_hover_r }} {{ accent_hover_g }} {{ accent_hover_b }};
+    --partbot-button-label-color: {{ partbot_label_color }};
+    --partbot-button-border-radius: 0;
   }
 {% endstyle %}

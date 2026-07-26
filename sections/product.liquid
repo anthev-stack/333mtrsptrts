@@ -1,50 +1,400 @@
 {% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
+  Product page with Partbot integrations when enabled in theme settings.
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+{% render 'section-padding' %}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+<section class="product-page">
+  <div class="product-page__media">
+    {% for image in product.images %}
+      {% render 'image', class: 'product-page__image', image: image %}
+    {% endfor %}
+  </div>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+  <div class="product-page__info">
+    {% render 'partbot-brand-logo', product: product %}
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+    <h1 class="product-page__title">{{ product.title | escape }}</h1>
+    <p class="product-page__price">{{ product.price | money }}</p>
 
-    <input type="text" name="quantity" min="1" value="1">
+    {% render 'partbot-vehicle-fitment', product: product %}
+    {% render 'partbot-catalogue-notes', product: product %}
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+    <div class="product-page__description">{{ product.description }}</div>
+
+    <div class="product-page__form">
+      {% form 'product', product %}
+        {% assign current_variant = product.selected_or_first_available_variant %}
+
+        <select name="id" class="product-page__variants">
+          {% for variant in product.variants %}
+            <option
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}selected="selected"{% endif %}
+            >
+              {{ variant.title | escape }} - {{ variant.price | money }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <input class="product-page__quantity" type="number" name="quantity" min="1" value="1">
+        <button type="submit" class="product-page__submit">{{ 'products.add_to_cart' | t }}</button>
+        {{ form | payment_button }}
+      {% endform %}
+    </div>
+
+    {% render 'partbot-product-attributes', product: product %}
+    {% render 'partbot-product-documents', product: product %}
+  </div>
+
+  <div class="product-page__partbot">
+    {% render 'partbot-vehicle-applications', product: product %}
+    {% render 'partbot-cross-sell-products', product: product, max_columns: 4 %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .product-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 2rem 2.5rem;
+    align-items: start;
+  }
+
+  .product-page__media {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .product-page__image {
+    width: 100%;
+    height: auto;
+  }
+
+  .product-page__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .product-page__price {
+    margin: 0 0 1rem;
+    font-weight: 700;
+  }
+
+  .product-page__description {
+    margin: 1rem 0;
+  }
+
+  .product-page__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.25rem 0;
+  }
+
+  .product-page__variants,
+  .product-page__quantity,
+  .product-page__submit {
+    border: 1px solid #111;
+    border-radius: 0;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.85rem;
+    font: inherit;
+    background: #fff;
+  }
+
+  .product-page__submit {
+    background: var(--color-accent, #f5c518);
+    color: #111;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .product-page__partbot {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .partbot-brand-logo {
+    margin-bottom: 0.75rem;
+  }
+
+  .partbot-brand-logo__image {
+    display: block;
+    width: auto;
+    max-width: 7.5rem;
+    height: 2rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .partbot-vehicle-fitment.is-hidden {
+    display: none;
+  }
+
+  .partbot-fitment {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin: 0 0 1rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid rgba(17, 17, 17, 0.15);
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .partbot-fitment--yes {
+    background: #f3faf4;
+  }
+
+  .partbot-fitment--no {
+    background: #faf3f3;
+  }
+
+  .partbot-fitment__badge {
+    flex-shrink: 0;
+    padding: 0.15rem 0.45rem;
+    background: #111;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .partbot-fitment--yes .partbot-fitment__badge {
+    background: #1f7a3a;
+  }
+
+  .partbot-fitment--no .partbot-fitment__badge {
+    background: #a11f1f;
+  }
+
+  .partbot-catalogue-notes {
+    margin: 0 0 1rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--color-accent, #f5c518);
+    background: color-mix(in srgb, var(--color-accent, #f5c518) 18%, #fff);
+  }
+
+  .partbot-catalogue-notes__label {
+    margin: 0 0 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .partbot-catalogue-notes__content,
+  .partbot-catalogue-notes__content p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .partbot-attributes__heading,
+  .partbot-documents__heading,
+  .partbot-applications__heading,
+  .partbot-cross-sell__heading {
+    margin: 0 0 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .partbot-attributes__list,
+  .partbot-documents__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .partbot-attributes__item {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+    font-size: 0.85rem;
+  }
+
+  .partbot-attributes__label {
+    color: #666;
+    text-transform: capitalize;
+  }
+
+  .partbot-documents__link {
+    display: inline-block;
+    padding: 0.35rem 0;
+    color: inherit;
+    font-size: 0.85rem;
+  }
+
+  .partbot-applications__group + .partbot-applications__group {
+    margin-top: 1.5rem;
+  }
+
+  .partbot-applications__title {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .partbot-applications__notes {
+    margin: 0 0 0.75rem;
+    color: #666;
+    font-size: 0.8rem;
+  }
+
+  .partbot-applications__table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+  }
+
+  .partbot-applications__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+  }
+
+  .partbot-applications__table th,
+  .partbot-applications__table td {
+    padding: 0.55rem 0.65rem;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .partbot-applications__table th {
+    background: #f5f5f5;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .partbot-cross-sell__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--partbot-cross-sell-columns, 3), minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .partbot-cross-sell__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .partbot-cross-sell__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    border: 1px solid rgba(17, 17, 17, 0.1);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .partbot-cross-sell__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .partbot-cross-sell__badge {
+    position: absolute;
+    top: 0.4rem;
+    left: 0.4rem;
+    padding: 0.2rem 0.4rem;
+    background: #111;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .partbot-cross-sell__badge--required {
+    background: #a11f1f;
+  }
+
+  .partbot-cross-sell__title {
+    color: inherit;
+    text-decoration: none;
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .partbot-cross-sell__price {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .partbot-cross-sell__button {
+    margin-top: auto;
+    min-height: 2.35rem;
+    border: 1px solid #111;
+    border-radius: 0;
+    background: #111;
+    color: #fff;
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .partbot-cross-sell__button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-page {
+      grid-template-columns: 1fr;
+    }
+
+    .partbot-cross-sell__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 56
+    }
+  ],
   "disabled_on": {
     "groups": ["header", "footer"]
   }

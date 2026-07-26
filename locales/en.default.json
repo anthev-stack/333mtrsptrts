@@ -65,9 +65,28 @@
   },
   "products": {
     "available": "In stock",
+    "add_to_cart": "Add to cart",
     "example_product": "Example product",
+    "from": "From",
     "in_stock": "{{ count }} in stock",
     "sold_out": "Sold out"
+  },
+  "partbot": {
+    "vehicle_applications": "Vehicle applications",
+    "make": "Make",
+    "model": "Model",
+    "from": "From",
+    "to": "To",
+    "body": "Body",
+    "series": "Series",
+    "engine": "Engine",
+    "variant": "Variant",
+    "drivetrain": "Drivetrain",
+    "specifications": "Specifications",
+    "documents": "Documents",
+    "download_instructions": "Download instructions for {{ sku }}",
+    "catalogue_notes": "Important notes",
+    "cross_sell_heading": "You may also need"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

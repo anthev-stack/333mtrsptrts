@@ -1,0 +1,18 @@
+{% doc %}
+  Partbot brand logo from product metafield.
+{% enddoc %}
+
+{% if settings.partbot_enable and settings.partbot_show_brand_logo %}
+  {% if product.metafields.partbot.brand_logo_url != blank %}
+    <div class="partbot-brand-logo">
+      <img
+        src="{{ product.metafields.partbot.brand_logo_url.value }}"
+        class="partbot-brand-logo__image"
+        width="120"
+        height="40"
+        alt="{{ product.vendor | escape }}"
+        loading="lazy"
+      >
+    </div>
+  {% endif %}
+{% endif %}

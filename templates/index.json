@@ -9,6 +9,14 @@
  */
 {
   "sections": {
+    "vehicle_search": {
+      "type": "vehicle-search",
+      "settings": {
+        "section_width": "page",
+        "padding_top": 24,
+        "padding_bottom": 8
+      }
+    },
     "promo_banners": {
       "type": "promo-banners",
       "blocks": {
@@ -106,6 +114,7 @@
     }
   },
   "order": [
+    "vehicle_search",
     "promo_banners",
     "featured_collection",
     "brand_carousel",
