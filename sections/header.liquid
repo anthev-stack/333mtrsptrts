@@ -42,31 +42,70 @@
 
 <div class="header-social header-social--{{ section_width }} full-width">
   <div class="header-social__inner">
-    {% if section.settings.facebook_url != blank %}
-      <a
-        href="{{ section.settings.facebook_url }}"
-        class="header-social__link"
-        aria-label="Facebook"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.09 15.84 2 14.67 2 11.95 2 10 3.66 10 6.7V9.5H7v4h3V22h4v-8.5z"/>
-        </svg>
-      </a>
-    {% endif %}
-    {% if section.settings.instagram_url != blank %}
-      <a
-        href="{{ section.settings.instagram_url }}"
-        class="header-social__link"
-        aria-label="Instagram"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm11 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-        </svg>
-      </a>
+    <div class="header-social__links">
+      {% if section.settings.facebook_url != blank %}
+        <a
+          href="{{ section.settings.facebook_url }}"
+          class="header-social__link"
+          aria-label="Facebook"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.09 15.84 2 14.67 2 11.95 2 10 3.66 10 6.7V9.5H7v4h3V22h4v-8.5z"/>
+          </svg>
+        </a>
+      {% endif %}
+      {% if section.settings.instagram_url != blank %}
+        <a
+          href="{{ section.settings.instagram_url }}"
+          class="header-social__link"
+          aria-label="Instagram"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm11 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+
+    {% if shop.customer_accounts_enabled %}
+      <div class="header-social__account">
+        {% if customer %}
+          {% liquid
+            assign account_name = customer.first_name | default: customer.name | default: customer.email
+          %}
+          <a href="{{ routes.account_url }}" class="header-social__account-link header-social__account-link--name">
+            {{ account_name | escape }}
+          </a>
+          {% if customer.store_credit_account != blank %}
+            <span class="header-social__account-meta">
+              {{ 'header.account_credit' | t }}:
+              {{ customer.store_credit_account.balance | money }}
+            </span>
+          {% endif %}
+          {% if customer.orders_count > 0 %}
+            <span class="header-social__account-meta">
+              {{ 'header.account_orders' | t: count: customer.orders_count }}
+            </span>
+          {% endif %}
+          <a href="{{ routes.account_url }}" class="header-social__account-link">
+            {{ 'header.account' | t }}
+          </a>
+          <a href="{{ routes.account_logout_url }}" class="header-social__account-link">
+            {{ 'header.log_out' | t }}
+          </a>
+        {% else %}
+          <a href="{{ routes.storefront_login_url }}" class="header-social__account-link">
+            {{ 'header.log_in' | t }}
+          </a>
+          <a href="{{ routes.account_register_url }}" class="header-social__account-link">
+            {{ 'header.create_account' | t }}
+          </a>
+        {% endif %}
+      </div>
     {% endif %}
   </div>
 </div>
@@ -486,7 +525,8 @@
   .header-social__inner {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    justify-content: space-between;
+    gap: 0.85rem;
     width: min(var(--page-width), 100%);
     min-height: 2.1rem;
     margin-inline: auto;
@@ -498,6 +538,13 @@
     width: 100%;
   }
 
+  .header-social__links {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+
   .header-social__link {
     display: inline-flex;
     color: #fff;
@@ -507,6 +554,57 @@
 
   .header-social__link:hover {
     opacity: 1;
+  }
+
+  .header-social__account {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem 0.75rem;
+    margin-left: auto;
+    min-width: 0;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .header-social__account-link {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.9;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .header-social__account-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .header-social__account-link--name {
+    max-width: 10rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-social__account-meta {
+    color: rgba(255, 255, 255, 0.72);
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 749px) {
+    .header-social__account {
+      gap: 0.3rem 0.55rem;
+      font-size: 0.58rem;
+    }
+
+    .header-social__account-meta {
+      display: none;
+    }
   }
 
   .site-header {

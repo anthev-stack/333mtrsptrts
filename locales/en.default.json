@@ -65,7 +65,16 @@
   "header": {
     "search": "Search",
     "cart": "Cart",
-    "menu": "Menu"
+    "menu": "Menu",
+    "log_in": "Log in",
+    "create_account": "Create account",
+    "log_out": "Log out",
+    "account": "Account",
+    "account_credit": "Credit",
+    "account_orders": {
+      "one": "{{ count }} order",
+      "other": "{{ count }} orders"
+    }
   },
   "products": {
     "available": "In stock",
