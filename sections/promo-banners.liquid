@@ -72,6 +72,7 @@
 {% stylesheet %}
   .promo-banners-shell {
     --promo-gap: 0.5rem;
+    position: relative;
     display: grid;
     grid-template-columns: var(--content-grid);
     width: 100%;
@@ -89,24 +90,22 @@
   }
 
   .promo-banners-shell .side-promo {
+    position: absolute;
+    top: 0;
+    z-index: 2;
     display: none;
     width: min(var(--side-promo-width, 140px), 100%);
-    max-width: 100%;
-    align-self: start;
+    max-width: calc((100% - var(--content-width)) / 2 - var(--promo-gap));
   }
 
   .promo-banners-shell--left .side-promo {
-    grid-column: 1;
-    justify-self: end;
-    padding-right: var(--promo-gap);
-    box-sizing: content-box;
+    right: calc(50% + var(--content-width) / 2 + var(--promo-gap));
+    left: auto;
   }
 
   .promo-banners-shell--right .side-promo {
-    grid-column: 3;
-    justify-self: start;
-    padding-left: var(--promo-gap);
-    box-sizing: content-box;
+    left: calc(50% + var(--content-width) / 2 + var(--promo-gap));
+    right: auto;
   }
 
   .side-promo__list {
