@@ -63,13 +63,98 @@
       {% if section.settings.menu != blank %}
         <ul class="site-header__menu">
           {% for link in section.settings.menu.links %}
-            <li>
-              <a
-                href="{{ link.url }}"
-                class="site-header__link{% if link.active %} site-header__link--active{% endif %}"
-              >
-                {{ link.title | escape }}
-              </a>
+            {% liquid
+              assign has_children = false
+              assign has_mega = false
+              if link.links != blank and link.links.size > 0
+                assign has_children = true
+                for child_link in link.links
+                  if child_link.links != blank and child_link.links.size > 0
+                    assign has_mega = true
+                    break
+                  endif
+                endfor
+              endif
+            %}
+
+            <li
+              class="site-header__item{% if has_mega %} site-header__item--mega{% elsif has_children %} site-header__item--dropdown{% endif %}"
+              {% if has_children %}data-submenu-item{% endif %}
+            >
+              {% if has_children %}
+                <button
+                  type="button"
+                  class="site-header__link site-header__link--parent{% if link.active or link.child_active %} site-header__link--active{% endif %}"
+                  data-submenu-toggle
+                  aria-expanded="false"
+                  aria-controls="HeaderSubmenu-{{ section.id }}-{{ forloop.index }}"
+                >
+                  {{ link.title | escape }}
+                </button>
+              {% else %}
+                <a
+                  href="{{ link.url }}"
+                  class="site-header__link{% if link.active %} site-header__link--active{% endif %}"
+                >
+                  {{ link.title | escape }}
+                </a>
+              {% endif %}
+
+              {% if has_mega %}
+                <div
+                  id="HeaderSubmenu-{{ section.id }}-{{ forloop.index }}"
+                  class="site-header__mega"
+                  data-submenu-panel
+                >
+                  <div class="site-header__mega-inner site-header__mega-inner--{{ section_width }}">
+                    {% for child_link in link.links %}
+                      <div class="site-header__mega-column">
+                        {% if child_link.url == blank or child_link.url == '#' %}
+                          <p class="site-header__mega-heading">{{ child_link.title | escape }}</p>
+                        {% else %}
+                          <a href="{{ child_link.url }}" class="site-header__mega-heading">
+                            {{ child_link.title | escape }}
+                          </a>
+                        {% endif %}
+
+                        {% if child_link.links != blank %}
+                          <ul class="site-header__mega-list">
+                            {% for grandchild_link in child_link.links %}
+                              <li>
+                                <a
+                                  href="{{ grandchild_link.url }}"
+                                  class="site-header__mega-link{% if grandchild_link.active %} is-active{% endif %}"
+                                >
+                                  {{ grandchild_link.title | escape }}
+                                </a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% elsif has_children %}
+                <div
+                  id="HeaderSubmenu-{{ section.id }}-{{ forloop.index }}"
+                  class="site-header__dropdown"
+                  data-submenu-panel
+                >
+                  <ul class="site-header__dropdown-list">
+                    {% for child_link in link.links %}
+                      <li>
+                        <a
+                          href="{{ child_link.url }}"
+                          class="site-header__dropdown-link{% if child_link.active %} is-active{% endif %}"
+                        >
+                          {{ child_link.title | escape }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
             </li>
           {% endfor %}
         </ul>
@@ -120,24 +205,72 @@
   document.querySelectorAll('[data-site-header]').forEach((header) => {
     const toggle = header.querySelector('[data-menu-toggle]');
     const nav = header.querySelector('[data-header-nav]');
-    if (!toggle || !nav) return;
+    const submenuItems = header.querySelectorAll('[data-submenu-item]');
 
-    const setOpen = (open) => {
-      header.classList.toggle('is-menu-open', open);
-      nav.classList.toggle('is-open', open);
-      toggle.setAttribute('aria-expanded', String(open));
+    const closeAllSubmenus = () => {
+      submenuItems.forEach((item) => {
+        item.classList.remove('is-open');
+        const button = item.querySelector('[data-submenu-toggle]');
+        if (button) button.setAttribute('aria-expanded', 'false');
+      });
     };
 
-    toggle.addEventListener('click', () => {
-      setOpen(!header.classList.contains('is-menu-open'));
+    const setMobileOpen = (open) => {
+      header.classList.toggle('is-menu-open', open);
+      nav?.classList.toggle('is-open', open);
+      toggle?.setAttribute('aria-expanded', String(open));
+      if (!open) closeAllSubmenus();
+    };
+
+    toggle?.addEventListener('click', () => {
+      setMobileOpen(!header.classList.contains('is-menu-open'));
     });
 
-    nav.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => setOpen(false));
+    submenuItems.forEach((item) => {
+      const button = item.querySelector('[data-submenu-toggle]');
+      if (!button) return;
+
+      button.addEventListener('click', (event) => {
+        const isMobile = window.matchMedia('(max-width: 749px)').matches;
+        if (!isMobile) return;
+
+        event.preventDefault();
+        const willOpen = !item.classList.contains('is-open');
+        closeAllSubmenus();
+        item.classList.toggle('is-open', willOpen);
+        button.setAttribute('aria-expanded', String(willOpen));
+      });
+
+      item.addEventListener('mouseenter', () => {
+        if (window.matchMedia('(max-width: 749px)').matches) return;
+        closeAllSubmenus();
+        item.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+      });
+
+      item.addEventListener('mouseleave', () => {
+        if (window.matchMedia('(max-width: 749px)').matches) return;
+        item.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+      });
+
+      item.addEventListener('focusin', () => {
+        if (window.matchMedia('(max-width: 749px)').matches) return;
+        item.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+      });
+    });
+
+    header.querySelectorAll('.site-header__mega-link, .site-header__dropdown-link').forEach((link) => {
+      link.addEventListener('click', () => setMobileOpen(false));
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') setMobileOpen(false);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!header.contains(event.target)) setMobileOpen(false);
     });
   });
 {% endjavascript %}
@@ -177,7 +310,7 @@
   .site-header {
     position: relative;
     background: var(--color-background);
-    z-index: 20;
+    z-index: 30;
   }
 
   .site-header__inner {
@@ -241,14 +374,25 @@
   .site-header__menu {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 1.1rem;
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
+  .site-header__item {
+    position: static;
+  }
+
   .site-header__link {
+    appearance: none;
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
     font-family: var(--font-navigation--family);
     font-style: var(--font-navigation--style);
     font-weight: var(--font-navigation--weight);
@@ -257,10 +401,13 @@
     text-transform: uppercase;
     text-decoration: var(--font-navigation--decoration);
     color: var(--color-foreground);
+    cursor: pointer;
   }
 
   .site-header__link--active::after,
-  .site-header__link:hover::after {
+  .site-header__link:hover::after,
+  .site-header__item.is-open > .site-header__link::after,
+  .site-header__item:hover > .site-header__link::after {
     content: '';
     position: absolute;
     left: 0;
@@ -268,6 +415,119 @@
     bottom: -0.3rem;
     height: 1px;
     background: currentColor;
+  }
+
+  .site-header__mega,
+  .site-header__dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 40;
+    background: #fff;
+    border-top: 1px solid rgba(17, 17, 17, 0.1);
+    border-bottom: 1px solid rgba(17, 17, 17, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.35rem);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  .site-header__item.is-open > .site-header__mega,
+  .site-header__item:hover > .site-header__mega,
+  .site-header__item:focus-within > .site-header__mega,
+  .site-header__item.is-open > .site-header__dropdown,
+  .site-header__item:hover > .site-header__dropdown,
+  .site-header__item:focus-within > .site-header__dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .site-header__mega-inner {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem 2rem;
+    width: min(var(--page-width), 100%);
+    margin-inline: auto;
+    padding: 1.5rem var(--page-margin) 1.75rem;
+    box-sizing: border-box;
+  }
+
+  .site-header__mega-inner--full {
+    width: 100%;
+  }
+
+  .site-header__mega-heading {
+    display: block;
+    margin: 0 0 0.75rem;
+    color: #8a8a8a;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .site-header__mega-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .site-header__mega-link {
+    font-family: var(--font-navigation--family);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+
+  .site-header__mega-link:hover,
+  .site-header__mega-link.is-active {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .site-header__dropdown {
+    left: auto;
+    right: auto;
+    min-width: 12rem;
+    width: max-content;
+    border: 1px solid rgba(17, 17, 17, 0.1);
+  }
+
+  .site-header__item--dropdown {
+    position: relative;
+  }
+
+  .site-header__dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.65rem 0;
+  }
+
+  .site-header__dropdown-link {
+    display: block;
+    padding: 0.55rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+
+  .site-header__dropdown-link:hover,
+  .site-header__dropdown-link.is-active {
+    background: #f5f5f5;
   }
 
   .site-header__logo {
@@ -360,21 +620,79 @@
     .site-header__menu {
       flex-direction: column;
       flex-wrap: nowrap;
+      align-items: stretch;
       gap: 0;
     }
 
-    .site-header__menu li + li {
+    .site-header__item + .site-header__item {
       border-top: 1px solid rgba(17, 17, 17, 0.08);
     }
 
     .site-header__link {
-      display: block;
+      display: flex;
+      width: 100%;
       padding: 0.85rem 0;
+      justify-content: space-between;
     }
 
     .site-header__link--active::after,
-    .site-header__link:hover::after {
+    .site-header__link:hover::after,
+    .site-header__item.is-open > .site-header__link::after,
+    .site-header__item:hover > .site-header__link::after {
       display: none;
+    }
+
+    .site-header__mega,
+    .site-header__dropdown {
+      position: static;
+      border: 0;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      display: none;
+      background: transparent;
+    }
+
+    .site-header__item.is-open > .site-header__mega,
+    .site-header__item.is-open > .site-header__dropdown {
+      display: block;
+    }
+
+    .site-header__item:hover > .site-header__mega,
+    .site-header__item:focus-within > .site-header__mega,
+    .site-header__item:hover > .site-header__dropdown,
+    .site-header__item:focus-within > .site-header__dropdown {
+      display: none;
+    }
+
+    .site-header__item.is-open:hover > .site-header__mega,
+    .site-header__item.is-open:focus-within > .site-header__mega,
+    .site-header__item.is-open:hover > .site-header__dropdown,
+    .site-header__item.is-open:focus-within > .site-header__dropdown {
+      display: block;
+    }
+
+    .site-header__mega-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      margin: 0;
+      padding: 0 0 0.75rem;
+    }
+
+    .site-header__mega-heading {
+      margin-bottom: 0.45rem;
+    }
+
+    .site-header__dropdown-list {
+      padding: 0 0 0.75rem;
+    }
+
+    .site-header__dropdown-link {
+      padding-left: 0;
+      padding-right: 0;
     }
 
     .site-header__action span {
