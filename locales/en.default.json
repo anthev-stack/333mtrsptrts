@@ -55,6 +55,9 @@
     "previous": "Previous",
     "next": "Next"
   },
+  "footer": {
+    "partnered_with_html": "Partnered with <a class=\"site-footer__partner-link\" href=\"https://use.partbot.io/\" target=\"_blank\" rel=\"noopener noreferrer\">Partbot</a> IO"
+  },
   "accessibility": {
     "side_promotions": "Promotional banners"
   },

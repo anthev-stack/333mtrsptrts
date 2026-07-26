@@ -127,6 +127,9 @@
         &copy; {{ 'now' | date: '%Y' }}
         {{ brand_heading | upcase | escape }}
       </p>
+      <p class="site-footer__partner">
+        {{ 'footer.partnered_with_html' | t }}
+      </p>
     </div>
   </div>
 </footer>
@@ -277,16 +280,38 @@
   }
 
   .site-footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
     margin-top: clamp(2rem, 4vw, 2.75rem);
     padding-top: 1rem;
     border-top: 1px solid rgba(17, 17, 17, 0.12);
   }
 
-  .site-footer__copyright {
+  .site-footer__copyright,
+  .site-footer__partner {
     margin: 0;
     color: #8a8a8a;
     font-size: 0.72rem;
     letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .site-footer__partner {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .site-footer__partner-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .site-footer__partner-link:hover {
+    color: var(--color-foreground);
   }
 
   .visually-hidden {
