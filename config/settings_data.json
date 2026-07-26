@@ -18,8 +18,8 @@
     "type_navigation_font": "arimo_n4",
     "type_navigation_bold": false,
     "type_footer_font": "arimo_n4",
-    "max_page_width": "60rem",
-    "min_page_margin": 64,
+    "max_page_width": "70rem",
+    "min_page_margin": 80,
     "background_color": "#FFFFFF",
     "foreground_color": "#111111",
     "content_for_index": []

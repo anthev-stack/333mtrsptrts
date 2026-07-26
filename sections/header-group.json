@@ -14,10 +14,18 @@
     "header": {
       "type": "header",
       "settings": {
-        "section_width": "full",
+        "section_width": "page",
         "menu": "main-menu",
         "facebook_url": "",
         "instagram_url": "https://instagram.com/333mtrsprts",
+        "shop_all_enable": true,
+        "shop_all_eyebrow": "333 Motorsports",
+        "shop_all_heading": "Wide menu",
+        "shop_all_text": "<p>Browse the full range of car care, maintenance, and performance products. Quality gear for enthusiasts who want their vehicle looking and running at its best.</p>",
+        "shop_all_button_1_label": "",
+        "shop_all_button_1_link": "",
+        "shop_all_button_2_label": "Shop all",
+        "shop_all_button_2_link": "shopify://collections",
         "padding_top": 0,
         "padding_bottom": 0
       }
