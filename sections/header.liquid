@@ -80,17 +80,17 @@
           <a href="{{ routes.account_url }}" class="header-social__account-link header-social__account-link--name">
             {{ account_name | escape }}
           </a>
-          {% if customer.store_credit_account != blank %}
-            <span class="header-social__account-meta">
-              {{ 'header.account_credit' | t }}:
+          <span class="header-social__account-meta header-social__account-meta--credit">
+            {{ 'header.account_credit' | t }}:
+            {% if customer.store_credit_account != blank %}
               {{ customer.store_credit_account.balance | money }}
-            </span>
-          {% endif %}
-          {% if customer.orders_count > 0 %}
-            <span class="header-social__account-meta">
-              {{ 'header.account_orders' | t: count: customer.orders_count }}
-            </span>
-          {% endif %}
+            {% else %}
+              {{ 0 | money }}
+            {% endif %}
+          </span>
+          <span class="header-social__account-meta header-social__account-meta--orders">
+            {{ 'header.account_orders' | t: count: customer.orders_count }}
+          </span>
           <a href="{{ routes.account_url }}" class="header-social__account-link">
             {{ 'header.account' | t }}
           </a>
@@ -602,7 +602,7 @@
       font-size: 0.58rem;
     }
 
-    .header-social__account-meta {
+    .header-social__account-meta--orders {
       display: none;
     }
   }
