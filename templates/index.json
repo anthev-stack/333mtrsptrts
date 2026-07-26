@@ -68,9 +68,9 @@
       "type": "featured-collection",
       "settings": {
         "section_width": "page",
-        "title": "TEST COLLECTION",
+        "title": "MITT SLIDE",
         "view_all_label": "View all",
-        "collection": "test-collection",
+        "collection": "mitt-slide",
         "products_to_show": 30,
         "columns": "5",
         "padding_top": 20,
