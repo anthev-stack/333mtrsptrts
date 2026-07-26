@@ -1,0 +1,132 @@
+{% doc %}
+  Renders sticky promotional banners in the homepage page-width side gutter.
+  Controlled by Theme settings → Side promotion banners.
+{% enddoc %}
+
+{% liquid
+  assign promo_position = settings.side_promo_position | default: 'left'
+  assign promo_width = settings.side_promo_width | default: 140
+  assign has_banners = false
+
+  if settings.side_promo_1_image != blank or settings.side_promo_2_image != blank or settings.side_promo_3_image != blank
+    assign has_banners = true
+  endif
+%}
+
+{% if settings.side_promo_enable and has_banners %}
+  <aside
+    class="side-promo side-promo--{{ promo_position }}"
+    style="--side-promo-width: {{ promo_width }}px;"
+    aria-label="{{ 'accessibility.side_promotions' | t }}"
+  >
+    <div class="side-promo__list">
+      {% for index in (1..3) %}
+        {% liquid
+          case index
+            when 1
+              assign promo_image = settings.side_promo_1_image
+              assign promo_link = settings.side_promo_1_link
+            when 2
+              assign promo_image = settings.side_promo_2_image
+              assign promo_link = settings.side_promo_2_link
+            when 3
+              assign promo_image = settings.side_promo_3_image
+              assign promo_link = settings.side_promo_3_link
+          endcase
+
+          if promo_image != blank
+            assign promo_alt = promo_image.alt | default: shop.name
+          endif
+        %}
+
+        {% if promo_image != blank %}
+          {% if promo_link != blank %}
+            <a href="{{ promo_link }}" class="side-promo__item">
+              {{
+                promo_image
+                | image_url: width: 600
+                | image_tag:
+                  class: 'side-promo__image',
+                  widths: '140, 200, 280, 400, 600',
+                  sizes: '(min-width: 1200px) 140px, 0px',
+                  loading: 'lazy',
+                  alt: promo_alt
+              }}
+            </a>
+          {% else %}
+            <div class="side-promo__item">
+              {{
+                promo_image
+                | image_url: width: 600
+                | image_tag:
+                  class: 'side-promo__image',
+                  widths: '140, 200, 280, 400, 600',
+                  sizes: '(min-width: 1200px) 140px, 0px',
+                  loading: 'lazy',
+                  alt: promo_alt
+              }}
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </aside>
+
+  {% style %}
+    .side-promo {
+      --side-promo-gap: 0.75rem;
+      --side-promo-inset: 0.75rem;
+      position: fixed;
+      top: 7.5rem;
+      z-index: 20;
+      display: none;
+      width: var(--side-promo-width);
+      max-height: calc(100vh - 9rem);
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+
+    .side-promo--left {
+      left: var(--side-promo-inset);
+    }
+
+    .side-promo--right {
+      right: var(--side-promo-inset);
+    }
+
+    .side-promo__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--side-promo-gap);
+    }
+
+    .side-promo__item {
+      display: block;
+      line-height: 0;
+      text-decoration: none;
+      background: #f3f3f3;
+      transition: opacity 0.2s ease;
+    }
+
+    .side-promo__item:hover {
+      opacity: 0.92;
+    }
+
+    .side-promo__image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Only show when there is space outside the centered page-width column */
+    @media screen and (min-width: 1200px) {
+      .side-promo {
+        display: block;
+        width: min(
+          var(--side-promo-width),
+          max(0px, calc((100vw - min(var(--page-width), 100vw)) / 2 - var(--side-promo-inset) * 2))
+        );
+      }
+    }
+  {% endstyle %}
+{% endif %}

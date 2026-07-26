@@ -55,6 +55,9 @@
     "previous": "Previous",
     "next": "Next"
   },
+  "accessibility": {
+    "side_promotions": "Promotional banners"
+  },
   "header": {
     "search": "Search",
     "cart": "Cart",

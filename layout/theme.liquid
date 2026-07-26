@@ -29,6 +29,10 @@
   <body>
     {% sections 'header-group' %}
 
+    {% if request.page_type == 'index' %}
+      {% render 'side-promo-banners' %}
+    {% endif %}
+
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
