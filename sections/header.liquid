@@ -236,23 +236,20 @@
           title="{{ 'partbot.demo_plate_search' | t }}"
         >
           <span class="site-header__pl8srch-plate">
-            <svg class="site-header__pl8srch-icon" width="18" height="14" viewBox="0 0 24 18" fill="none" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="M5.2 7.1c.35-1.15 1.35-1.9 2.55-1.9h8.5c1.2 0 2.2.75 2.55 1.9l.95 3.15H4.25L5.2 7.1z"
-              />
-              <path
-                fill="currentColor"
-                d="M3.5 10.4h17v3.1c0 .55-.45 1-1 1h-15c-.55 0-1-.45-1-1v-3.1z"
-              />
-              <circle cx="7.1" cy="14.7" r="1.55" fill="currentColor"/>
-              <circle cx="16.9" cy="14.7" r="1.55" fill="currentColor"/>
-              <path
-                fill="#fff"
-                d="M8.1 8.05h7.8c.35 0 .55.35.4.65l-.2.4H7.9l-.2-.4c-.15-.3.05-.65.4-.65z"
-              />
-              <rect x="6.35" y="11.15" width="2.1" height="0.85" rx="0.2" fill="#fff"/>
-              <rect x="15.55" y="11.15" width="2.1" height="0.85" rx="0.2" fill="#fff"/>
+            <svg
+              class="site-header__pl8srch-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M7.2 8.2c.45-1.55 1.85-2.55 3.5-2.55h2.6c1.65 0 3.05 1 3.5 2.55l.55 1.9H6.65l.55-1.9z"/>
+              <path d="M5.2 11.4h13.6c.9 0 1.6.7 1.6 1.55v2.7c0 .55-.45 1-1 1h-.55c-.2 1.05-1.1 1.85-2.2 1.85s-2-.8-2.2-1.85h-4.1c-.2 1.05-1.1 1.85-2.2 1.85s-2-.8-2.2-1.85H4.6c-.55 0-1-.45-1-1v-2.7c0-.85.7-1.55 1.6-1.55z"/>
+              <path fill="#fff" d="M8.35 9.05h7.3c.3 0 .5.28.4.55l-.35.85H8.3l-.35-.85c-.1-.27.1-.55.4-.55z"/>
+              <rect x="6.7" y="12.55" width="2.35" height="1.05" rx="0.2" fill="#fff"/>
+              <rect x="14.95" y="12.55" width="2.35" height="1.05" rx="0.2" fill="#fff"/>
             </svg>
             <span class="site-header__pl8srch-text">PL8SRCH</span>
           </span>
@@ -806,8 +803,9 @@
 
   .site-header__pl8srch-icon {
     flex-shrink: 0;
-    width: 1.15rem;
-    height: 0.9rem;
+    display: block;
+    width: 1.05rem;
+    height: 1.05rem;
     color: #111;
   }
 
