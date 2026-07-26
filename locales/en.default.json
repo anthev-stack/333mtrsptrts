@@ -57,7 +57,8 @@
   },
   "header": {
     "search": "Search",
-    "cart": "Cart"
+    "cart": "Cart",
+    "menu": "Menu"
   },
   "products": {
     "available": "In stock",
