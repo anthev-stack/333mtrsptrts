@@ -256,13 +256,38 @@
     const toggle = header.querySelector('[data-menu-toggle]');
     const nav = header.querySelector('[data-header-nav]');
     const submenuItems = header.querySelectorAll('[data-submenu-item]');
+    const desktopQuery = window.matchMedia('(max-width: 749px)');
+    let closeTimer = null;
+
+    const isMobile = () => desktopQuery.matches;
+
+    const setItemOpen = (item, open) => {
+      item.classList.toggle('is-open', open);
+      const button = item.querySelector('[data-submenu-toggle]');
+      if (button) button.setAttribute('aria-expanded', String(open));
+    };
 
     const closeAllSubmenus = () => {
-      submenuItems.forEach((item) => {
-        item.classList.remove('is-open');
-        const button = item.querySelector('[data-submenu-toggle]');
-        if (button) button.setAttribute('aria-expanded', 'false');
+      clearTimeout(closeTimer);
+      closeTimer = null;
+      submenuItems.forEach((item) => setItemOpen(item, false));
+    };
+
+    const openSubmenu = (item) => {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+      submenuItems.forEach((other) => {
+        if (other !== item) setItemOpen(other, false);
       });
+      setItemOpen(item, true);
+    };
+
+    const scheduleCloseSubmenu = (item) => {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => {
+        setItemOpen(item, false);
+        closeTimer = null;
+      }, 280);
     };
 
     const setMobileOpen = (open) => {
@@ -281,33 +306,33 @@
       if (!button) return;
 
       button.addEventListener('click', (event) => {
-        const isMobile = window.matchMedia('(max-width: 749px)').matches;
-        if (!isMobile) return;
+        if (!isMobile()) return;
 
         event.preventDefault();
         const willOpen = !item.classList.contains('is-open');
         closeAllSubmenus();
-        item.classList.toggle('is-open', willOpen);
-        button.setAttribute('aria-expanded', String(willOpen));
+        setItemOpen(item, willOpen);
       });
 
       item.addEventListener('mouseenter', () => {
-        if (window.matchMedia('(max-width: 749px)').matches) return;
-        closeAllSubmenus();
-        item.classList.add('is-open');
-        button.setAttribute('aria-expanded', 'true');
+        if (isMobile()) return;
+        openSubmenu(item);
       });
 
       item.addEventListener('mouseleave', () => {
-        if (window.matchMedia('(max-width: 749px)').matches) return;
-        item.classList.remove('is-open');
-        button.setAttribute('aria-expanded', 'false');
+        if (isMobile()) return;
+        scheduleCloseSubmenu(item);
       });
 
       item.addEventListener('focusin', () => {
-        if (window.matchMedia('(max-width: 749px)').matches) return;
-        item.classList.add('is-open');
-        button.setAttribute('aria-expanded', 'true');
+        if (isMobile()) return;
+        openSubmenu(item);
+      });
+
+      item.addEventListener('focusout', (event) => {
+        if (isMobile()) return;
+        if (item.contains(event.relatedTarget)) return;
+        scheduleCloseSubmenu(item);
       });
     });
 
@@ -491,8 +516,19 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateY(0.35rem);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+
+  /* Invisible bridge so the pointer can travel from the nav label into the panel */
+  .site-header__mega::before,
+  .site-header__dropdown::before,
+  .site-header__blurb::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 1.75rem;
   }
 
   .site-header__item.is-open > .site-header__mega,
@@ -507,7 +543,6 @@
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: translateY(0);
   }
 
   .site-header__blurb-inner {
