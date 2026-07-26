@@ -25,7 +25,7 @@
         "banner_car_care": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/MUGENBANNER_02.webp",
+            "image": "shopify://shop_images/333fk8.png",
             "title": "Car care",
             "button_label": "Shop now",
             "link": ""
@@ -34,8 +34,8 @@
         "banner_maintenance": {
           "type": "banner",
           "settings": {
-            "image": "shopify://shop_images/MUGENBANNER_02.webp",
-            "title": "Maintenance",
+            "image": "shopify://shop_images/333merch.png",
+            "title": "Merchandise",
             "button_label": "Shop now",
             "link": ""
           }
