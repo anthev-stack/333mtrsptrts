@@ -25,7 +25,7 @@
     "announcement_bar": {
       "type": "announcement-bar",
       "settings": {
-        "section_width": "full",
+        "section_width": "page",
         "message_left": "Buy now. Pay later. Options available at checkout.",
         "link_left": "",
         "message_right": "Free domestic shipping on orders over $150. Conditions apply.",
