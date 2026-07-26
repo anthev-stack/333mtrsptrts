@@ -10,8 +10,8 @@
 {
   "current": {
     "logo": "shopify://shop_images/333logo.png",
-    "logo_width": 40,
-    "logo_height": 24,
+    "logo_width": 400,
+    "logo_height": 160,
     "type_primary_font": "arimo_n4",
     "type_heading_font": "arimo_n4",
     "type_heading_bold": false,
