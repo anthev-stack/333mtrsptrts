@@ -240,8 +240,29 @@
   }
 
   @media screen and (max-width: 749px) {
+    .promo-banners-shell {
+      display: block;
+      width: 100%;
+    }
+
+    .promo-banners-shell .promo-banners--page,
+    .promo-banners-shell .promo-banners--full {
+      grid-column: auto;
+      width: 100%;
+      max-width: none;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+
     .promo-banners {
       grid-template-columns: 1fr;
+      gap: 0;
+      width: 100%;
+    }
+
+    .promo-banner {
+      width: 100%;
+      border-radius: 0;
     }
   }
 {% endstylesheet %}
