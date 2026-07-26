@@ -19,12 +19,23 @@
         "type": "range",
         "id": "logo_width",
         "min": 40,
-        "max": 320,
+        "max": 400,
         "step": 4,
         "unit": "px",
-        "label": "t:labels.logo_width",
-        "default": 120,
-        "info": "Controls the displayed logo size. A sharp high-resolution source is used automatically."
+        "label": "Logo width",
+        "default": 160,
+        "info": "Displayed logo width."
+      },
+      {
+        "type": "range",
+        "id": "logo_height",
+        "min": 24,
+        "max": 160,
+        "step": 2,
+        "unit": "px",
+        "label": "Logo height",
+        "default": 56,
+        "info": "Displayed logo height. Image stays sharp and fits inside the width/height box."
       }
     ]
   },

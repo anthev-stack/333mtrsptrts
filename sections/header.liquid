@@ -1,10 +1,14 @@
 {% liquid
-  assign logo_width = settings.logo_width | default: 120
-  assign logo_width_2x = logo_width | times: 2
-  assign logo_width_3x = logo_width | times: 3
-  if logo_width_3x > 1200
-    assign logo_width_3x = 1200
+  assign logo_width = settings.logo_width | default: 160
+  assign logo_height = settings.logo_height | default: 56
+  assign logo_render_width = logo_width | times: 3
+  if logo_render_width < 600
+    assign logo_render_width = 600
   endif
+  if logo_render_width > 1600
+    assign logo_render_width = 1600
+  endif
+  assign logo_style = 'width: ' | append: logo_width | append: 'px; height: ' | append: logo_height | append: 'px; max-width: 100%; object-fit: contain; object-position: center; display: block;'
   assign section_width = section.settings.section_width | default: 'page'
 %}
 
@@ -215,16 +219,22 @@
       {% endif %}
     </nav>
 
-    <a href="{{ routes.root_url }}" class="site-header__logo" style="--logo-width: {{ logo_width }}px;">
+    <a
+      href="{{ routes.root_url }}"
+      class="site-header__logo"
+      style="--logo-width: {{ logo_width }}px; --logo-height: {{ logo_height }}px;"
+    >
       {% if settings.logo != blank %}
         {{
           settings.logo
-          | image_url: width: logo_width_3x
+          | image_url: width: logo_render_width
           | image_tag:
             class: 'site-header__logo-image',
-            widths: '80, 120, 160, 200, 240, 280, 360, 480, 560, 720, 840, 1200',
+            widths: '120, 160, 200, 240, 280, 320, 400, 480, 640, 800, 960, 1200, 1600',
             sizes: '{{ logo_width }}px',
             width: logo_width,
+            height: logo_height,
+            style: logo_style,
             alt: shop.name,
             loading: 'eager'
         }}
@@ -816,14 +826,16 @@
     text-decoration: none;
     color: var(--color-foreground);
     justify-self: center;
+    line-height: 0;
   }
 
   .site-header__logo-image {
     display: block;
-    width: var(--logo-width, {{ logo_width }}px);
+    width: var(--logo-width, 160px) !important;
+    height: var(--logo-height, 56px) !important;
     max-width: 100%;
-    height: auto;
     object-fit: contain;
+    object-position: center;
   }
 
   .site-header__logo-text {
