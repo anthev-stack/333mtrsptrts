@@ -66,6 +66,13 @@
             {% liquid
               assign has_children = false
               assign has_mega = false
+              assign show_shop_all_blurb = false
+              assign link_title_normalized = link.title | downcase | strip
+
+              if link_title_normalized == 'shop all' and section.settings.shop_all_enable
+                assign show_shop_all_blurb = true
+              endif
+
               if link.links != blank and link.links.size > 0
                 assign has_children = true
                 for child_link in link.links
@@ -75,13 +82,18 @@
                   endif
                 endfor
               endif
+
+              if show_shop_all_blurb
+                assign has_mega = false
+                assign has_children = true
+              endif
             %}
 
             <li
-              class="site-header__item{% if has_mega %} site-header__item--mega{% elsif has_children %} site-header__item--dropdown{% endif %}"
-              {% if has_children %}data-submenu-item{% endif %}
+              class="site-header__item{% if show_shop_all_blurb %} site-header__item--blurb{% elsif has_mega %} site-header__item--mega{% elsif has_children %} site-header__item--dropdown{% endif %}"
+              {% if has_children or show_shop_all_blurb %}data-submenu-item{% endif %}
             >
-              {% if has_children %}
+              {% if has_children or show_shop_all_blurb %}
                 <button
                   type="button"
                   class="site-header__link site-header__link--parent{% if link.active or link.child_active %} site-header__link--active{% endif %}"
@@ -100,7 +112,45 @@
                 </a>
               {% endif %}
 
-              {% if has_mega %}
+              {% if show_shop_all_blurb %}
+                <div
+                  id="HeaderSubmenu-{{ section.id }}-{{ forloop.index }}"
+                  class="site-header__blurb"
+                  data-submenu-panel
+                >
+                  <div class="site-header__blurb-inner site-header__blurb-inner--{{ section_width }}">
+                    {% if section.settings.shop_all_eyebrow != blank %}
+                      <p class="site-header__blurb-eyebrow">{{ section.settings.shop_all_eyebrow | escape }}</p>
+                    {% endif %}
+                    {% if section.settings.shop_all_heading != blank %}
+                      <h2 class="site-header__blurb-heading">{{ section.settings.shop_all_heading | escape }}</h2>
+                    {% endif %}
+                    {% if section.settings.shop_all_text != blank %}
+                      <div class="site-header__blurb-text">{{ section.settings.shop_all_text }}</div>
+                    {% endif %}
+                    {% if section.settings.shop_all_button_1_label != blank or section.settings.shop_all_button_2_label != blank %}
+                      <div class="site-header__blurb-actions">
+                        {% if section.settings.shop_all_button_1_label != blank %}
+                          <a
+                            href="{{ section.settings.shop_all_button_1_link | default: link.url }}"
+                            class="site-header__blurb-button site-header__blurb-button--secondary"
+                          >
+                            {{ section.settings.shop_all_button_1_label | escape }}
+                          </a>
+                        {% endif %}
+                        {% if section.settings.shop_all_button_2_label != blank %}
+                          <a
+                            href="{{ section.settings.shop_all_button_2_link | default: routes.all_products_collection_url }}"
+                            class="site-header__blurb-button site-header__blurb-button--primary"
+                          >
+                            {{ section.settings.shop_all_button_2_label | escape }}
+                          </a>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% elsif has_mega %}
                 <div
                   id="HeaderSubmenu-{{ section.id }}-{{ forloop.index }}"
                   class="site-header__mega"
@@ -261,7 +311,7 @@
       });
     });
 
-    header.querySelectorAll('.site-header__mega-link, .site-header__dropdown-link').forEach((link) => {
+    header.querySelectorAll('.site-header__mega-link, .site-header__dropdown-link, .site-header__blurb-button').forEach((link) => {
       link.addEventListener('click', () => setMobileOpen(false));
     });
 
@@ -399,15 +449,12 @@
     font-size: 0.7rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    text-decoration: var(--font-navigation--decoration);
+    text-decoration: none;
     color: var(--color-foreground);
     cursor: pointer;
   }
 
-  .site-header__link--active::after,
-  .site-header__link:hover::after,
-  .site-header__item.is-open > .site-header__link::after,
-  .site-header__item:hover > .site-header__link::after {
+  .site-header__link::after {
     content: '';
     position: absolute;
     left: 0;
@@ -415,10 +462,24 @@
     bottom: -0.3rem;
     height: 1px;
     background: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .site-header__link:hover::after,
+  .site-header__link--active::after,
+  .site-header__item.is-open > .site-header__link::after,
+  .site-header__item:hover > .site-header__link::after,
+  .site-header__item:focus-within > .site-header__link::after {
+    transform: scaleX(1);
+    opacity: 1;
   }
 
   .site-header__mega,
-  .site-header__dropdown {
+  .site-header__dropdown,
+  .site-header__blurb {
     position: absolute;
     left: 0;
     right: 0;
@@ -439,11 +500,103 @@
   .site-header__item:focus-within > .site-header__mega,
   .site-header__item.is-open > .site-header__dropdown,
   .site-header__item:hover > .site-header__dropdown,
-  .site-header__item:focus-within > .site-header__dropdown {
+  .site-header__item:focus-within > .site-header__dropdown,
+  .site-header__item.is-open > .site-header__blurb,
+  .site-header__item:hover > .site-header__blurb,
+  .site-header__item:focus-within > .site-header__blurb {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     transform: translateY(0);
+  }
+
+  .site-header__blurb-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    width: min(var(--page-width), 100%);
+    max-width: 42rem;
+    margin-inline: auto;
+    padding: 2.5rem var(--page-margin) 2.75rem;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .site-header__blurb-inner--full {
+    width: 100%;
+  }
+
+  .site-header__blurb-eyebrow {
+    margin: 0;
+    color: #8a8a8a;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .site-header__blurb-heading {
+    margin: 0;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .site-header__blurb-text {
+    color: #666;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .site-header__blurb-text p {
+    margin: 0;
+  }
+
+  .site-header__blurb-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+  }
+
+  .site-header__blurb-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .site-header__blurb-button--secondary {
+    border: 1px solid #111;
+    background: #fff;
+    color: #111;
+  }
+
+  .site-header__blurb-button--secondary:hover {
+    background: #111;
+    color: #fff;
+  }
+
+  .site-header__blurb-button--primary {
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+  }
+
+  .site-header__blurb-button--primary:hover {
+    background: #000;
   }
 
   .site-header__mega-inner {
@@ -643,7 +796,8 @@
     }
 
     .site-header__mega,
-    .site-header__dropdown {
+    .site-header__dropdown,
+    .site-header__blurb {
       position: static;
       border: 0;
       opacity: 1;
@@ -655,22 +809,40 @@
     }
 
     .site-header__item.is-open > .site-header__mega,
-    .site-header__item.is-open > .site-header__dropdown {
+    .site-header__item.is-open > .site-header__dropdown,
+    .site-header__item.is-open > .site-header__blurb {
       display: block;
     }
 
     .site-header__item:hover > .site-header__mega,
     .site-header__item:focus-within > .site-header__mega,
     .site-header__item:hover > .site-header__dropdown,
-    .site-header__item:focus-within > .site-header__dropdown {
+    .site-header__item:focus-within > .site-header__dropdown,
+    .site-header__item:hover > .site-header__blurb,
+    .site-header__item:focus-within > .site-header__blurb {
       display: none;
     }
 
     .site-header__item.is-open:hover > .site-header__mega,
     .site-header__item.is-open:focus-within > .site-header__mega,
     .site-header__item.is-open:hover > .site-header__dropdown,
-    .site-header__item.is-open:focus-within > .site-header__dropdown {
+    .site-header__item.is-open:focus-within > .site-header__dropdown,
+    .site-header__item.is-open:hover > .site-header__blurb,
+    .site-header__item.is-open:focus-within > .site-header__blurb {
       display: block;
+    }
+
+    .site-header__blurb-inner {
+      max-width: none;
+      width: 100%;
+      margin: 0;
+      padding: 0.25rem 0 1rem;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .site-header__blurb-actions {
+      justify-content: flex-start;
     }
 
     .site-header__mega-inner {
@@ -738,6 +910,57 @@
       "id": "instagram_url",
       "label": "t:labels.instagram_url",
       "default": "https://instagram.com"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.shop_all_blurb"
+    },
+    {
+      "type": "checkbox",
+      "id": "shop_all_enable",
+      "label": "t:labels.shop_all_enable",
+      "default": true,
+      "info": "t:labels.shop_all_enable_info"
+    },
+    {
+      "type": "text",
+      "id": "shop_all_eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "333 Motorsports"
+    },
+    {
+      "type": "text",
+      "id": "shop_all_heading",
+      "label": "t:labels.heading",
+      "default": "Wide menu"
+    },
+    {
+      "type": "richtext",
+      "id": "shop_all_text",
+      "label": "t:labels.text",
+      "default": "<p>Browse the full range of car care, maintenance, and performance products. Quality gear for enthusiasts who want their vehicle looking and running at its best.</p>"
+    },
+    {
+      "type": "text",
+      "id": "shop_all_button_1_label",
+      "label": "t:labels.button_1_label",
+      "default": "Shop this"
+    },
+    {
+      "type": "url",
+      "id": "shop_all_button_1_link",
+      "label": "t:labels.button_1_link"
+    },
+    {
+      "type": "text",
+      "id": "shop_all_button_2_label",
+      "label": "t:labels.button_2_label",
+      "default": "Shop all"
+    },
+    {
+      "type": "url",
+      "id": "shop_all_button_2_link",
+      "label": "t:labels.button_2_link"
     },
     {
       "type": "header",
