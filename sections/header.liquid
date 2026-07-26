@@ -1,6 +1,10 @@
 {% liquid
   assign logo_width = settings.logo_width | default: 120
   assign logo_width_2x = logo_width | times: 2
+  assign logo_width_3x = logo_width | times: 3
+  if logo_width_3x > 1200
+    assign logo_width_3x = 1200
+  endif
   assign section_width = section.settings.section_width | default: 'page'
 %}
 
@@ -211,13 +215,15 @@
       {% endif %}
     </nav>
 
-    <a href="{{ routes.root_url }}" class="site-header__logo">
+    <a href="{{ routes.root_url }}" class="site-header__logo" style="--logo-width: {{ logo_width }}px;">
       {% if settings.logo != blank %}
         {{
           settings.logo
-          | image_url: width: logo_width_2x
+          | image_url: width: logo_width_3x
           | image_tag:
             class: 'site-header__logo-image',
+            widths: '80, 120, 160, 200, 240, 280, 360, 480, 560, 720, 840, 1200',
+            sizes: '{{ logo_width }}px',
             width: logo_width,
             alt: shop.name,
             loading: 'eager'
@@ -813,10 +819,10 @@
   }
 
   .site-header__logo-image {
-    width: auto;
+    display: block;
+    width: var(--logo-width, {{ logo_width }}px);
+    max-width: 100%;
     height: auto;
-    max-height: 3.25rem;
-    max-width: {{ settings.logo_width | default: 120 }}px;
     object-fit: contain;
   }
 

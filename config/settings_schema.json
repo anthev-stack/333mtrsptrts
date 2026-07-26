@@ -19,11 +19,12 @@
         "type": "range",
         "id": "logo_width",
         "min": 40,
-        "max": 280,
+        "max": 320,
         "step": 4,
         "unit": "px",
         "label": "t:labels.logo_width",
-        "default": 120
+        "default": 120,
+        "info": "Controls the displayed logo size. A sharp high-resolution source is used automatically."
       }
     ]
   },
