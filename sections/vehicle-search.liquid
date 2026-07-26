@@ -4,13 +4,20 @@
   if section_width == 'full'
     assign width_class = 'full-width'
   endif
+
+  assign show_vehicle_search = false
+  if settings.partbot_demo_mode
+    assign show_vehicle_search = true
+  elsif settings.partbot_enable and settings.partbot_api_key != blank
+    assign show_vehicle_search = true
+  endif
 %}
 
-{% if settings.partbot_enable and settings.partbot_api_key != blank %}
+{% if show_vehicle_search %}
   {% render 'section-padding' %}
 
   <section class="vehicle-search-section vehicle-search-section--{{ section_width }} {{ width_class }}">
-    {% render 'partbot-vehicle-search' %}
+    {% render 'vehicle-search-bar' %}
   </section>
 {% endif %}
 

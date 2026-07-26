@@ -2,7 +2,7 @@
   Partbot manufacturer document download links.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_show_documents %}
+{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_documents %}
   {% assign has_documents = false %}
   {% for variant in product.variants %}
     {% if variant.metafields.partbot.document.value != blank %}

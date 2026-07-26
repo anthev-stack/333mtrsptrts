@@ -23,6 +23,7 @@
     "background_color": "#FFFFFF",
     "foreground_color": "#111111",
     "accent_color": "#F5C518",
+    "partbot_demo_mode": true,
     "side_promo_enable": true,
     "side_promo_position": "right",
     "side_promo_width": 180,

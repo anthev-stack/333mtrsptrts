@@ -1,9 +1,9 @@
 {% doc %}
   Renders the Partbot MMY vehicle search web component.
-  Only outputs when Partbot is enabled and an API key is set.
+  Only outputs when Partbot is enabled, demo mode is off, and an API key is set.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_api_key != blank %}
+{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_api_key != blank %}
   {% liquid
     assign callback_url = settings.partbot_callback_url | default: routes.all_products_collection_url
     assign fields = settings.partbot_fields | default: 'body,series' | strip
@@ -31,23 +31,9 @@
     .partbot-vehicle-search {
       width: 100%;
       padding: 0.85rem 1rem;
-      background:
-        linear-gradient(rgba(17, 17, 17, 0.92), rgba(17, 17, 17, 0.92)),
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 11px,
-          rgba(255, 255, 255, 0.04) 11px,
-          rgba(255, 255, 255, 0.04) 12px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent 11px,
-          rgba(255, 255, 255, 0.04) 11px,
-          rgba(255, 255, 255, 0.04) 12px
-        );
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(10, 10, 10, 0.55);
+      border: 2px dotted var(--color-accent, #f5c518);
+      border-radius: 0;
       box-sizing: border-box;
     }
 

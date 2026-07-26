@@ -228,6 +228,25 @@
     </a>
 
     <div class="site-header__actions">
+      {% if settings.partbot_demo_mode %}
+        <button
+          type="button"
+          class="site-header__pl8srch"
+          aria-label="{{ 'partbot.demo_plate_search' | t }}"
+          title="{{ 'partbot.demo_plate_search' | t }}"
+        >
+          <span class="site-header__pl8srch-plate">
+            <svg class="site-header__pl8srch-icon" width="16" height="12" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true">
+              <path d="M3.5 12.5h17l-1.2-4.2A2 2 0 0 0 17.4 7H6.6a2 2 0 0 0-1.9 1.3L3.5 12.5z"/>
+              <path d="M5 12.5h14v2.2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V12.5z"/>
+              <circle cx="7.2" cy="14.8" r="1.5"/>
+              <circle cx="16.8" cy="14.8" r="1.5"/>
+              <path d="M8.2 7.2h7.6"/>
+            </svg>
+            <span class="site-header__pl8srch-text">PL8SRCH</span>
+          </span>
+        </button>
+      {% endif %}
       <a href="{{ routes.search_url }}" class="site-header__action">
         <span>{{ 'header.search' | t }}</span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
@@ -751,6 +770,45 @@
     gap: 1.15rem;
   }
 
+  .site-header__pl8srch {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: default;
+  }
+
+  .site-header__pl8srch-plate {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 1.7rem;
+    padding: 0.2rem 0.45rem;
+    border: 2px solid var(--color-accent, #f5c518);
+    outline: 1px solid var(--color-accent, #f5c518);
+    outline-offset: 2px;
+    background: #fff;
+    color: #111;
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  .site-header__pl8srch-icon {
+    flex-shrink: 0;
+    color: #222;
+  }
+
+  .site-header__pl8srch-text {
+    font-family: var(--font-navigation--family);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
   .site-header__action {
     position: relative;
     display: inline-flex;
@@ -904,6 +962,15 @@
 
     .site-header__action span {
       display: none;
+    }
+
+    .site-header__pl8srch-text {
+      display: none;
+    }
+
+    .site-header__pl8srch-plate {
+      min-height: 1.85rem;
+      padding: 0.25rem 0.4rem;
     }
   }
 {% endstylesheet %}

@@ -2,7 +2,7 @@
   Partbot synced product attributes / tech specs.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_show_attributes %}
+{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_attributes %}
   {% assign variant = product.selected_or_first_available_variant %}
 
   {% if variant.metafields.partbot.attributes != blank %}

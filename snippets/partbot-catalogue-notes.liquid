@@ -2,7 +2,7 @@
   Partbot catalogue notes for the selected variant.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_show_catalogue_notes %}
+{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_catalogue_notes %}
   {% assign catalogue_notes = product.selected_or_first_available_variant.metafields.partbot.catalogue_notes %}
 
   {% if catalogue_notes != blank %}

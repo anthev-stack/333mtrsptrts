@@ -1,0 +1,128 @@
+{% doc %}
+  Non-functional vehicle search preview for judging layout.
+  Shown when Theme settings → Partbot → Demo preview mode is enabled.
+{% enddoc %}
+
+<div class="vehicle-search-demo" aria-label="{{ 'partbot.demo_vehicle_search' | t }}">
+  <div class="vehicle-search-demo__fields">
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.make' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.make' | t }}</option>
+      </select>
+    </label>
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.model' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.model' | t }}</option>
+      </select>
+    </label>
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.year' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.year' | t }}</option>
+      </select>
+    </label>
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.body' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.body' | t }}</option>
+      </select>
+    </label>
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.series' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.series' | t }}</option>
+      </select>
+    </label>
+    <label class="vehicle-search-demo__field">
+      <span class="visually-hidden">{{ 'partbot.engine_capacity' | t }}</span>
+      <select class="vehicle-search-demo__select" tabindex="-1" aria-disabled="true">
+        <option selected>{{ 'partbot.engine_capacity' | t }}</option>
+      </select>
+    </label>
+    <button type="button" class="vehicle-search-demo__button" tabindex="-1" aria-disabled="true">
+      {{ 'partbot.select_vehicle' | t }}
+    </button>
+  </div>
+</div>
+
+{% style %}
+  .vehicle-search-demo {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(10, 10, 10, 0.55);
+    border: 2px dotted var(--color-accent, #f5c518);
+    border-radius: 0;
+    box-sizing: border-box;
+  }
+
+  .vehicle-search-demo__fields {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+    gap: 0.65rem;
+    align-items: stretch;
+  }
+
+  .vehicle-search-demo__field {
+    display: block;
+    min-width: 0;
+  }
+
+  .vehicle-search-demo__select {
+    appearance: none;
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.55rem 2rem 0.55rem 0.75rem;
+    border: 0;
+    border-radius: 0;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    color: #9a9a9a;
+    font-family: var(--font-paragraph--family);
+    font-size: 0.85rem;
+    line-height: 1.2;
+    pointer-events: none;
+  }
+
+  .vehicle-search-demo__button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.6rem;
+    padding: 0.55rem 1.15rem;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-accent, #f5c518);
+    color: #111;
+    font-family: var(--font-paragraph--family);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .collection-page__vehicle-search {
+    margin-bottom: 1.25rem;
+  }
+
+  @media screen and (max-width: 989px) {
+    .vehicle-search-demo__fields {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .vehicle-search-demo__button {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media screen and (max-width: 549px) {
+    .vehicle-search-demo__fields {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}

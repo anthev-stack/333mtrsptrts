@@ -2,7 +2,7 @@
   Partbot vehicle application / fitment table.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_show_applications %}
+{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_applications %}
   {% assign variant = product.selected_or_first_available_variant %}
   {% assign vehicle_applications = variant.metafields.partbot.vehicle_applications.value %}
 

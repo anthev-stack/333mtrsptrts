@@ -1,0 +1,10 @@
+{% doc %}
+  Renders demo or live Partbot vehicle search based on theme settings.
+  Demo mode always wins and disables live Partbot output.
+{% enddoc %}
+
+{% if settings.partbot_demo_mode %}
+  {% render 'vehicle-search-demo' %}
+{% elsif settings.partbot_enable and settings.partbot_api_key != blank %}
+  {% render 'partbot-vehicle-search' %}
+{% endif %}

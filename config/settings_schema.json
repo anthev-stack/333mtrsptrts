@@ -240,6 +240,13 @@
     "settings": [
       {
         "type": "checkbox",
+        "id": "partbot_demo_mode",
+        "label": "t:labels.partbot_demo_mode",
+        "default": false,
+        "info": "t:labels.partbot_demo_mode_info"
+      },
+      {
+        "type": "checkbox",
         "id": "partbot_enable",
         "label": "t:labels.partbot_enable",
         "default": false,

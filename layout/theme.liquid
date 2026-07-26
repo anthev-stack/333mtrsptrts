@@ -33,7 +33,7 @@
 
     {% sections 'footer-group' %}
 
-    {% if settings.partbot_enable and settings.partbot_api_key != blank %}
+    {% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_api_key != blank %}
       <script src="https://unpkg.com/@cartbot/vehicle-search@latest/dist/vehicle-search.js" async></script>
     {% endif %}
   </body>
