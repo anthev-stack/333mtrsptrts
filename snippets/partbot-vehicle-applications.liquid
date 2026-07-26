@@ -1,14 +1,70 @@
 {% doc %}
   Partbot vehicle application / fitment table.
+  Shows a demo table when Demo preview mode is on.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_applications %}
+{% if settings.partbot_demo_mode and settings.partbot_show_applications %}
+  <div id="partbot-vehicle-applications" class="partbot-applications partbot-applications--demo">
+    <h2 class="partbot-applications__heading">
+      {{ 'partbot.vehicle_compatibility' | t }}
+      <span class="partbot-fitment__demo-label">{{ 'partbot.demo_badge' | t }}</span>
+    </h2>
+
+    <div class="partbot-applications__group">
+      <h3 class="partbot-applications__title">{{ 'partbot.demo_applications_title' | t }}</h3>
+      <div class="partbot-applications__table-wrap">
+        <table class="partbot-applications__table">
+          <thead>
+            <tr>
+              <th>{{ 'partbot.make' | t }}</th>
+              <th>{{ 'partbot.model' | t }}</th>
+              <th>{{ 'partbot.from' | t }}</th>
+              <th>{{ 'partbot.to' | t }}</th>
+              <th>{{ 'partbot.body' | t }}</th>
+              <th>{{ 'partbot.series' | t }}</th>
+              <th>{{ 'partbot.engine' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Toyota</td>
+              <td>Hilux</td>
+              <td>2015</td>
+              <td>2024</td>
+              <td>Dual Cab</td>
+              <td>GUN126</td>
+              <td>2.8L Diesel</td>
+            </tr>
+            <tr>
+              <td>Toyota</td>
+              <td>Fortuner</td>
+              <td>2015</td>
+              <td>2024</td>
+              <td>Wagon</td>
+              <td>GUN156</td>
+              <td>2.8L Diesel</td>
+            </tr>
+            <tr>
+              <td>Ford</td>
+              <td>Ranger</td>
+              <td>2018</td>
+              <td>2022</td>
+              <td>Dual Cab</td>
+              <td>PX3</td>
+              <td>2.0L Bi-Turbo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% elsif settings.partbot_enable and settings.partbot_show_applications %}
   {% assign variant = product.selected_or_first_available_variant %}
   {% assign vehicle_applications = variant.metafields.partbot.vehicle_applications.value %}
 
   {% if vehicle_applications != blank %}
     <div id="partbot-vehicle-applications" class="partbot-applications">
-      <h2 class="partbot-applications__heading">{{ 'partbot.vehicle_applications' | t }}</h2>
+      <h2 class="partbot-applications__heading">{{ 'partbot.vehicle_compatibility' | t }}</h2>
 
       {% for application in vehicle_applications %}
         <div class="partbot-applications__group">

@@ -1,124 +1,590 @@
 {% comment %}
-  Product page with Partbot integrations when enabled in theme settings.
+  Product page — reference layout with Partbot vehicle compatibility.
 {% endcomment %}
+
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'ProductForm-' | append: section.id
+  assign color_option = nil
+
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == 'color' or option_name == 'colour'
+      assign color_option = option
+      break
+    endif
+  endfor
+
+  assign swatch_value = nil
+  if color_option != blank
+    for value in color_option.values
+      if value.selected
+        assign swatch_value = value
+        break
+      endif
+    endfor
+    if swatch_value == blank
+      assign swatch_value = color_option.values.first
+    endif
+  endif
+
+  assign collection = product.collections.first
+%}
 
 {% render 'section-padding' %}
 
-<section class="product-page">
-  <div class="product-page__media">
-    {% for image in product.images %}
-      {% render 'image', class: 'product-page__image', image: image %}
-    {% endfor %}
+<section class="product-page" data-product-page>
+  <div class="product-page__nav">
+    <nav class="product-page__breadcrumbs" aria-label="{{ 'products.breadcrumb' | t }}">
+      <a href="{{ routes.root_url }}">{{ 'products.home' | t }}</a>
+      {% if collection != blank %}
+        <span class="product-page__breadcrumbs-sep" aria-hidden="true">/</span>
+        <a href="{{ collection.url }}">{{ collection.title | escape }}</a>
+      {% endif %}
+      <span class="product-page__breadcrumbs-sep" aria-hidden="true">/</span>
+      <span>{{ product.title | escape }}</span>
+    </nav>
+
+    <div class="product-page__siblings">
+      {% if collection != blank and collection.previous_product %}
+        <a href="{{ collection.previous_product.url }}" class="product-page__sibling">
+          <span aria-hidden="true">&lt;</span> {{ 'products.previous' | t }}
+        </a>
+      {% endif %}
+      {% if collection != blank and collection.next_product %}
+        <a href="{{ collection.next_product.url }}" class="product-page__sibling">
+          {{ 'products.next' | t }} <span aria-hidden="true">&gt;</span>
+        </a>
+      {% endif %}
+    </div>
   </div>
 
-  <div class="product-page__info">
-    {% render 'partbot-brand-logo', product: product %}
+  <div class="product-page__main">
+    <div class="product-page__media">
+      <div class="product-page__gallery">
+        {% if product.featured_media %}
+          {% assign featured_alt = product.featured_media.alt | default: product.title %}
+          {{
+            product.featured_media.preview_image
+            | image_url: width: 1600
+            | image_tag:
+              class: 'product-page__image',
+              widths: '600, 800, 1000, 1200, 1600',
+              sizes: '(min-width: 990px) 42vw, 100vw',
+              alt: featured_alt,
+              loading: 'eager'
+          }}
+        {% elsif product.featured_image %}
+          {{
+            product.featured_image
+            | image_url: width: 1600
+            | image_tag:
+              class: 'product-page__image',
+              widths: '600, 800, 1000, 1200, 1600',
+              sizes: '(min-width: 990px) 42vw, 100vw',
+              alt: product.title,
+              loading: 'eager'
+          }}
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'product-page__image product-page__image--placeholder' }}
+        {% endif %}
 
-    <h1 class="product-page__title">{{ product.title | escape }}</h1>
-    <p class="product-page__price">{{ product.price | money }}</p>
+        {% if product.media.size > 1 %}
+          <div class="product-page__thumbs">
+            {% for media in product.media limit: 6 %}
+              {% assign thumb_alt = media.alt | default: product.title %}
+              <span class="product-page__thumb{% if forloop.first %} is-active{% endif %}">
+                {{
+                  media.preview_image
+                  | image_url: width: 200
+                  | image_tag:
+                    class: 'product-page__thumb-image',
+                    loading: 'lazy',
+                    alt: thumb_alt
+                }}
+              </span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
 
-    {% render 'partbot-vehicle-fitment', product: product %}
-    {% render 'partbot-catalogue-notes', product: product %}
-
-    <div class="product-page__description">{{ product.description }}</div>
-
-    <div class="product-page__form">
-      {% form 'product', product %}
-        {% assign current_variant = product.selected_or_first_available_variant %}
-
-        <select name="id" class="product-page__variants">
-          {% for variant in product.variants %}
-            <option
-              value="{{ variant.id }}"
-              {% if variant == current_variant %}selected="selected"{% endif %}
-            >
-              {{ variant.title | escape }} - {{ variant.price | money }}
-            </option>
-          {% endfor %}
-        </select>
-
-        <input class="product-page__quantity" type="number" name="quantity" min="1" value="1">
-        <button type="submit" class="product-page__submit">{{ 'products.add_to_cart' | t }}</button>
-        {{ form | payment_button }}
-      {% endform %}
+      {% if swatch_value != blank %}
+        <div class="product-page__swatch">
+          {% if swatch_value.swatch.image %}
+            {{
+              swatch_value.swatch.image
+              | image_url: width: 120
+              | image_tag: class: 'product-page__swatch-image', loading: 'lazy', alt: swatch_value.name
+            }}
+          {% elsif swatch_value.swatch.color %}
+            <span
+              class="product-page__swatch-color"
+              style="background-color: {{ swatch_value.swatch.color }};"
+              aria-hidden="true"
+            ></span>
+          {% else %}
+            <span class="product-page__swatch-color product-page__swatch-color--fallback" aria-hidden="true"></span>
+          {% endif %}
+          <span class="product-page__swatch-label">{{ swatch_value.name | escape }}</span>
+        </div>
+      {% endif %}
     </div>
 
-    {% render 'partbot-product-attributes', product: product %}
-    {% render 'partbot-product-documents', product: product %}
+    <div class="product-page__info">
+      {% render 'partbot-brand-logo', product: product %}
+
+      <h1 class="product-page__title">{{ product.title | escape }}</h1>
+      <p class="product-page__price">{{ current_variant.price | money }}</p>
+
+      {% if product.vendor != blank %}
+        <a
+          class="product-page__vendor"
+          href="{{ product.vendor | url_for_vendor }}"
+        >
+          {{ 'products.by_vendor' | t: vendor: product.vendor }}
+        </a>
+      {% endif %}
+
+      {% if current_variant.sku != blank %}
+        <p class="product-page__sku">{{ 'products.sku' | t: sku: current_variant.sku }}</p>
+      {% endif %}
+
+      <hr class="product-page__divider">
+
+      {% render 'partbot-vehicle-fitment', product: product %}
+      {% render 'partbot-catalogue-notes', product: product %}
+
+      {% form 'product', product, id: product_form_id, class: 'product-page__form' %}
+        {% unless product.has_only_default_variant %}
+          <div class="product-page__variants">
+            <label class="product-page__label" for="Variant-{{ section.id }}">{{ 'products.variant' | t }}</label>
+            <select name="id" id="Variant-{{ section.id }}" class="product-page__select">
+              {% for variant in product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  {% if variant == current_variant %}selected="selected"{% endif %}
+                  {% if variant.available == false %}disabled{% endif %}
+                >
+                  {{ variant.title | escape }} — {{ variant.price | money }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {% endunless %}
+
+        <div class="product-page__quantity-wrap">
+          <label class="product-page__label" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
+          <div class="product-page__quantity" data-quantity>
+            <button type="button" class="product-page__qty-btn" data-quantity-minus aria-label="{{ 'products.decrease_quantity' | t }}">−</button>
+            <input
+              id="Quantity-{{ section.id }}"
+              class="product-page__qty-input"
+              type="number"
+              name="quantity"
+              min="1"
+              value="1"
+              data-quantity-input
+            >
+            <button type="button" class="product-page__qty-btn" data-quantity-plus aria-label="{{ 'products.increase_quantity' | t }}">+</button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          name="add"
+          class="product-page__add"
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          {% if current_variant.available %}
+            {{ 'products.add_to_cart' | t }}
+          {% else %}
+            {{ 'products.sold_out' | t }}
+          {% endif %}
+        </button>
+
+        <div class="product-page__buy">
+          {{ form | payment_button }}
+        </div>
+      {% endform %}
+
+      {% if product.description != blank %}
+        <div class="product-page__description">{{ product.description }}</div>
+      {% endif %}
+
+      {% render 'partbot-product-attributes', product: product %}
+      {% render 'partbot-product-documents', product: product %}
+    </div>
   </div>
 
   <div class="product-page__partbot">
     {% render 'partbot-vehicle-applications', product: product %}
     {% render 'partbot-cross-sell-products', product: product, max_columns: 4 %}
   </div>
+
+  {% liquid
+    assign suggested_count = 0
+    if collection != blank
+      for related in collection.products limit: 8
+        unless related.id == product.id
+          assign suggested_count = suggested_count | plus: 1
+        endunless
+      endfor
+    endif
+  %}
+
+  {% if suggested_count > 0 %}
+    <div class="product-page__suggested">
+      <h2 class="product-page__suggested-heading">{{ 'products.suggested_products' | t }}</h2>
+      <div class="product-page__suggested-grid">
+        {% assign shown = 0 %}
+        {% for related in collection.products %}
+          {% if related.id != product.id and shown < 4 %}
+            {% render 'product-card', product: related %}
+            {% assign shown = shown | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
 </section>
+
+{% javascript %}
+  document.querySelectorAll('[data-product-page]').forEach((page) => {
+    const quantity = page.querySelector('[data-quantity]');
+    if (!quantity) return;
+
+    const input = quantity.querySelector('[data-quantity-input]');
+    const minus = quantity.querySelector('[data-quantity-minus]');
+    const plus = quantity.querySelector('[data-quantity-plus]');
+
+    const setValue = (next) => {
+      const value = Math.max(1, Number(next) || 1);
+      input.value = String(value);
+    };
+
+    minus?.addEventListener('click', () => setValue(Number(input.value) - 1));
+    plus?.addEventListener('click', () => setValue(Number(input.value) + 1));
+    input?.addEventListener('change', () => setValue(input.value));
+  });
+{% endjavascript %}
 
 {% stylesheet %}
   .product-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .product-page__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .product-page__breadcrumbs,
+  .product-page__siblings {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.55rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .product-page__breadcrumbs a,
+  .product-page__sibling {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.7;
+  }
+
+  .product-page__breadcrumbs a:hover,
+  .product-page__sibling:hover {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .product-page__breadcrumbs-sep {
+    opacity: 0.35;
+  }
+
+  .product-page__siblings {
+    margin-left: auto;
+  }
+
+  .product-page__main {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    gap: 2rem 2.5rem;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 2rem 3rem;
     align-items: start;
   }
 
   .product-page__media {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    align-items: start;
+  }
+
+  .product-page__gallery {
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
+    min-width: 0;
   }
 
   .product-page__image {
+    display: block;
     width: 100%;
     height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background: #f3f3f3;
+  }
+
+  .product-page__thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+    gap: 0.5rem;
+  }
+
+  .product-page__thumb {
+    display: block;
+    border: 1px solid transparent;
+    line-height: 0;
+  }
+
+  .product-page__thumb.is-active,
+  .product-page__thumb:hover {
+    border-color: #111;
+  }
+
+  .product-page__thumb-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: #f3f3f3;
+  }
+
+  .product-page__swatch {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 4.75rem;
+  }
+
+  .product-page__swatch-image,
+  .product-page__swatch-color {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid rgba(17, 17, 17, 0.15);
+  }
+
+  .product-page__swatch-color--fallback {
+    background: #ddd;
+  }
+
+  .product-page__swatch-label {
+    font-size: 0.65rem;
+    line-height: 1.25;
+    color: #666;
+  }
+
+  .product-page__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .product-page__title {
-    margin: 0 0 0.5rem;
-    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    margin: 0 0 0.65rem;
+    font-size: clamp(1.55rem, 3vw, 2.35rem);
+    font-weight: 700;
     letter-spacing: 0.04em;
+    line-height: 1.1;
     text-transform: uppercase;
   }
 
   .product-page__price {
-    margin: 0 0 1rem;
-    font-weight: 700;
+    margin: 0 0 0.85rem;
+    font-size: 1.15rem;
+    font-weight: 600;
   }
 
-  .product-page__description {
-    margin: 1rem 0;
+  .product-page__vendor {
+    margin: 0 0 0.45rem;
+    color: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-underline-offset: 0.2em;
+  }
+
+  .product-page__sku {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #666;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .product-page__divider {
+    width: 100%;
+    margin: 1.15rem 0 1.25rem;
+    border: 0;
+    border-top: 1px solid rgba(17, 17, 17, 0.14);
   }
 
   .product-page__form {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 1.25rem 0;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+    margin: 0 0 1.25rem;
   }
 
-  .product-page__variants,
-  .product-page__quantity,
-  .product-page__submit {
+  .product-page__label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .product-page__select {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.55rem 0.75rem;
     border: 1px solid #111;
     border-radius: 0;
-    min-height: 2.5rem;
-    padding: 0.55rem 0.85rem;
-    font: inherit;
     background: #fff;
+    font: inherit;
   }
 
-  .product-page__submit {
-    background: var(--color-accent, #f5c518);
-    color: #111;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .product-page__quantity {
+    display: inline-grid;
+    grid-template-columns: 2.6rem minmax(3rem, 4rem) 2.6rem;
+    border: 1px solid #111;
+    width: fit-content;
+  }
+
+  .product-page__qty-btn,
+  .product-page__qty-input {
+    min-height: 2.6rem;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+    font: inherit;
+    text-align: center;
+  }
+
+  .product-page__qty-btn {
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .product-page__qty-btn:hover {
+    background: #f5f5f5;
+  }
+
+  .product-page__qty-input {
+    border-inline: 1px solid #111;
+    -moz-appearance: textfield;
+  }
+
+  .product-page__qty-input::-webkit-outer-spin-button,
+  .product-page__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .product-page__add,
+  .product-page__buy .shopify-payment-button__button {
+    width: 100%;
+    min-height: 2.85rem;
+    border-radius: 0 !important;
+    font: inherit !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
     cursor: pointer;
   }
 
+  .product-page__add {
+    border: 1px solid #111;
+    background: #fff;
+    color: #111;
+  }
+
+  .product-page__add:hover {
+    background: #f5f5f5;
+  }
+
+  .product-page__add:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .product-page__buy .shopify-payment-button__button--unbranded {
+    background: #111 !important;
+    color: #fff !important;
+    border: 1px solid #111 !important;
+  }
+
+  .product-page__buy .shopify-payment-button__button--unbranded:hover {
+    background: #000 !important;
+  }
+
+  .product-page__description {
+    width: 100%;
+    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: #333;
+  }
+
+  .product-page__description p {
+    margin: 0 0 0.75rem;
+  }
+
   .product-page__partbot {
-    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .product-page__suggested-heading,
+  .partbot-attributes__heading,
+  .partbot-documents__heading,
+  .partbot-applications__heading,
+  .partbot-cross-sell__heading {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .partbot-attributes__heading,
+  .partbot-documents__heading {
+    text-align: left;
+    font-size: 0.85rem;
+  }
+
+  .product-page__suggested-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
   }
 
   .partbot-brand-logo {
@@ -142,11 +608,13 @@
     display: flex;
     align-items: flex-start;
     gap: 0.65rem;
+    width: 100%;
     margin: 0 0 1rem;
-    padding: 0.65rem 0.75rem;
+    padding: 0.7rem 0.8rem;
     border: 1px solid rgba(17, 17, 17, 0.15);
     font-size: 0.8rem;
     line-height: 1.4;
+    box-sizing: border-box;
   }
 
   .partbot-fitment--yes {
@@ -176,11 +644,25 @@
     background: #a11f1f;
   }
 
+  .partbot-fitment__demo-label {
+    display: inline-block;
+    margin-left: 0.35rem;
+    padding: 0.1rem 0.35rem;
+    border: 1px solid rgba(17, 17, 17, 0.25);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
   .partbot-catalogue-notes {
+    width: 100%;
     margin: 0 0 1rem;
     padding: 0.75rem 0.85rem;
-    border: 1px solid var(--color-accent, #f5c518);
-    background: color-mix(in srgb, var(--color-accent, #f5c518) 18%, #fff);
+    border: 1px solid var(--color-accent, #111);
+    background: color-mix(in srgb, var(--color-accent, #111) 10%, #fff);
+    box-sizing: border-box;
   }
 
   .partbot-catalogue-notes__label {
@@ -198,22 +680,12 @@
     line-height: 1.5;
   }
 
-  .partbot-attributes__heading,
-  .partbot-documents__heading,
-  .partbot-applications__heading,
-  .partbot-cross-sell__heading {
-    margin: 0 0 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
   .partbot-attributes__list,
   .partbot-documents__list {
     list-style: none;
-    margin: 0;
+    margin: 0 0 1.25rem;
     padding: 0;
+    width: 100%;
   }
 
   .partbot-attributes__item {
@@ -235,6 +707,13 @@
     padding: 0.35rem 0;
     color: inherit;
     font-size: 0.85rem;
+  }
+
+  .partbot-applications__heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .partbot-applications__group + .partbot-applications__group {
@@ -276,6 +755,10 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  .partbot-cross-sell__heading {
+    text-align: center;
   }
 
   .partbot-cross-sell__grid {
@@ -355,11 +838,23 @@
     cursor: not-allowed;
   }
 
+  @media screen and (max-width: 989px) {
+    .product-page__suggested-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
   @media screen and (max-width: 749px) {
-    .product-page {
+    .product-page__main {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
 
+    .product-page__media {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .product-page__suggested-grid,
     .partbot-cross-sell__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

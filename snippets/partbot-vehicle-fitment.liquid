@@ -1,8 +1,18 @@
 {% doc %}
   Partbot product vehicle fitment confirmation.
+  Shows a demo panel when Demo preview mode is on.
 {% enddoc %}
 
-{% if settings.partbot_enable and settings.partbot_demo_mode == false and settings.partbot_show_fitment %}
+{% if settings.partbot_demo_mode and settings.partbot_show_fitment %}
+  <div class="partbot-fitment partbot-fitment--yes partbot-fitment--demo" data-partbot-fitment-demo>
+    <span class="partbot-fitment__badge">{{ 'partbot.fits' | t }}</span>
+    <span class="partbot-fitment__text">
+      {{ 'partbot.fits_vehicle' | t }}
+      <strong>2018 Toyota Hilux SR5</strong>
+      <span class="partbot-fitment__demo-label">{{ 'partbot.demo_badge' | t }}</span>
+    </span>
+  </div>
+{% elsif settings.partbot_enable and settings.partbot_show_fitment %}
   {% assign vehicle_ids = product.metafields.partbot.vehicle_ids %}
   {% assign vehicle_years = product.metafields.partbot.vehicle_years %}
 

@@ -68,6 +68,9 @@
   </div>
 
   <div class="product-card__info">
+    {% if product.vendor != blank %}
+      <p class="product-card__vendor">{{ product.vendor | escape }}</p>
+    {% endif %}
     <h3 class="product-card__title">
       <a href="{{ product.url }}">{{ product.title | escape }}</a>
     </h3>
@@ -154,6 +157,14 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .product-card__vendor {
+    margin: 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #777;
   }
 
   .product-card__title,
