@@ -42,6 +42,16 @@
     background-repeat: no-repeat;
     background-size: cover;
   }
+
+  @media screen and (max-width: 749px) {
+    .shopify-section:has(.vehicle-search-section):has(+ .shopify-section .promo-banners-shell) {
+      padding-bottom: 0 !important;
+    }
+
+    .shopify-section:has(.vehicle-search-section) + .shopify-section:has(.promo-banners-shell) {
+      padding-top: 0 !important;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
