@@ -134,6 +134,7 @@
 
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
+    --page-margin-mobile: 0.75rem;
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
     --color-accent: {{ settings.accent_color }};
@@ -162,5 +163,11 @@
     --partbot-button-hover-color: {{ accent_hover_r }} {{ accent_hover_g }} {{ accent_hover_b }};
     --partbot-button-label-color: {{ partbot_label_color }};
     --partbot-button-border-radius: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    :root {
+      --page-margin: var(--page-margin-mobile);
+    }
   }
 {% endstyle %}
