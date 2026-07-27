@@ -25,7 +25,7 @@
         "shop_all_button_1_label": "",
         "shop_all_button_1_link": "",
         "shop_all_button_2_label": "Shop all",
-        "shop_all_button_2_link": "shopify://collections",
+        "shop_all_button_2_link": "shopify://collections/all",
         "padding_top": 0,
         "padding_bottom": 0
       }
