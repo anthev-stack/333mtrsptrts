@@ -77,26 +77,27 @@
                 </td>
 
                 <td class="cart-page__cell cart-page__cell--qty" data-label="{{ 'cart.quantity' | t }}">
-                  <div class="cart-page__qty" data-cart-page-qty>
+                  <div class="cart-page__qty" data-cart-page-qty data-line-key="{{ item.key }}">
                     <button
                       type="button"
                       class="cart-page__qty-btn"
-                      data-qty-change="-1"
+                      data-cart-page-qty-change="-1"
                       aria-label="{{ 'products.decrease_quantity' | t }}"
                     >−</button>
                     <input
                       class="cart-page__qty-input"
                       type="number"
-                      name="updates[]"
+                      name="updates[{{ item.key }}]"
                       value="{{ item.quantity }}"
                       min="0"
                       aria-label="{{ 'cart.quantity' | t }}"
-                      data-qty-input
+                      data-cart-page-qty-input
+                      data-line-key="{{ item.key }}"
                     >
                     <button
                       type="button"
                       class="cart-page__qty-btn"
-                      data-qty-change="1"
+                      data-cart-page-qty-change="1"
                       aria-label="{{ 'products.increase_quantity' | t }}"
                     >+</button>
                   </div>
@@ -146,26 +147,65 @@
 </section>
 
 {% javascript %}
-  document.querySelectorAll('[data-cart-page]').forEach((page) => {
-    const form = page.querySelector('#CartPageForm');
-    if (!form) return;
+  (() => {
+    const root = window.Shopify?.routes?.root || '/';
 
-    page.querySelectorAll('[data-cart-page-qty]').forEach((wrap) => {
-      const input = wrap.querySelector('[data-qty-input]');
-      wrap.querySelectorAll('[data-qty-change]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const next = Math.max(0, Number(input.value || 0) + Number(btn.dataset.qtyChange));
-          input.value = String(next);
-          form.submit();
-        });
+    const changeLineQuantity = async (key, quantity) => {
+      const response = await fetch(`${root}cart/change.js`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ id: key, quantity }),
       });
 
-      input?.addEventListener('change', () => {
-        input.value = String(Math.max(0, Number(input.value) || 0));
-        form.submit();
-      });
+      if (!response.ok) {
+        throw new Error('Cart quantity update failed');
+      }
+
+      window.location.reload();
+    };
+
+    document.addEventListener('click', async (event) => {
+      const btn = event.target.closest('[data-cart-page-qty-change]');
+      if (!btn) return;
+
+      const wrap = btn.closest('[data-cart-page-qty]');
+      const input = wrap?.querySelector('[data-cart-page-qty-input]');
+      const key = wrap?.dataset.lineKey || input?.dataset.lineKey;
+      if (!key || !input) return;
+
+      event.preventDefault();
+      const next = Math.max(0, Number(input.value || 0) + Number(btn.dataset.cartPageQtyChange));
+      input.value = String(next);
+      btn.disabled = true;
+
+      try {
+        await changeLineQuantity(key, next);
+      } catch (error) {
+        btn.disabled = false;
+        console.error(error);
+      }
     });
-  });
+
+    document.addEventListener('change', async (event) => {
+      const input = event.target.closest('[data-cart-page-qty-input]');
+      if (!input) return;
+
+      const key = input.dataset.lineKey;
+      if (!key) return;
+
+      const next = Math.max(0, Number(input.value) || 0);
+      input.value = String(next);
+
+      try {
+        await changeLineQuantity(key, next);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  })();
 {% endjavascript %}
 
 {% stylesheet %}
