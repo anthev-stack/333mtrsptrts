@@ -25,11 +25,19 @@
             "tag": "OEM",
             "label": "GENUINE OEM"
           }
+        },
+        "tag_note_Y7tGy6": {
+          "type": "tag_note",
+          "settings": {
+            "tag": "CERTIFIED",
+            "label": "CERTIFIED CLASSIC"
+          }
         }
       },
       "block_order": [
         "tag_note_QfepEW",
-        "tag_note_BH8DHT"
+        "tag_note_BH8DHT",
+        "tag_note_Y7tGy6"
       ],
       "settings": {
         "padding_top": 40,
