@@ -12,15 +12,23 @@
     "main": {
       "type": "product",
       "blocks": {
+        "tag_note_QfepEW": {
+          "type": "tag_note",
+          "settings": {
+            "tag": "",
+            "label": "FIA APPROVED"
+          }
+        },
         "tag_note_BH8DHT": {
           "type": "tag_note",
           "settings": {
-            "tag": "FIA",
-            "label": "FIA APPROVED"
+            "tag": "OEM",
+            "label": "GENUINE OEM"
           }
         }
       },
       "block_order": [
+        "tag_note_QfepEW",
         "tag_note_BH8DHT"
       ],
       "settings": {
