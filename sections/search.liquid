@@ -1,70 +1,386 @@
 {% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
+  Search page — centered search bar + recommended products + results.
 {% endcomment %}
 
-<h1>{{ 'search.title' | t }}</h1>
+{% liquid
+  assign recommend_collection = section.settings.recommend_collection
+  assign recommend_limit = section.settings.products_to_show | default: 8
+%}
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
+{% render 'section-padding' %}
+
+<section class="search-page" data-search-page>
+  <form
+    action="{{ routes.search_url }}"
+    method="get"
+    role="search"
+    class="search-page__form"
   >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
-
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
-
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        {% endfor %}
-
-        {{ paginate | default_pagination }}
-      {% endpaginate %}
+    <label class="visually-hidden" for="SearchInput-{{ section.id }}">
+      {{ 'search.title' | t }}
+    </label>
+    <div class="search-page__field">
+      <input
+        id="SearchInput-{{ section.id }}"
+        class="search-page__input"
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ 'search.placeholder' | t }}"
+        autocomplete="off"
+        autofocus
+      >
+      <button type="submit" class="search-page__submit" aria-label="{{ 'search.submit' | t }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
+        </svg>
+      </button>
     </div>
+  </form>
+
+  {% if search.performed %}
+    <div class="search-page__results-meta">
+      {% if search.results_count == 0 %}
+        <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
+      {% else %}
+        <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+      {% endif %}
+    </div>
+
+    {% if search.results_count > 0 %}
+      <div class="search-page__results">
+        {% paginate search.results by 24 %}
+          <div class="search-page__grid">
+            {% for result in search.results %}
+              {% if result.object_type == 'product' %}
+                {% render 'product-card', product: result %}
+              {% else %}
+                <article class="search-page__result-card">
+                  {% assign featured_image = result.featured_image | default: result.image %}
+                  {% if featured_image %}
+                    <a href="{{ result.url }}" class="search-page__result-media">
+                      {{
+                        featured_image
+                        | image_url: width: 600
+                        | image_tag:
+                          class: 'search-page__result-image',
+                          widths: '300, 450, 600',
+                          sizes: '(min-width: 990px) 22vw, 45vw',
+                          loading: 'lazy',
+                          alt: result.title
+                      }}
+                    </a>
+                  {% endif %}
+                  <h3 class="search-page__result-title">
+                    <a href="{{ result.url }}">{{ result.title | escape }}</a>
+                  </h3>
+                </article>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% if paginate.pages > 1 %}
+            <nav class="search-page__pagination" aria-label="{{ 'collections.pagination' | t }}">
+              {{ paginate | default_pagination }}
+            </nav>
+          {% endif %}
+        {% endpaginate %}
+      </div>
+    {% endif %}
   {% endif %}
-{% endif %}
+
+  <div
+    class="search-page__recommended"
+    data-search-recommended
+    {% unless search.performed %}data-search-recommended-default{% endunless %}
+  >
+    <h2 class="search-page__recommended-heading">{{ 'search.recommended' | t }}</h2>
+
+    <div class="search-page__grid" data-search-recommended-grid>
+      {% comment %} Server fallback: collection picks, then all products {% endcomment %}
+      {% liquid
+        assign shown = 0
+        if recommend_collection != blank
+          for product in recommend_collection.products limit: recommend_limit
+            render 'product-card', product: product
+            assign shown = shown | plus: 1
+          endfor
+        endif
+
+        if shown == 0
+          for product in collections.all.products limit: recommend_limit
+            render 'product-card', product: product
+            assign shown = shown | plus: 1
+          endfor
+        endif
+      %}
+    </div>
+
+    <p class="search-page__recommended-empty" data-search-recommended-empty hidden>
+      {{ 'search.recommended_empty' | t }}
+    </p>
+  </div>
+</section>
+
+{% javascript %}
+  (() => {
+    const page = document.querySelector('[data-search-page]');
+    if (!page) return;
+
+    const grid = page.querySelector('[data-search-recommended-grid]');
+    const empty = page.querySelector('[data-search-recommended-empty]');
+    const root = window.Shopify?.routes?.root || '/';
+    const storageKey = '333_recently_viewed';
+    const limit = {{ recommend_limit | json }};
+    const moneyFormat = {{ shop.money_format | json }};
+
+    const getRecentlyViewed = () => {
+      try {
+        const raw = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        return Array.isArray(raw) ? raw.map(String).filter(Boolean) : [];
+      } catch (error) {
+        return [];
+      }
+    };
+
+    const fetchRecommendations = async (productId) => {
+      const url = `${root}recommendations/products.json?product_id=${encodeURIComponent(productId)}&limit=${limit}&intent=related`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('recommendations failed');
+      const data = await response.json();
+      return data.products || [];
+    };
+
+    const formatMoney = (cents) => {
+      const amount = (Number(cents) / 100).toFixed(2);
+      if (!moneyFormat) return `$${amount}`;
+      return moneyFormat
+        .replace(/\{\{\s*amount\s*\}\}/, amount)
+        .replace(/\{\{\s*amount_no_decimals\s*\}\}/, String(Math.round(Number(cents) / 100)))
+        .replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, amount.replace('.', ','))
+        .replace(/\{\{\s*amount_no_decimals_with_comma_separator\s*\}\}/, String(Math.round(Number(cents) / 100)));
+    };
+
+    const cardHtml = (product) => {
+      const image = product.featured_image || product.images?.[0];
+      const price = product.price_min ?? product.price;
+      const vendor = product.vendor ? `<p class="product-card__vendor">${product.vendor}</p>` : '';
+      const img = image
+        ? `<img class="product-card__image" src="${image}" alt="${product.title.replace(/"/g, '&quot;')}" loading="lazy" width="400" height="400">`
+        : '';
+
+      return `
+        <article class="product-card">
+          <div class="product-card__media">
+            <a href="${product.url}" class="product-card__image-link">
+              ${img}
+            </a>
+          </div>
+          <div class="product-card__info">
+            ${vendor}
+            <h3 class="product-card__title"><a href="${product.url}">${product.title}</a></h3>
+            <p class="product-card__price">${formatMoney(price)}</p>
+          </div>
+        </article>
+      `;
+    };
+
+    const renderProducts = (products) => {
+      if (!products.length) {
+        empty?.removeAttribute('hidden');
+        return;
+      }
+      empty?.setAttribute('hidden', '');
+      grid.innerHTML = products.slice(0, limit).map(cardHtml).join('');
+    };
+
+    const loadTailored = async () => {
+      const recent = getRecentlyViewed();
+      if (!recent.length) return;
+
+      try {
+        const products = await fetchRecommendations(recent[0]);
+        if (products.length) renderProducts(products);
+      } catch (error) {
+        // Keep server-rendered fallback cards.
+      }
+    };
+
+    loadTailored();
+  })();
+{% endjavascript %}
 
 {% stylesheet %}
-  .search-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.75rem;
-  }
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+  .search-page {
+    width: min(var(--page-width), 100%);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+    box-sizing: border-box;
   }
 
-  @media screen and (max-width: 549px) {
-    .search-results {
+  .search-page__form {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .search-page__field {
+    position: relative;
+    width: min(34rem, 100%);
+  }
+
+  .search-page__input {
+    width: 100%;
+    min-height: 3.1rem;
+    padding: 0.85rem 3rem 0.85rem 1.15rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: #f3f3f3;
+    color: #111;
+    font: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .search-page__input::placeholder {
+    color: #9a9a9a;
+  }
+
+  .search-page__input:focus {
+    box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.2);
+  }
+
+  .search-page__submit {
+    appearance: none;
+    position: absolute;
+    top: 50%;
+    right: 0.65rem;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+  }
+
+  .search-page__submit:hover {
+    color: #111;
+  }
+
+  .search-page__results-meta {
+    margin: 0 0 1.25rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .search-page__results-meta p {
+    margin: 0;
+  }
+
+  .search-page__recommended {
+    margin-top: 1.5rem;
+  }
+
+  .search-page__recommended-heading {
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .search-page__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .search-page__result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .search-page__result-media {
+    display: block;
+    background: #f3f3f3;
+    line-height: 0;
+  }
+
+  .search-page__result-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+
+  .search-page__result-title {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.35;
+  }
+
+  .search-page__result-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .search-page__result-title a:hover {
+    text-decoration: underline;
+  }
+
+  .search-page__pagination {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .search-page__pagination a,
+  .search-page__pagination span {
+    margin: 0 0.35rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .search-page__recommended-empty {
+    text-align: center;
+    color: #666;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .search-page__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .search-page__form {
+      margin: 0.75rem 0 1.75rem;
+    }
+
+    .search-page__grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
     }
   }
 {% endstylesheet %}
@@ -72,6 +388,46 @@
 {% schema %}
 {
   "name": "t:general.search",
-  "settings": []
+  "settings": [
+    {
+      "type": "collection",
+      "id": "recommend_collection",
+      "label": "Recommended products collection",
+      "info": "Fallback products when a shopper has no browsing history yet."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8,
+      "label": "Recommended products to show"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 56
+    }
+  ]
 }
 {% endschema %}

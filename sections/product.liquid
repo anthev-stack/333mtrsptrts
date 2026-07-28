@@ -253,20 +253,30 @@
 {% javascript %}
   document.querySelectorAll('[data-product-page]').forEach((page) => {
     const quantity = page.querySelector('[data-quantity]');
-    if (!quantity) return;
+    if (quantity) {
+      const input = quantity.querySelector('[data-quantity-input]');
+      const minus = quantity.querySelector('[data-quantity-minus]');
+      const plus = quantity.querySelector('[data-quantity-plus]');
 
-    const input = quantity.querySelector('[data-quantity-input]');
-    const minus = quantity.querySelector('[data-quantity-minus]');
-    const plus = quantity.querySelector('[data-quantity-plus]');
+      const setValue = (next) => {
+        const value = Math.max(1, Number(next) || 1);
+        input.value = String(value);
+      };
 
-    const setValue = (next) => {
-      const value = Math.max(1, Number(next) || 1);
-      input.value = String(value);
-    };
+      minus?.addEventListener('click', () => setValue(Number(input.value) - 1));
+      plus?.addEventListener('click', () => setValue(Number(input.value) + 1));
+      input?.addEventListener('change', () => setValue(input.value));
+    }
 
-    minus?.addEventListener('click', () => setValue(Number(input.value) - 1));
-    plus?.addEventListener('click', () => setValue(Number(input.value) + 1));
-    input?.addEventListener('change', () => setValue(input.value));
+    {% if product.id %}
+      try {
+        const key = '333_recently_viewed';
+        const id = String({{ product.id | json }});
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        const next = [id, ...existing.filter((item) => String(item) !== id)].slice(0, 12);
+        localStorage.setItem(key, JSON.stringify(next));
+      } catch (error) {}
+    {% endif %}
   });
 {% endjavascript %}
 
