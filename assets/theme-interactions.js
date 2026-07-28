@@ -1,6 +1,163 @@
 (() => {
   const root = window.Shopify?.routes?.root || '/';
 
+  const initSiteHeaders = () => {
+    document.querySelectorAll('[data-site-header]:not([data-header-init])').forEach((header) => {
+      header.setAttribute('data-header-init', '');
+
+      const toggle = header.querySelector('[data-menu-toggle]');
+      const nav = header.querySelector('[data-header-nav]');
+      const submenuItems = header.querySelectorAll('[data-submenu-item]');
+      const mobileQuery = window.matchMedia('(max-width: 749px)');
+      const pl8Open = header.querySelector('[data-pl8srch-open]');
+      const pl8Modal = document.querySelector('[data-pl8srch-modal]');
+      const pl8Dialog = pl8Modal?.querySelector('[data-pl8srch-dialog]');
+      const pl8Plate = pl8Modal?.querySelector('[data-pl8srch-plate]');
+      let closeTimer = null;
+      let lastFocus = null;
+
+      const isMobile = () => mobileQuery.matches;
+
+      const setPl8Open = (open) => {
+        if (!pl8Modal) return;
+        pl8Modal.hidden = !open;
+        pl8Modal.setAttribute('aria-hidden', String(!open));
+        document.body.classList.toggle('pl8srch-modal-open', open);
+
+        if (open) {
+          lastFocus = document.activeElement;
+          pl8Dialog?.focus();
+          pl8Plate?.focus();
+          pl8Plate?.select?.();
+        } else if (lastFocus && typeof lastFocus.focus === 'function') {
+          lastFocus.focus();
+        }
+      };
+
+      pl8Open?.addEventListener('click', () => setPl8Open(true));
+
+      pl8Modal?.querySelectorAll('[data-pl8srch-close]').forEach((el) => {
+        el.addEventListener('click', () => setPl8Open(false));
+      });
+
+      pl8Modal?.querySelectorAll('[data-pl8srch-state]').forEach((button) => {
+        button.addEventListener('click', () => {
+          pl8Modal.querySelectorAll('[data-pl8srch-state]').forEach((other) => {
+            other.classList.toggle('is-selected', other === button);
+            other.setAttribute('aria-pressed', String(other === button));
+          });
+        });
+      });
+
+      pl8Modal?.querySelector('[data-pl8srch-submit]')?.addEventListener('click', () => {
+        setPl8Open(false);
+      });
+
+      pl8Plate?.addEventListener('input', () => {
+        pl8Plate.value = pl8Plate.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      });
+
+      const setItemOpen = (item, open) => {
+        item.classList.toggle('is-open', open);
+        const button = item.querySelector('[data-submenu-toggle]');
+        if (button) button.setAttribute('aria-expanded', String(open));
+      };
+
+      const closeAllSubmenus = () => {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+        submenuItems.forEach((item) => setItemOpen(item, false));
+      };
+
+      const openSubmenu = (item) => {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+        submenuItems.forEach((other) => {
+          if (other !== item) setItemOpen(other, false);
+        });
+        setItemOpen(item, true);
+      };
+
+      const scheduleCloseSubmenu = (item) => {
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          setItemOpen(item, false);
+          closeTimer = null;
+        }, 280);
+      };
+
+      const setMobileOpen = (open) => {
+        header.classList.toggle('is-menu-open', open);
+        nav?.classList.toggle('is-open', open);
+        toggle?.setAttribute('aria-expanded', String(open));
+        document.body.classList.toggle('site-header-menu-open', open);
+        if (!open) closeAllSubmenus();
+      };
+
+      toggle?.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setMobileOpen(!header.classList.contains('is-menu-open'));
+      });
+
+      submenuItems.forEach((item) => {
+        const button = item.querySelector('[data-submenu-toggle]');
+        if (!button) return;
+
+        button.addEventListener('click', (event) => {
+          if (!isMobile()) return;
+
+          event.preventDefault();
+          const willOpen = !item.classList.contains('is-open');
+          closeAllSubmenus();
+          setItemOpen(item, willOpen);
+        });
+
+        item.addEventListener('mouseenter', () => {
+          if (isMobile()) return;
+          openSubmenu(item);
+        });
+
+        item.addEventListener('mouseleave', () => {
+          if (isMobile()) return;
+          scheduleCloseSubmenu(item);
+        });
+
+        item.addEventListener('focusin', () => {
+          if (isMobile()) return;
+          openSubmenu(item);
+        });
+
+        item.addEventListener('focusout', (event) => {
+          if (isMobile()) return;
+          if (item.contains(event.relatedTarget)) return;
+          scheduleCloseSubmenu(item);
+        });
+      });
+
+      header.querySelectorAll('.site-header__mega-link, .site-header__dropdown-link, .site-header__blurb-button').forEach((link) => {
+        link.addEventListener('click', () => setMobileOpen(false));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        if (pl8Modal && !pl8Modal.hidden) {
+          setPl8Open(false);
+          return;
+        }
+        setMobileOpen(false);
+      });
+
+      document.addEventListener('click', (event) => {
+        if (header.contains(event.target) || (pl8Modal && pl8Modal.contains(event.target))) return;
+        setMobileOpen(false);
+      });
+    });
+  };
+
+  initSiteHeaders();
+  document.addEventListener('shopify:section:load', initSiteHeaders);
+
   const setInputValue = (input, value, min = 1) => {
     if (!input) return;
     const next = Math.max(min, Number(value) || min);
