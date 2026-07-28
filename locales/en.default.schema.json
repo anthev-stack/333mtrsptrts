@@ -83,6 +83,8 @@
     "link_right": "Right link",
     "logo": "Logo image",
     "logo_width": "Logo width",
+    "favicon": "Favicon",
+    "favicon_info": "Shown in browser tabs. Use a square PNG, ideally 512 × 512.",
     "map_address": "Map address",
     "map_address_info": "Used to generate a Google Map. Leave blank if you paste a custom embed below.",
     "map_embed": "Custom map embed",

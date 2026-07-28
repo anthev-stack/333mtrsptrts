@@ -25,6 +25,12 @@
         "label": "Logo scale",
         "default": 100,
         "info": "Scale the logo from 20% to 100% of its full header size."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "t:labels.favicon",
+        "info": "t:labels.favicon_info"
       }
     ]
   },
