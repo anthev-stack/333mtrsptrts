@@ -91,7 +91,12 @@
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                 body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] }),
               });
-              window.location.href = window.Shopify?.routes?.root ? `${window.Shopify.routes.root}cart` : '/cart';
+              if (window.CartDrawer?.refresh && window.CartDrawer?.open) {
+                await window.CartDrawer.refresh();
+                window.CartDrawer.open();
+              } else {
+                window.location.href = window.Shopify?.routes?.root ? `${window.Shopify.routes.root}cart` : '/cart';
+              }
             } catch (error) {
               console.error('Partbot cross-sell add to cart failed', error);
               button.disabled = false;
