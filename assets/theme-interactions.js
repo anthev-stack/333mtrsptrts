@@ -97,4 +97,38 @@
       // Ignore storage errors.
     }
   }
+
+  const variantSelect = document.querySelector('[data-product-variant-select]');
+  const variantsEl = document.querySelector('[data-product-variants]');
+  if (variantSelect && variantsEl) {
+    let variants = [];
+    try {
+      variants = JSON.parse(variantsEl.textContent || '[]');
+    } catch (error) {
+      variants = [];
+    }
+
+    const form = variantSelect.closest('[data-product-form]');
+    const addBtn = form?.querySelector('[data-product-add]');
+    const paymentWrap = form?.querySelector('[data-product-payment]');
+    const unavailableBtn = form?.querySelector('[data-product-unavailable]');
+
+    const updateAvailability = (variantId) => {
+      const variant = variants.find((item) => String(item.id) === String(variantId));
+      if (!variant) return;
+
+      const available = Boolean(variant.available);
+      if (addBtn) {
+        addBtn.disabled = !available;
+        addBtn.textContent = available ? addBtn.dataset.addLabel : addBtn.dataset.soldOutLabel;
+      }
+
+      paymentWrap?.classList.toggle('is-hidden', !available);
+      unavailableBtn?.classList.toggle('is-hidden', available);
+    };
+
+    variantSelect.addEventListener('change', () => {
+      updateAvailability(variantSelect.value);
+    });
+  }
 })();

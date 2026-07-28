@@ -154,11 +154,16 @@
       {% render 'partbot-vehicle-fitment', product: product %}
       {% render 'partbot-catalogue-notes', product: product %}
 
-      {% form 'product', product, id: product_form_id, class: 'product-page__form' %}
+      {% form 'product', product, id: product_form_id, class: 'product-page__form', data-product-form: '' %}
         {% unless product.has_only_default_variant %}
           <div class="product-page__variants">
             <label class="product-page__label" for="Variant-{{ section.id }}">{{ 'products.variant' | t }}</label>
-            <select name="id" id="Variant-{{ section.id }}" class="product-page__select">
+            <select
+              name="id"
+              id="Variant-{{ section.id }}"
+              class="product-page__select"
+              data-product-variant-select
+            >
               {% for variant in product.variants %}
                 <option
                   value="{{ variant.id }}"
@@ -195,6 +200,9 @@
           type="submit"
           name="add"
           class="product-page__add"
+          data-product-add
+          data-add-label="{{ 'products.add_to_cart' | t | escape }}"
+          data-sold-out-label="{{ 'products.sold_out' | t | escape }}"
           {% unless current_variant.available %}disabled{% endunless %}
         >
           {% if current_variant.available %}
@@ -204,9 +212,26 @@
           {% endif %}
         </button>
 
-        <div class="product-page__buy">
-          {{ form | payment_button }}
+        <div class="product-page__buy" data-product-buy>
+          <div
+            class="product-page__payment{% unless current_variant.available %} is-hidden{% endunless %}"
+            data-product-payment
+          >
+            {{ form | payment_button }}
+          </div>
+          <button
+            type="button"
+            class="product-page__unavailable{% if current_variant.available %} is-hidden{% endif %}"
+            disabled
+            data-product-unavailable
+          >
+            {{ 'products.currently_unavailable' | t }}
+          </button>
         </div>
+
+        <script type="application/json" data-product-variants>
+          {{ product.variants | json }}
+        </script>
       {% endform %}
 
       {% if product.description != blank %}
@@ -489,7 +514,8 @@
   }
 
   .product-page__add,
-  .product-page__buy .shopify-payment-button__button {
+  .product-page__buy .shopify-payment-button__button,
+  .product-page__unavailable {
     width: 100%;
     min-height: 2.85rem;
     border-radius: 0 !important;
@@ -499,6 +525,19 @@
     letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
     cursor: pointer;
+  }
+
+  .product-page__unavailable {
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .product-page__payment.is-hidden,
+  .product-page__unavailable.is-hidden {
+    display: none;
   }
 
   .product-page__add {

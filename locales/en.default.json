@@ -96,6 +96,7 @@
     "from": "From",
     "in_stock": "{{ count }} in stock",
     "sold_out": "Sold out",
+    "currently_unavailable": "Currently unavailable",
     "home": "Home",
     "breadcrumb": "Breadcrumb",
     "previous": "Previous",
