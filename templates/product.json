@@ -11,7 +11,22 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "blocks": {
+        "tag_note_BH8DHT": {
+          "type": "tag_note",
+          "settings": {
+            "tag": "FIA",
+            "label": "FIA APPROVED"
+          }
+        }
+      },
+      "block_order": [
+        "tag_note_BH8DHT"
+      ],
+      "settings": {
+        "padding_top": 40,
+        "padding_bottom": 56
+      }
     }
   },
   "order": [
