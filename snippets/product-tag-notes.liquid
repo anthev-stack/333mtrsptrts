@@ -1,0 +1,34 @@
+{% doc %}
+  Renders notes for product tags configured as blocks on the product section.
+  Only shows notes when the viewed product has a matching tag.
+{% enddoc %}
+
+{% capture notes_markup %}
+  {% for block in blocks %}
+    {% if block.type == 'tag_note' %}
+      {% assign match_tag = block.settings.tag | downcase | strip %}
+      {% assign note_label = block.settings.label | strip %}
+
+      {% if match_tag != blank and note_label != blank %}
+        {% for product_tag in product.tags %}
+          {% assign normalized_tag = product_tag | downcase | strip %}
+
+          {% if normalized_tag == match_tag %}
+            <p class="product-tag-note" {{ block.shopify_attributes }}>
+              {{ note_label | escape }}
+            </p>
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+{% assign notes_markup = notes_markup | strip %}
+
+{% if notes_markup != blank %}
+  <div class="product-tag-notes">
+    {{ notes_markup }}
+  </div>
+{% endif %}
