@@ -25,12 +25,20 @@
   "cart": {
     "checkout": "Checkout",
     "title": "Cart",
+    "your_cart": "Your cart",
     "update": "Update",
     "remove": "Remove",
     "empty": "Your cart is empty",
     "start_shopping": "Start shopping",
+    "continue_shopping": "Continue shopping",
     "subtotal": "Subtotal",
-    "view_cart": "View cart"
+    "line_subtotal": "Subtotal",
+    "view_cart": "View cart",
+    "product": "Product",
+    "price": "Price",
+    "quantity": "Quantity",
+    "order_note": "Order note",
+    "taxes_shipping": "Taxes, discounts and shipping calculated at checkout."
   },
   "customers": {
     "login": {
