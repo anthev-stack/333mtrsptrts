@@ -33,7 +33,7 @@
 
 {% render 'section-padding' %}
 
-<section class="product-page" data-product-page>
+<section class="product-page" data-product-page data-product-id="{{ product.id }}">
   <div class="product-page__nav">
     <nav class="product-page__breadcrumbs" aria-label="{{ 'products.breadcrumb' | t }}">
       <a href="{{ routes.root_url }}">{{ 'products.home' | t }}</a>
@@ -250,35 +250,7 @@
   {% endif %}
 </section>
 
-{% javascript %}
-  document.querySelectorAll('[data-product-page]').forEach((page) => {
-    const quantity = page.querySelector('[data-quantity]');
-    if (quantity) {
-      const input = quantity.querySelector('[data-quantity-input]');
-      const minus = quantity.querySelector('[data-quantity-minus]');
-      const plus = quantity.querySelector('[data-quantity-plus]');
-
-      const setValue = (next) => {
-        const value = Math.max(1, Number(next) || 1);
-        input.value = String(value);
-      };
-
-      minus?.addEventListener('click', () => setValue(Number(input.value) - 1));
-      plus?.addEventListener('click', () => setValue(Number(input.value) + 1));
-      input?.addEventListener('change', () => setValue(input.value));
-    }
-
-    {% if product.id %}
-      try {
-        const key = '333_recently_viewed';
-        const id = String({{ product.id | json }});
-        const existing = JSON.parse(localStorage.getItem(key) || '[]');
-        const next = [id, ...existing.filter((item) => String(item) !== id)].slice(0, 12);
-        localStorage.setItem(key, JSON.stringify(next));
-      } catch (error) {}
-    {% endif %}
-  });
-{% endjavascript %}
+{% comment %} Quantity + recently viewed tracking handled in assets/theme-interactions.js {% endcomment %}
 
 {% stylesheet %}
   .product-page {
