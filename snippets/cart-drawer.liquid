@@ -527,7 +527,7 @@
 
     document.addEventListener('submit', async (event) => {
       const form = event.target.closest('form[action*="/cart/add"]');
-      if (!form) return;
+      if (!form || form.hasAttribute('data-membership-checkout')) return;
 
       event.preventDefault();
       const formData = new FormData(form);

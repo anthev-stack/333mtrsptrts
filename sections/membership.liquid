@@ -1,0 +1,412 @@
+{% liquid
+  assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+  assign membership_product = settings.membership_product
+  assign cancel_url = settings.membership_cancel_url | strip
+  assign price_label = settings.membership_price_label | default: '$3.33 / month'
+  assign is_member = false
+  assign barcode_value = ''
+
+  if customer
+    for tag in customer.tags
+      assign normalized_tag = tag | strip | downcase
+      if normalized_tag == membership_tag
+        assign is_member = true
+        break
+      endif
+    endfor
+
+    if customer.metafields.membership.barcode != blank
+      assign barcode_value = customer.metafields.membership.barcode.value | default: customer.metafields.membership.barcode
+    endif
+
+    if barcode_value == blank
+      assign barcode_value = '333-' | append: customer.id
+    endif
+  endif
+
+  if membership_product == blank
+    assign membership_product = all_products['333-membership']
+  endif
+
+  if membership_product == blank
+    assign membership_product = all_products['333-memberships']
+  endif
+
+  assign membership_variant = membership_product.selected_or_first_available_variant
+%}
+
+{% render 'section-padding' %}
+
+<section
+  class="membership"
+  data-membership-page
+  {% if customer %}data-customer-id="{{ customer.id }}"{% endif %}
+  {% if is_member %}
+    data-barcode="{{ barcode_value | escape }}"
+    data-cancel-url="{{ cancel_url | escape }}"
+  {% endif %}
+>
+  <div class="membership__inner">
+    <p class="membership__eyebrow">{{ 'membership.eyebrow' | t }}</p>
+    <h1 class="membership__title">{{ 'membership.title' | t }}</h1>
+
+    {% unless customer %}
+      <div class="membership__panel membership__panel--guest">
+        <p class="membership__lead">{{ 'membership.guest_lead' | t }}</p>
+        <div class="membership__actions">
+          <a href="{{ routes.storefront_login_url }}" class="membership__button membership__button--primary">
+            {{ 'membership.log_in' | t }}
+          </a>
+          <a href="{{ routes.account_register_url }}" class="membership__button membership__button--secondary">
+            {{ 'membership.create_account' | t }}
+          </a>
+        </div>
+      </div>
+    {% elsif is_member %}
+      <div class="membership__panel membership__panel--member">
+        <p class="membership__status">{{ 'membership.active_status' | t }}</p>
+        <p class="membership__lead">{{ 'membership.member_lead' | t }}</p>
+
+        <div class="membership__card" aria-label="{{ 'membership.card_label' | t }}">
+          <div class="membership__card-top">
+            <span class="membership__card-brand">333</span>
+            <span class="membership__card-name">
+              {{ customer.first_name | default: customer.name | default: customer.email | escape }}
+            </span>
+          </div>
+
+          <div class="membership__barcode-wrap">
+            <svg
+              class="membership__barcode"
+              data-membership-barcode
+              role="img"
+              aria-label="{{ 'membership.barcode_label' | t: code: barcode_value }}"
+            ></svg>
+            <p class="membership__barcode-code">{{ barcode_value | escape }}</p>
+          </div>
+
+          <p class="membership__card-note">{{ 'membership.scan_note' | t }}</p>
+        </div>
+
+        <div class="membership__cancel">
+          <button
+            type="button"
+            class="membership__button membership__button--ghost"
+            data-membership-cancel
+            data-cancel-confirm="{{ 'membership.cancel_confirm' | t | escape }}"
+            data-cancel-pending="{{ 'membership.cancel_pending' | t | escape }}"
+            data-cancel-success="{{ 'membership.cancel_success' | t | escape }}"
+            data-cancel-error="{{ 'membership.cancel_error' | t | escape }}"
+            data-cancel-unavailable="{{ 'membership.cancel_unavailable' | t | escape }}"
+          >
+            {{ 'membership.cancel' | t }}
+          </button>
+          <p class="membership__cancel-status" data-membership-cancel-status hidden></p>
+        </div>
+      </div>
+    {% else %}
+      <div class="membership__panel membership__panel--join">
+        <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
+        <p class="membership__price">{{ price_label | escape }}</p>
+
+        {% if section.settings.benefits != blank %}
+          <div class="membership__benefits">
+            {{ section.settings.benefits }}
+          </div>
+        {% else %}
+          <ul class="membership__benefits-list">
+            <li>{{ 'membership.benefit_1' | t }}</li>
+            <li>{{ 'membership.benefit_2' | t }}</li>
+            <li>{{ 'membership.benefit_3' | t }}</li>
+            <li>{{ 'membership.benefit_4' | t }}</li>
+          </ul>
+        {% endif %}
+
+        {% if membership_product != blank and membership_variant != blank %}
+          {% form 'product', membership_product, class: 'membership__form', data-membership-checkout: '' %}
+            <input type="hidden" name="id" value="{{ membership_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="return_to" value="/checkout">
+            <button
+              type="submit"
+              name="add"
+              class="membership__button membership__button--primary"
+              {% unless membership_variant.available %}disabled{% endunless %}
+            >
+              {% if membership_variant.available %}
+                {{ 'membership.become_member' | t }}
+              {% else %}
+                {{ 'membership.unavailable' | t }}
+              {% endif %}
+            </button>
+          {% endform %}
+          <p class="membership__product-ref">
+            {{ membership_product.title | escape }}
+            · {{ membership_variant.price | money }}
+          </p>
+          <p class="membership__fineprint">{{ 'membership.subscription_note' | t }}</p>
+        {% else %}
+          <p class="membership__missing">{{ 'membership.product_missing' | t }}</p>
+        {% endif %}
+      </div>
+    {% endunless %}
+  </div>
+</section>
+
+<script src="{{ 'jsbarcode.min.js' | asset_url }}" defer></script>
+<script src="{{ 'membership.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .membership {
+    width: min(var(--page-width), 100%);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+
+  .membership__inner {
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+
+  .membership__eyebrow {
+    margin: 0 0 0.55rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #666;
+  }
+
+  .membership__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    line-height: 1.05;
+  }
+
+  .membership__panel {
+    padding: 1.35rem 1.25rem 1.5rem;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    background:
+      linear-gradient(180deg, #fafafa 0%, #f3f3f3 100%);
+  }
+
+  .membership__status {
+    display: inline-block;
+    margin: 0 0 0.85rem;
+    padding: 0.2rem 0.5rem;
+    background: #1f7a3a;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .membership__lead {
+    margin: 0 0 1rem;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .membership__price {
+    margin: 0 0 1rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .membership__benefits,
+  .membership__benefits-list {
+    margin: 0 0 1.25rem;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .membership__benefits-list {
+    padding-left: 1.1rem;
+  }
+
+  .membership__benefits-list li + li {
+    margin-top: 0.35rem;
+  }
+
+  .membership__actions,
+  .membership__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .membership__button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.7rem 1.15rem;
+    border: 1px solid #111;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .membership__button--primary {
+    background: #111;
+    color: #fff;
+  }
+
+  .membership__button--secondary {
+    background: transparent;
+    color: #111;
+  }
+
+  .membership__button--ghost {
+    background: transparent;
+    color: #111;
+    border-color: rgba(17, 17, 17, 0.35);
+  }
+
+  .membership__button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .membership__product-ref,
+  .membership__fineprint,
+  .membership__missing,
+  .membership__cancel-status {
+    margin: 0.75rem 0 0;
+    color: #666;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .membership__missing {
+    color: #a11f1f;
+  }
+
+  .membership__card {
+    margin: 1.15rem 0 1.35rem;
+    padding: 1.1rem 1rem 1rem;
+    background: #111;
+    color: #fff;
+  }
+
+  .membership__card-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .membership__card-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  .membership__card-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    text-align: right;
+  }
+
+  .membership__barcode-wrap {
+    padding: 0.75rem 0.65rem 0.55rem;
+    background: #fff;
+    color: #111;
+    text-align: center;
+  }
+
+  .membership__barcode {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .membership__barcode-code,
+  .membership__barcode-fallback {
+    margin: 0.35rem 0 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .membership__card-note {
+    margin: 0.75rem 0 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    line-height: 1.4;
+  }
+
+  .membership__cancel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .membership__button {
+      width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.membership",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "benefits",
+      "label": "t:labels.membership_benefits",
+      "default": "<p>Exclusive member deals, early product drops, member discounts, and in-store coffee shop perks with your membership card.</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

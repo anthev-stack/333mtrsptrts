@@ -345,6 +345,46 @@
     ]
   },
   {
+    "name": "t:general.membership",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:labels.membership_settings_info"
+      },
+      {
+        "type": "text",
+        "id": "membership_tag",
+        "label": "t:labels.membership_tag",
+        "default": "MEMBERSHIP",
+        "info": "t:labels.membership_tag_info"
+      },
+      {
+        "type": "product",
+        "id": "membership_product",
+        "label": "t:labels.membership_product",
+        "info": "t:labels.membership_product_info"
+      },
+      {
+        "type": "url",
+        "id": "membership_page_url",
+        "label": "t:labels.membership_page_url",
+        "info": "t:labels.membership_page_url_info"
+      },
+      {
+        "type": "text",
+        "id": "membership_price_label",
+        "label": "t:labels.membership_price_label",
+        "default": "$3.33 / month"
+      },
+      {
+        "type": "text",
+        "id": "membership_cancel_url",
+        "label": "t:labels.membership_cancel_url",
+        "info": "t:labels.membership_cancel_url_info"
+      }
+    ]
+  },
+  {
     "name": "t:general.side_promo_banners",
     "settings": [
       {

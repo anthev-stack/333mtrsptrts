@@ -76,6 +76,7 @@
         {% if customer %}
           {% liquid
             assign account_name = customer.first_name | default: customer.name | default: customer.email
+            assign membership_page_url = settings.membership_page_url | default: '/pages/membership'
           %}
           <a href="{{ routes.account_url }}" class="header-social__account-link header-social__account-link--name">
             {{ account_name | escape }}
@@ -91,6 +92,9 @@
           <span class="header-social__account-meta header-social__account-meta--orders">
             {{ 'header.account_orders' | t: count: customer.orders_count }}
           </span>
+          <a href="{{ membership_page_url }}" class="header-social__account-link">
+            {{ 'header.membership_card' | t }}
+          </a>
           <a href="{{ routes.account_url }}" class="header-social__account-link">
             {{ 'header.account' | t }}
           </a>
