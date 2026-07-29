@@ -27,7 +27,10 @@
   <div class="featured-collection__grid">
     {% if section.settings.collection != blank %}
       {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
-        {% render 'product-card', product: product %}
+        {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+        {% if is_membership != 'true' %}
+          {% render 'product-card', product: product %}
+        {% endif %}
       {% else %}
         <p class="featured-collection__empty">{{ 'collections.empty' | t }}</p>
       {% endfor %}

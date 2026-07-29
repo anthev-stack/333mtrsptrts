@@ -37,6 +37,7 @@
     "product": "Product",
     "price": "Price",
     "quantity": "Quantity",
+    "membership_qty_locked": "Limited to 1 membership",
     "order_note": "Order note",
     "taxes_shipping": "Taxes, discounts and shipping calculated at checkout."
   },

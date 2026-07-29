@@ -6,7 +6,22 @@
   assign current_variant = product.selected_or_first_available_variant
   assign product_form_id = 'ProductForm-' | append: section.id
   assign color_option = nil
+  assign membership_page_url = settings.membership_page_url | default: '/pages/membership'
+%}
+{% capture is_membership_product %}{% render 'product-is-membership', product: product %}{% endcapture %}
+{% if is_membership_product == 'true' %}
+  <script>
+    window.location.replace({{ membership_page_url | json }});
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url={{ membership_page_url }}">
+  </noscript>
+  <p style="padding:2rem;text-align:center;">
+    <a href="{{ membership_page_url }}">{{ 'membership.title' | t }}</a>
+  </p>
+{% else %}
 
+{% liquid
   for option in product.options_with_values
     assign option_name = option.name | downcase
     if option_name == 'color' or option_name == 'colour'
@@ -266,7 +281,8 @@
       <div class="product-page__suggested-grid">
         {% assign shown = 0 %}
         {% for related in collection.products %}
-          {% if related.id != product.id and shown < 4 %}
+          {% capture is_membership_related %}{% render 'product-is-membership', product: related %}{% endcapture %}
+          {% if related.id != product.id and is_membership_related != 'true' and shown < 4 %}
             {% render 'product-card', product: related %}
             {% assign shown = shown | plus: 1 %}
           {% endif %}
@@ -275,6 +291,8 @@
     </div>
   {% endif %}
 </section>
+
+{% endif %}
 
 {% comment %} Quantity + recently viewed tracking handled in assets/theme-interactions.js {% endcomment %}
 

@@ -77,30 +77,43 @@
                 </td>
 
                 <td class="cart-page__cell cart-page__cell--qty" data-label="{{ 'cart.quantity' | t }}">
-                  <div class="cart-page__qty" data-cart-page-qty data-line-key="{{ item.key }}">
-                    <button
-                      type="button"
-                      class="cart-page__qty-btn"
-                      data-cart-page-qty-change="-1"
-                      aria-label="{{ 'products.decrease_quantity' | t }}"
-                    >−</button>
-                    <input
-                      class="cart-page__qty-input"
-                      type="number"
-                      name="updates[{{ item.key }}]"
-                      value="{{ item.quantity }}"
-                      min="0"
-                      aria-label="{{ 'cart.quantity' | t }}"
-                      data-cart-page-qty-input
-                      data-line-key="{{ item.key }}"
+                  {% capture is_membership_line %}{% render 'product-is-membership', product: item.product %}{% endcapture %}
+                  {% if is_membership_line == 'true' %}
+                    <div
+                      class="cart-page__qty cart-page__qty--locked"
+                      data-membership-qty-locked
+                      {% if item.quantity != 1 %}data-membership-fix-qty="{{ item.key }}"{% endif %}
                     >
-                    <button
-                      type="button"
-                      class="cart-page__qty-btn"
-                      data-cart-page-qty-change="1"
-                      aria-label="{{ 'products.increase_quantity' | t }}"
-                    >+</button>
-                  </div>
+                      <span class="cart-page__qty-locked-value">1</span>
+                      <input type="hidden" name="updates[{{ item.key }}]" value="1">
+                    </div>
+                    <p class="cart-page__qty-note">{{ 'cart.membership_qty_locked' | t }}</p>
+                  {% else %}
+                    <div class="cart-page__qty" data-cart-page-qty data-line-key="{{ item.key }}">
+                      <button
+                        type="button"
+                        class="cart-page__qty-btn"
+                        data-cart-page-qty-change="-1"
+                        aria-label="{{ 'products.decrease_quantity' | t }}"
+                      >−</button>
+                      <input
+                        class="cart-page__qty-input"
+                        type="number"
+                        name="updates[{{ item.key }}]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        aria-label="{{ 'cart.quantity' | t }}"
+                        data-cart-page-qty-input
+                        data-line-key="{{ item.key }}"
+                      >
+                      <button
+                        type="button"
+                        class="cart-page__qty-btn"
+                        data-cart-page-qty-change="1"
+                        aria-label="{{ 'products.increase_quantity' | t }}"
+                      >+</button>
+                    </div>
+                  {% endif %}
                   <a href="{{ item.url_to_remove }}" class="cart-page__remove">
                     {{ 'cart.remove' | t }}
                   </a>
@@ -274,6 +287,28 @@
     grid-template-columns: 2.1rem minmax(2.4rem, 3rem) 2.1rem;
     border: 1px solid #111;
     margin-inline: auto;
+  }
+
+  .cart-page__qty--locked {
+    display: inline-flex;
+    min-width: 2.75rem;
+    justify-content: center;
+    align-items: center;
+    padding: 0.45rem 0.7rem;
+    grid-template-columns: none;
+  }
+
+  .cart-page__qty-locked-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .cart-page__qty-note {
+    margin: 0.35rem 0 0;
+    color: #666;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .cart-page__qty-btn,

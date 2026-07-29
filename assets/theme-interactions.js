@@ -181,6 +181,17 @@
     window.location.reload();
   };
 
+  // Membership is limited to quantity 1 — normalize any existing multi-qty lines.
+  document.querySelectorAll('[data-membership-fix-qty]').forEach(async (el) => {
+    const key = el.getAttribute('data-membership-fix-qty');
+    if (!key) return;
+    try {
+      await changeCartLine(key, 1);
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   document.addEventListener('click', async (event) => {
     const productMinus = event.target.closest('[data-quantity-minus]');
     const productPlus = event.target.closest('[data-quantity-plus]');

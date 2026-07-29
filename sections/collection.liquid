@@ -82,7 +82,10 @@
         {% if collection.products.size > 0 %}
           <div class="collection-page__grid">
             {% for product in collection.products %}
-              {% render 'product-card', product: product %}
+              {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+              {% if is_membership != 'true' %}
+                {% render 'product-card', product: product %}
+              {% endif %}
             {% endfor %}
           </div>
         {% else %}

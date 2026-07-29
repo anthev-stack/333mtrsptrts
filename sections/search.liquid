@@ -54,7 +54,10 @@
           <div class="search-page__grid">
             {% for result in search.results %}
               {% if result.object_type == 'product' %}
-                {% render 'product-card', product: result %}
+                {% capture is_membership %}{% render 'product-is-membership', product: result %}{% endcapture %}
+                {% if is_membership != 'true' %}
+                  {% render 'product-card', product: result %}
+                {% endif %}
               {% else %}
                 <article class="search-page__result-card">
                   {% assign featured_image = result.featured_image | default: result.image %}
@@ -98,22 +101,28 @@
 
     <div class="search-page__grid" data-search-recommended-grid>
       {% comment %} Server fallback: collection picks, then all products {% endcomment %}
-      {% liquid
-        assign shown = 0
-        if recommend_collection != blank
-          for product in recommend_collection.products limit: recommend_limit
-            render 'product-card', product: product
-            assign shown = shown | plus: 1
-          endfor
-        endif
+      {% assign shown = 0 %}
+      {% if recommend_collection != blank %}
+        {% for product in recommend_collection.products %}
+          {% if shown >= recommend_limit %}{% break %}{% endif %}
+          {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+          {% if is_membership != 'true' %}
+            {% render 'product-card', product: product %}
+            {% assign shown = shown | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
 
-        if shown == 0
-          for product in collections.all.products limit: recommend_limit
-            render 'product-card', product: product
-            assign shown = shown | plus: 1
-          endfor
-        endif
-      %}
+      {% if shown == 0 %}
+        {% for product in collections.all.products %}
+          {% if shown >= recommend_limit %}{% break %}{% endif %}
+          {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+          {% if is_membership != 'true' %}
+            {% render 'product-card', product: product %}
+            {% assign shown = shown | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
     </div>
 
     <p class="search-page__recommended-empty" data-search-recommended-empty hidden>
@@ -185,13 +194,20 @@
       `;
     };
 
+    const isMembershipProduct = (product) => {
+      const handle = String(product.handle || '').toLowerCase();
+      const title = String(product.title || '').toLowerCase();
+      return handle === '333-membership' || handle === '333-memberships' || title === '333 membership';
+    };
+
     const renderProducts = (products) => {
-      if (!products.length) {
+      const filtered = products.filter((product) => !isMembershipProduct(product));
+      if (!filtered.length) {
         empty?.removeAttribute('hidden');
         return;
       }
       empty?.setAttribute('hidden', '');
-      grid.innerHTML = products.slice(0, limit).map(cardHtml).join('');
+      grid.innerHTML = filtered.slice(0, limit).map(cardHtml).join('');
     };
 
     const loadTailored = async () => {

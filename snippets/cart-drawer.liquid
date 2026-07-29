@@ -91,23 +91,34 @@
                 <p class="cart-drawer__item-price">{{ item.final_line_price | money }}</p>
 
                 <div class="cart-drawer__item-actions">
-                  <div class="cart-drawer__qty" data-cart-qty>
-                    <button
-                      type="button"
-                      class="cart-drawer__qty-btn"
-                      data-cart-qty-change="-1"
-                      data-line-key="{{ item.key }}"
-                      aria-label="{{ 'products.decrease_quantity' | t }}"
-                    >−</button>
-                    <span class="cart-drawer__qty-value">{{ item.quantity }}</span>
-                    <button
-                      type="button"
-                      class="cart-drawer__qty-btn"
-                      data-cart-qty-change="1"
-                      data-line-key="{{ item.key }}"
-                      aria-label="{{ 'products.increase_quantity' | t }}"
-                    >+</button>
-                  </div>
+                  {% capture is_membership_line %}{% render 'product-is-membership', product: item.product %}{% endcapture %}
+                  {% if is_membership_line == 'true' %}
+                    <div
+                      class="cart-drawer__qty cart-drawer__qty--locked"
+                      data-membership-qty-locked
+                      {% if item.quantity != 1 %}data-membership-fix-qty="{{ item.key }}"{% endif %}
+                    >
+                      <span class="cart-drawer__qty-value">1</span>
+                    </div>
+                  {% else %}
+                    <div class="cart-drawer__qty" data-cart-qty>
+                      <button
+                        type="button"
+                        class="cart-drawer__qty-btn"
+                        data-cart-qty-change="-1"
+                        data-line-key="{{ item.key }}"
+                        aria-label="{{ 'products.decrease_quantity' | t }}"
+                      >−</button>
+                      <span class="cart-drawer__qty-value">{{ item.quantity }}</span>
+                      <button
+                        type="button"
+                        class="cart-drawer__qty-btn"
+                        data-cart-qty-change="1"
+                        data-line-key="{{ item.key }}"
+                        aria-label="{{ 'products.increase_quantity' | t }}"
+                      >+</button>
+                    </div>
+                  {% endif %}
                   <button
                     type="button"
                     class="cart-drawer__remove"
@@ -374,6 +385,17 @@
     border: 1px solid #111;
   }
 
+  .cart-drawer__qty--locked {
+    display: inline-flex;
+    min-width: 2.5rem;
+    justify-content: center;
+    padding: 0 0.55rem;
+  }
+
+  .cart-drawer__qty--locked .cart-drawer__qty-value {
+    border-inline: 0;
+  }
+
   .cart-drawer__qty-btn {
     appearance: none;
     min-height: 1.85rem;
@@ -487,6 +509,11 @@
       await refreshDrawer();
       openDrawer();
     };
+
+    document.querySelectorAll('[data-membership-fix-qty]').forEach((el) => {
+      const key = el.getAttribute('data-membership-fix-qty');
+      if (key) changeQuantity(key, 1);
+    });
 
     document.addEventListener('click', (event) => {
       const openBtn = event.target.closest('[data-cart-drawer-open]');
