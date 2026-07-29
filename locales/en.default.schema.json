@@ -136,7 +136,7 @@
     "membership_product": "Membership product",
     "membership_product_info": "Select your 333 MEMBERSHIP product. Non-members use this to sign up.",
     "membership_page_url": "Membership page",
-    "membership_page_url_info": "Usually /pages/membership. Used by the Membership card link in the social bar.",
+    "membership_page_url_info": "Use /membership and create a Shopify URL redirect from /membership to /pages/membership. The page itself must still use the page.membership template.",
     "membership_price_label": "Price label",
     "membership_cancel_url": "Cancel API URL",
     "membership_cancel_url_info": "HTTPS endpoint on your Vultr app that cancels the subscription. Leave blank until the backend is ready.",
