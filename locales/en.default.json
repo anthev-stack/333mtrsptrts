@@ -113,7 +113,9 @@
     "benefit_4": "In-store membership card for the warehouse coffee shop",
     "become_member": "Become a member",
     "unavailable": "Currently unavailable",
-    "subscription_note": "Once the membership app is connected, this product will renew as a subscription. Until then checkout still uses the 333 MEMBERSHIP product.",
+    "unavailable_help": "This membership product is marked unavailable in Shopify. Open Products → 333 MEMBERSHIP and set Status to Active, turn off inventory tracking (or enable Continue selling when out of stock), and make sure Online Store is a sales channel.",
+    "subscription_note": "Billed monthly as a 333 Membership subscription at checkout.",
+    "subscription_ready": "Subscription plan attached",
     "product_missing": "Membership product is not selected yet. Set it under Theme settings → Membership."
   },
   "products": {

@@ -33,6 +33,27 @@
   endif
 
   assign membership_variant = membership_product.selected_or_first_available_variant
+  if membership_variant == blank and membership_product != blank
+    assign membership_variant = membership_product.variants.first
+  endif
+
+  assign membership_selling_plan_id = blank
+  if membership_product != blank
+    for group in membership_product.selling_plan_groups
+      for plan in group.selling_plans
+        assign membership_selling_plan_id = plan.id
+        break
+      endfor
+      if membership_selling_plan_id != blank
+        break
+      endif
+    endfor
+  endif
+
+  assign membership_can_purchase = false
+  if membership_variant != blank and membership_variant.available
+    assign membership_can_purchase = true
+  endif
 %}
 
 {% render 'section-padding' %}
@@ -126,14 +147,17 @@
           {% form 'product', membership_product, class: 'membership__form', data-membership-checkout: '' %}
             <input type="hidden" name="id" value="{{ membership_variant.id }}">
             <input type="hidden" name="quantity" value="1">
+            {% if membership_selling_plan_id != blank %}
+              <input type="hidden" name="selling_plan" value="{{ membership_selling_plan_id }}">
+            {% endif %}
             <input type="hidden" name="return_to" value="/checkout">
             <button
               type="submit"
               name="add"
               class="membership__button membership__button--primary"
-              {% unless membership_variant.available %}disabled{% endunless %}
+              {% unless membership_can_purchase %}disabled{% endunless %}
             >
-              {% if membership_variant.available %}
+              {% if membership_can_purchase %}
                 {{ 'membership.become_member' | t }}
               {% else %}
                 {{ 'membership.unavailable' | t }}
@@ -143,8 +167,15 @@
           <p class="membership__product-ref">
             {{ membership_product.title | escape }}
             · {{ membership_variant.price | money }}
+            {% if membership_selling_plan_id != blank %}
+              · {{ 'membership.subscription_ready' | t }}
+            {% endif %}
           </p>
-          <p class="membership__fineprint">{{ 'membership.subscription_note' | t }}</p>
+          {% if membership_can_purchase %}
+            <p class="membership__fineprint">{{ 'membership.subscription_note' | t }}</p>
+          {% else %}
+            <p class="membership__fineprint">{{ 'membership.unavailable_help' | t }}</p>
+          {% endif %}
         {% else %}
           <p class="membership__missing">{{ 'membership.product_missing' | t }}</p>
         {% endif %}
