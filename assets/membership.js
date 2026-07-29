@@ -8,6 +8,76 @@
   const cancelStatus = root.querySelector('[data-membership-cancel-status]');
   const cancelUrl = root.getAttribute('data-cancel-url') || '';
   const joinForm = root.querySelector('form[data-membership-checkout]');
+  const rootPath = window.Shopify?.routes?.root || '/';
+
+  const isMembershipLine = (item, variantId) => {
+    const handle = String(item.handle || '').toLowerCase();
+    const title = String(item.product_title || item.title || '').toLowerCase();
+    if (variantId && String(item.variant_id) === String(variantId)) return true;
+    if (handle === '333-membership' || handle === '333-memberships') return true;
+    if (title === '333 membership' || title.includes('333 membership')) return true;
+    return false;
+  };
+
+  const fetchCart = async () => {
+    const response = await fetch(`${rootPath}cart.js`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) throw new Error('Unable to load cart');
+    return response.json();
+  };
+
+  const changeLine = async (key, quantity) => {
+    const response = await fetch(`${rootPath}cart/change.js`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ id: key, quantity: Number(quantity) }),
+    });
+    if (!response.ok) throw new Error('Unable to update cart');
+    return response.json();
+  };
+
+  const addMembership = async (formData) => {
+    const variantId = formData.get('id');
+    const sellingPlan = formData.get('selling_plan');
+    const cart = await fetchCart();
+    const membershipLines = (cart.items || []).filter((item) => isMembershipLine(item, variantId));
+
+    // Keep a single membership line at quantity 1.
+    if (membershipLines.length) {
+      const [primary, ...extras] = membershipLines;
+      for (const extra of extras) {
+        await changeLine(extra.key, 0);
+      }
+      if (Number(primary.quantity) !== 1) {
+        await changeLine(primary.key, 1);
+      }
+      return;
+    }
+
+    const payload = {
+      items: [
+        {
+          id: Number(variantId),
+          quantity: 1,
+          ...(sellingPlan ? { selling_plan: Number(sellingPlan) } : {}),
+        },
+      ],
+    };
+
+    const response = await fetch(`${rootPath}cart/add.js`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error('Unable to start membership checkout');
+  };
 
   const renderBarcode = () => {
     if (!svg || !barcodeValue) return false;
@@ -54,24 +124,19 @@
 
   joinForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    event.stopImmediatePropagation();
     const button = joinForm.querySelector('button[type="submit"]');
     if (button) button.disabled = true;
 
-    const rootPath = window.Shopify?.routes?.root || '/';
     const formData = new FormData(joinForm);
 
     try {
-      const response = await fetch(`${rootPath}cart/add.js`, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: formData,
-      });
-      if (!response.ok) throw new Error('Unable to start membership checkout');
+      await addMembership(formData);
       window.location.href = `${rootPath}checkout`;
     } catch (error) {
       if (button) button.disabled = false;
       console.error(error);
-      joinForm.submit();
+      window.alert('Unable to start membership checkout. Please try again.');
     }
   });
 

@@ -181,16 +181,49 @@
     window.location.reload();
   };
 
-  // Membership is limited to quantity 1 — normalize any existing multi-qty lines.
-  document.querySelectorAll('[data-membership-fix-qty]').forEach(async (el) => {
-    const key = el.getAttribute('data-membership-fix-qty');
-    if (!key) return;
+  const isMembershipCartItem = (item) => {
+    const handle = String(item.handle || '').toLowerCase();
+    const title = String(item.product_title || item.title || '').toLowerCase();
+    return (
+      handle === '333-membership' ||
+      handle === '333-memberships' ||
+      title === '333 membership' ||
+      title.includes('333 membership')
+    );
+  };
+
+  // Membership is limited to quantity 1 — normalize liquid-marked lines and any cart.js matches.
+  const normalizeMembershipQuantities = async () => {
+    const marked = [...document.querySelectorAll('[data-membership-fix-qty]')].map((el) =>
+      el.getAttribute('data-membership-fix-qty'),
+    );
+
     try {
-      await changeCartLine(key, 1);
+      const response = await fetch(`${root}cart.js`, { headers: { Accept: 'application/json' } });
+      if (response.ok) {
+        const cart = await response.json();
+        for (const item of cart.items || []) {
+          if (isMembershipCartItem(item) && Number(item.quantity) !== 1) {
+            marked.push(item.key);
+          }
+        }
+      }
     } catch (error) {
-      console.error(error);
+      // Ignore and rely on marked nodes.
     }
-  });
+
+    const uniqueKeys = [...new Set(marked.filter(Boolean))];
+    for (const key of uniqueKeys) {
+      try {
+        await changeCartLine(key, 1);
+        return;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  normalizeMembershipQuantities();
 
   document.addEventListener('click', async (event) => {
     const productMinus = event.target.closest('[data-quantity-minus]');
@@ -205,8 +238,17 @@
       return;
     }
 
+    if (event.target.closest('[data-membership-qty-locked], [data-membership-line]')) {
+      event.preventDefault();
+      return;
+    }
+
     const cartPageBtn = event.target.closest('[data-cart-page-qty-change]');
     if (cartPageBtn) {
+      if (cartPageBtn.closest('[data-membership-line], [data-membership-qty-locked]')) {
+        event.preventDefault();
+        return;
+      }
       const wrap = cartPageBtn.closest('[data-cart-page-qty]');
       const input = wrap?.querySelector('[data-cart-page-qty-input]');
       const key = wrap?.getAttribute('data-line-key') || input?.getAttribute('data-line-key');
@@ -236,6 +278,11 @@
 
     const cartInput = event.target.closest('[data-cart-page-qty-input]');
     if (!cartInput) return;
+    if (cartInput.closest('[data-membership-line], [data-membership-qty-locked]')) {
+      event.preventDefault();
+      cartInput.value = '1';
+      return;
+    }
 
     const key = cartInput.getAttribute('data-line-key');
     if (!key) return;

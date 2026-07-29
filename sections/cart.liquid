@@ -78,10 +78,12 @@
 
                 <td class="cart-page__cell cart-page__cell--qty" data-label="{{ 'cart.quantity' | t }}">
                   {% capture is_membership_line %}{% render 'product-is-membership', product: item.product %}{% endcapture %}
+                  {% assign is_membership_line = is_membership_line | strip %}
                   {% if is_membership_line == 'true' %}
                     <div
                       class="cart-page__qty cart-page__qty--locked"
                       data-membership-qty-locked
+                      data-membership-line
                       {% if item.quantity != 1 %}data-membership-fix-qty="{{ item.key }}"{% endif %}
                     >
                       <span class="cart-page__qty-locked-value">1</span>

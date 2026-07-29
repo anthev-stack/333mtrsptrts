@@ -92,10 +92,12 @@
 
                 <div class="cart-drawer__item-actions">
                   {% capture is_membership_line %}{% render 'product-is-membership', product: item.product %}{% endcapture %}
+                  {% assign is_membership_line = is_membership_line | strip %}
                   {% if is_membership_line == 'true' %}
                     <div
                       class="cart-drawer__qty cart-drawer__qty--locked"
                       data-membership-qty-locked
+                      data-membership-line
                       {% if item.quantity != 1 %}data-membership-fix-qty="{{ item.key }}"{% endif %}
                     >
                       <span class="cart-drawer__qty-value">1</span>

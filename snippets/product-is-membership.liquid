@@ -2,19 +2,24 @@
   Outputs "true" when the given product is the configured membership product.
   Usage:
   {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+  {% assign is_membership = is_membership | strip %}
   {% if is_membership == 'true' %}
 {% enddoc %}
-{% liquid
+{%- liquid
   assign matched = false
-  if product == blank
-    echo ''
-  elsif settings.membership_product != blank and product.id == settings.membership_product.id
-    assign matched = true
-  else
-    assign handle_normalized = product.handle | downcase
-    if handle_normalized == '333-membership' or handle_normalized == '333-memberships'
+  if product != blank
+    assign handle_normalized = product.handle | downcase | strip
+    assign title_normalized = product.title | downcase | strip
+
+    if settings.membership_product != blank and product.id == settings.membership_product.id
+      assign matched = true
+    elsif handle_normalized == '333-membership' or handle_normalized == '333-memberships'
+      assign matched = true
+    elsif title_normalized == '333 membership'
+      assign matched = true
+    elsif title_normalized contains '333 membership'
       assign matched = true
     endif
   endif
-%}
+-%}
 {%- if matched -%}true{%- endif -%}
