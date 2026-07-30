@@ -76,49 +76,99 @@
 
   <div class="product-page__main">
     <div class="product-page__media">
-      <div class="product-page__gallery">
-        {% if product.featured_media %}
-          {% assign featured_alt = product.featured_media.alt | default: product.title %}
-          {{
-            product.featured_media.preview_image
-            | image_url: width: 1600
-            | image_tag:
-              class: 'product-page__image',
-              widths: '600, 800, 1000, 1200, 1600',
-              sizes: '(min-width: 990px) 42vw, 100vw',
-              alt: featured_alt,
-              loading: 'eager'
-          }}
-        {% elsif product.featured_image %}
-          {{
-            product.featured_image
-            | image_url: width: 1600
-            | image_tag:
-              class: 'product-page__image',
-              widths: '600, 800, 1000, 1200, 1600',
-              sizes: '(min-width: 990px) 42vw, 100vw',
-              alt: product.title,
-              loading: 'eager'
-          }}
-        {% else %}
-          {{ 'product-1' | placeholder_svg_tag: 'product-page__image product-page__image--placeholder' }}
-        {% endif %}
-
-        {% if product.media.size > 1 %}
-          <div class="product-page__thumbs">
-            {% for media in product.media limit: 6 %}
-              {% assign thumb_alt = media.alt | default: product.title %}
-              <span class="product-page__thumb{% if forloop.first %} is-active{% endif %}">
-                {{
-                  media.preview_image
-                  | image_url: width: 200
-                  | image_tag:
-                    class: 'product-page__thumb-image',
-                    loading: 'lazy',
-                    alt: thumb_alt
-                }}
-              </span>
+      <div class="product-page__gallery" data-product-gallery>
+        {% if product.media.size > 0 %}
+          <div class="product-page__viewer" data-gallery-viewer>
+            {% for media in product.media %}
+              {% assign slide_alt = media.alt | default: product.title %}
+              {% assign is_featured = false %}
+              {% if media.id == product.featured_media.id %}
+                {% assign is_featured = true %}
+              {% elsif product.featured_media == blank and forloop.first %}
+                {% assign is_featured = true %}
+              {% endif %}
+              <div
+                class="product-page__slide{% if is_featured %} is-active{% endif %}"
+                data-gallery-slide
+                data-gallery-index="{{ forloop.index0 }}"
+              >
+                {% if is_featured %}
+                  {{
+                    media.preview_image
+                    | image_url: width: 1600
+                    | image_tag:
+                      class: 'product-page__image',
+                      widths: '600, 800, 1000, 1200, 1600',
+                      sizes: '(min-width: 990px) 42vw, 100vw',
+                      alt: slide_alt,
+                      loading: 'eager'
+                  }}
+                {% else %}
+                  {{
+                    media.preview_image
+                    | image_url: width: 1600
+                    | image_tag:
+                      class: 'product-page__image',
+                      widths: '600, 800, 1000, 1200, 1600',
+                      sizes: '(min-width: 990px) 42vw, 100vw',
+                      alt: slide_alt,
+                      loading: 'lazy'
+                  }}
+                {% endif %}
+              </div>
             {% endfor %}
+          </div>
+
+          {% if product.media.size > 1 %}
+            <div class="product-page__thumbs" role="list">
+              {% for media in product.media %}
+                {% assign thumb_alt = media.alt | default: product.title %}
+                {% assign is_featured = false %}
+                {% if media.id == product.featured_media.id %}
+                  {% assign is_featured = true %}
+                {% elsif product.featured_media == blank and forloop.first %}
+                  {% assign is_featured = true %}
+                {% endif %}
+                <button
+                  type="button"
+                  class="product-page__thumb{% if is_featured %} is-active{% endif %}"
+                  data-gallery-thumb
+                  data-gallery-index="{{ forloop.index0 }}"
+                  aria-label="{{ thumb_alt | escape }} {{ forloop.index }}"
+                  aria-pressed="{% if is_featured %}true{% else %}false{% endif %}"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 160
+                    | image_tag:
+                      class: 'product-page__thumb-image',
+                      loading: 'lazy',
+                      alt: ''
+                  }}
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% elsif product.featured_image %}
+          <div class="product-page__viewer">
+            <div class="product-page__slide is-active">
+              {{
+                product.featured_image
+                | image_url: width: 1600
+                | image_tag:
+                  class: 'product-page__image',
+                  widths: '600, 800, 1000, 1200, 1600',
+                  sizes: '(min-width: 990px) 42vw, 100vw',
+                  alt: product.title,
+                  loading: 'eager'
+              }}
+            </div>
+          </div>
+        {% else %}
+          <div class="product-page__viewer">
+            <div class="product-page__slide is-active">
+              {{ 'product-1' | placeholder_svg_tag: 'product-page__image product-page__image--placeholder' }}
+            </div>
           </div>
         {% endif %}
       </div>
@@ -365,25 +415,47 @@
     min-width: 0;
   }
 
+  .product-page__viewer {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #f3f3f3;
+    overflow: hidden;
+  }
+
+  .product-page__slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-page__slide.is-active {
+    display: block;
+  }
+
   .product-page__image {
     display: block;
     width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
+    height: 100%;
     object-fit: contain;
     background: #f3f3f3;
   }
 
   .product-page__thumbs {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
-    gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
   }
 
   .product-page__thumb {
+    appearance: none;
     display: block;
+    width: 3.35rem;
+    padding: 0.2rem;
     border: 1px solid transparent;
+    background: transparent;
     line-height: 0;
+    cursor: pointer;
   }
 
   .product-page__thumb.is-active,
@@ -396,6 +468,7 @@
     aspect-ratio: 1;
     object-fit: contain;
     background: #f3f3f3;
+    pointer-events: none;
   }
 
   .product-page__swatch {
@@ -911,6 +984,37 @@
 
     .product-page__media {
       grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .product-page__viewer {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      touch-action: pan-x;
+    }
+
+    .product-page__viewer::-webkit-scrollbar {
+      display: none;
+    }
+
+    .product-page__slide {
+      display: block;
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .product-page__thumbs {
+      gap: 0.35rem;
+    }
+
+    .product-page__thumb {
+      width: 2.85rem;
+      padding: 0.18rem;
     }
 
     .product-page__suggested-grid,

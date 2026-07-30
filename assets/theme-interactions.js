@@ -431,6 +431,92 @@
     });
   };
 
+  const initProductGallery = () => {
+    document.querySelectorAll('[data-product-gallery]').forEach((gallery) => {
+      if (gallery.hasAttribute('data-gallery-ready')) return;
+      gallery.setAttribute('data-gallery-ready', '');
+
+      const viewer = gallery.querySelector('[data-gallery-viewer]');
+      const slides = Array.from(gallery.querySelectorAll('[data-gallery-slide]'));
+      const thumbs = Array.from(gallery.querySelectorAll('[data-gallery-thumb]'));
+      if (!viewer || slides.length < 2) return;
+
+      let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+      if (activeIndex < 0) activeIndex = 0;
+      let scrollSyncLock = false;
+
+      const isMobileSwipe = () => window.matchMedia('(max-width: 749px)').matches;
+
+      const setActive = (index, { scroll = true } = {}) => {
+        if (index < 0 || index >= slides.length) return;
+        activeIndex = index;
+
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('is-active', i === index);
+        });
+
+        thumbs.forEach((thumb, i) => {
+          const on = i === index;
+          thumb.classList.toggle('is-active', on);
+          thumb.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+
+        if (scroll && isMobileSwipe()) {
+          scrollSyncLock = true;
+          const target = slides[index];
+          viewer.scrollTo({
+            left: target.offsetLeft,
+            behavior: 'smooth',
+          });
+          window.setTimeout(() => {
+            scrollSyncLock = false;
+          }, 320);
+        }
+      };
+
+      thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', () => {
+          const index = Number(thumb.getAttribute('data-gallery-index'));
+          if (Number.isNaN(index)) return;
+          setActive(index);
+        });
+      });
+
+      let scrollFrame = 0;
+      viewer.addEventListener(
+        'scroll',
+        () => {
+          if (!isMobileSwipe() || scrollSyncLock) return;
+          window.cancelAnimationFrame(scrollFrame);
+          scrollFrame = window.requestAnimationFrame(() => {
+            const width = viewer.clientWidth || 1;
+            const nextIndex = Math.round(viewer.scrollLeft / width);
+            if (nextIndex !== activeIndex) {
+              setActive(nextIndex, { scroll: false });
+            }
+          });
+        },
+        { passive: true }
+      );
+
+      window.addEventListener('resize', () => {
+        if (!isMobileSwipe()) return;
+        const target = slides[activeIndex];
+        if (!target) return;
+        viewer.scrollTo({ left: target.offsetLeft, behavior: 'auto' });
+      });
+
+      setActive(activeIndex, { scroll: false });
+      if (isMobileSwipe()) {
+        const target = slides[activeIndex];
+        if (target) viewer.scrollTo({ left: target.offsetLeft, behavior: 'auto' });
+      }
+    });
+  };
+
+  initProductGallery();
+  document.addEventListener('shopify:section:load', initProductGallery);
+
   initCollectionFilters();
   document.addEventListener('shopify:section:load', initCollectionFilters);
 })();
