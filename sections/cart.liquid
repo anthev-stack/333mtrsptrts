@@ -73,7 +73,7 @@
                 </td>
 
                 <td class="cart-page__cell cart-page__cell--price" data-label="{{ 'cart.price' | t }}">
-                  {{ item.final_price | money }}
+                  {% render 'cart-item-price', item: item, mode: 'unit', class: 'cart-page__price product-price cart-price' %}
                 </td>
 
                 <td class="cart-page__cell cart-page__cell--qty" data-label="{{ 'cart.quantity' | t }}">
@@ -122,7 +122,7 @@
                 </td>
 
                 <td class="cart-page__cell cart-page__cell--subtotal" data-label="{{ 'cart.line_subtotal' | t }}">
-                  {{ item.final_line_price | money }}
+                  {% render 'cart-item-price', item: item, mode: 'line', class: 'cart-page__line-price product-price cart-price' %}
                 </td>
               </tr>
             {% endfor %}
@@ -144,7 +144,7 @@
         <div class="cart-page__summary">
           <p class="cart-page__subtotal">
             <span>{{ 'cart.subtotal' | t }}:</span>
-            <strong>{{ cart.total_price | money }}</strong>
+            {% render 'cart-subtotal-price', class: 'cart-page__subtotal-prices' %}
           </p>
           <p class="cart-page__taxes">{{ 'cart.taxes_shipping' | t }}</p>
 
@@ -390,6 +390,11 @@
   }
 
   .cart-page__subtotal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.45rem 0.65rem;
     margin: 0 0 0.45rem;
     font-size: clamp(1.15rem, 2vw, 1.45rem);
     font-weight: 700;
@@ -397,8 +402,25 @@
     text-transform: uppercase;
   }
 
-  .cart-page__subtotal strong {
+  .cart-page__subtotal strong,
+  .cart-page__subtotal-prices {
     font-weight: 700;
+  }
+
+  .cart-page__subtotal-prices {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.55rem;
+  }
+
+  .cart-page__subtotal-prices .product-price__compare,
+  .cart-page__price .product-price__compare,
+  .cart-page__line-price .product-price__compare {
+    font-size: 0.9em;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .cart-page__taxes {

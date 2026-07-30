@@ -1,0 +1,110 @@
+{% doc %}
+  Cart line price with struck-through original when discounted.
+
+  Priority:
+  1. Shopify-applied cart discounts (original > final)
+  2. Member deals preview from theme percent (when Shopify has not reduced the line yet)
+  3. Compare-at sale pricing
+
+  @param {line_item} item - Cart line item
+  @param {string} [mode] - "unit" or "line" (default: line)
+  @param {string} [class] - Extra classes on the wrapper
+{% enddoc %}
+
+{% liquid
+  assign price_mode = mode | default: 'line'
+  assign price_class = class | default: 'product-price cart-price'
+
+  assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+  assign is_member = false
+  if customer and membership_tag != blank
+    for tag in customer.tags
+      assign tag_down = tag | strip | downcase
+      if tag_down == membership_tag
+        assign is_member = true
+        break
+      endif
+    endfor
+  endif
+
+  assign in_member_deals = false
+  assign member_deals = settings.member_deals_collection
+  if is_member and member_deals != blank
+    for collection in item.product.collections
+      if collection.id == member_deals.id
+        assign in_member_deals = true
+        break
+      endif
+    endfor
+  endif
+
+  assign member_percent = settings.member_discount_percent | default: 0 | plus: 0
+
+  if price_mode == 'unit'
+    assign current_amount = item.final_price
+    assign compare_amount = item.original_price
+  else
+    assign current_amount = item.final_line_price
+    assign compare_amount = item.original_line_price
+  endif
+
+  assign show_compare = false
+
+  if compare_amount > current_amount
+    assign show_compare = true
+  elsif in_member_deals and member_percent > 0
+    assign member_keep = 100 | minus: member_percent
+    if price_mode == 'unit'
+      assign current_amount = item.original_price | times: member_keep | divided_by: 100
+      assign compare_amount = item.original_price
+    else
+      assign current_amount = item.original_line_price | times: member_keep | divided_by: 100
+      assign compare_amount = item.original_line_price
+    endif
+    if compare_amount > current_amount
+      assign show_compare = true
+    endif
+  elsif item.variant.compare_at_price > item.variant.price
+    if price_mode == 'unit'
+      assign compare_amount = item.variant.compare_at_price
+      assign current_amount = item.final_price
+    else
+      assign compare_amount = item.variant.compare_at_price | times: item.quantity
+      assign current_amount = item.final_line_price
+    endif
+    if compare_amount > current_amount
+      assign show_compare = true
+    endif
+  endif
+%}
+
+<p class="{{ price_class }}{% if show_compare %} product-price--on-sale{% endif %}">
+  {% if show_compare %}
+    <span class="product-price__compare">{{ compare_amount | money }}</span>
+    <span class="product-price__current">{{ current_amount | money }}</span>
+  {% else %}
+    <span class="product-price__current">{{ current_amount | money }}</span>
+  {% endif %}
+</p>
+
+{% stylesheet %}
+  .product-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.55rem;
+    margin: 0;
+  }
+
+  .product-price__compare {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    font-weight: 400;
+  }
+
+  .product-price__current {
+    color: inherit;
+    font-weight: 600;
+  }
+{% endstylesheet %}

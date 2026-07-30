@@ -88,7 +88,7 @@
                 {% unless item.product.has_only_default_variant %}
                   <p class="cart-drawer__item-variant">{{ item.variant.title | escape }}</p>
                 {% endunless %}
-                <p class="cart-drawer__item-price">{{ item.final_line_price | money }}</p>
+                {% render 'cart-item-price', item: item, mode: 'line', class: 'cart-drawer__item-price product-price cart-price' %}
 
                 <div class="cart-drawer__item-actions">
                   {% capture is_membership_line %}{% render 'product-is-membership', product: item.product %}{% endcapture %}
@@ -141,7 +141,7 @@
       <div class="cart-drawer__footer">
         <div class="cart-drawer__subtotal">
           <span>{{ 'cart.subtotal' | t }}</span>
-          <strong>{{ cart.total_price | money }}</strong>
+          {% render 'cart-subtotal-price', class: 'cart-drawer__subtotal-prices' %}
         </div>
         <a href="{{ routes.cart_url }}" class="cart-drawer__view-cart">{{ 'cart.view_cart' | t }}</a>
         <form action="{{ routes.cart_url }}" method="post">
@@ -371,6 +371,26 @@
   .cart-drawer__item-price {
     font-weight: 600;
     margin-bottom: 0.55rem;
+  }
+
+  .cart-drawer__item-price .product-price__compare {
+    font-size: 0.72rem;
+  }
+
+  .cart-drawer__subtotal-prices {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem 0.55rem;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .cart-drawer__subtotal-prices .product-price__compare {
+    font-size: 0.78rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
   }
 
   .cart-drawer__item-actions {

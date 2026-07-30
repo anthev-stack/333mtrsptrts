@@ -1,0 +1,71 @@
+{% doc %}
+  Cart subtotal with struck-through original when discounted.
+
+  Uses Shopify cart totals when discounts are applied; otherwise previews
+  member-deal percent off for eligible lines.
+
+  @param {string} [class] - Wrapper class for the price element
+{% enddoc %}
+
+{% liquid
+  assign subtotal_class = class | default: 'product-price cart-subtotal-price'
+  assign show_compare = false
+  assign compare_amount = cart.original_total_price
+  assign current_amount = cart.total_price
+
+  if cart.original_total_price > cart.total_price
+    assign show_compare = true
+  else
+    assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+    assign is_member = false
+    if customer and membership_tag != blank
+      for tag in customer.tags
+        assign tag_down = tag | strip | downcase
+        if tag_down == membership_tag
+          assign is_member = true
+          break
+        endif
+      endfor
+    endif
+
+    assign member_deals = settings.member_deals_collection
+    assign member_percent = settings.member_discount_percent | default: 0 | plus: 0
+
+    if is_member and member_deals != blank and member_percent > 0
+      assign member_keep = 100 | minus: member_percent
+      assign compare_amount = 0
+      assign current_amount = 0
+      for item in cart.items
+        assign line_in_deals = false
+        for collection in item.product.collections
+          if collection.id == member_deals.id
+            assign line_in_deals = true
+            break
+          endif
+        endfor
+        if line_in_deals
+          assign compare_amount = compare_amount | plus: item.original_line_price
+          assign discounted_line = item.original_line_price | times: member_keep | divided_by: 100
+          assign current_amount = current_amount | plus: discounted_line
+        else
+          assign compare_amount = compare_amount | plus: item.final_line_price
+          assign current_amount = current_amount | plus: item.final_line_price
+        endif
+      endfor
+      if compare_amount > current_amount
+        assign show_compare = true
+      else
+        assign current_amount = cart.total_price
+      endif
+    endif
+  endif
+%}
+
+{% if show_compare %}
+  <strong class="{{ subtotal_class }} product-price product-price--on-sale">
+    <span class="product-price__compare">{{ compare_amount | money }}</span>
+    <span class="product-price__current">{{ current_amount | money }}</span>
+  </strong>
+{% else %}
+  <strong class="{{ subtotal_class }}">{{ current_amount | money }}</strong>
+{% endif %}
