@@ -2,13 +2,17 @@
   Renders storefront filter facets for a collection.
 {% enddoc %}
 
-{% if collection.filters.size > 0 %}
-  <form class="facets" method="get" id="FacetFiltersForm">
-    {% if results.sort_by != blank %}
-      <input type="hidden" name="sort_by" value="{{ results.sort_by }}">
+{% liquid
+  assign facet_results = results | default: collection
+%}
+
+{% if facet_results.filters.size > 0 %}
+  <form class="facets" method="get" id="FacetFiltersForm" action="{{ facet_results.url }}">
+    {% if facet_results.sort_by != blank %}
+      <input type="hidden" name="sort_by" value="{{ facet_results.sort_by }}">
     {% endif %}
 
-    {% for filter in collection.filters %}
+    {% for filter in facet_results.filters %}
       {% comment %} Hide Partbot Vehicle Filters {% endcomment %}
       {%- if filter.param_name contains 'partbot.vehicle_' -%}
         {% continue %}
@@ -121,9 +125,7 @@
       {% endcase %}
     {% endfor %}
 
-    <noscript>
-      <button type="submit" class="facets__submit">{{ 'collections.apply' | t }}</button>
-    </noscript>
+    <button type="submit" class="facets__submit">{{ 'collections.apply' | t }}</button>
   </form>
 {% endif %}
 
@@ -138,12 +140,21 @@
   }
 
   .facets__label,
-  .facets__summary {
+  .facets__summary,
+  .facets__boolean-option,
+  .facets__checkbox,
+  .facets__submit {
     margin: 0;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  .facets__boolean-option,
+  .facets__checkbox {
+    font-weight: 600;
+    color: #444;
   }
 
   .facets__summary {
@@ -188,6 +199,9 @@
     border: 1px solid rgba(17, 17, 17, 0.2);
     background: #fff;
     font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
   }
 
@@ -216,7 +230,9 @@
     display: flex;
     align-items: center;
     gap: 0.55rem;
-    font-size: 0.86rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: #444;
     cursor: pointer;
   }

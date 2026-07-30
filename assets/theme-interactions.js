@@ -346,4 +346,91 @@
       updateAvailability(variantSelect.value);
     });
   }
+
+  const initCollectionFilters = () => {
+    document.querySelectorAll('[data-collection-layout]').forEach((layout) => {
+      if (layout.hasAttribute('data-collection-filters-ready')) return;
+      layout.setAttribute('data-collection-filters-ready', '');
+
+      const root = layout.closest('.shopify-section') || document;
+      const toggle = root.querySelector('[data-filter-toggle]');
+      const sortSelect = root.querySelector('[data-collection-sort]');
+      const facetForm = root.querySelector('#FacetFiltersForm');
+
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const collapsed = layout.classList.toggle('is-filters-collapsed');
+          toggle.setAttribute('aria-expanded', String(!collapsed));
+        });
+      }
+
+      if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+          const url = new URL(window.location.href);
+          url.searchParams.set('sort_by', sortSelect.value);
+          window.location.href = url.toString();
+        });
+      }
+
+      if (!facetForm) return;
+
+      facetForm.addEventListener('change', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        if (target.matches('input[type="range"]')) return;
+        facetForm.submit();
+      });
+
+      const priceRoot = facetForm.querySelector('[data-price-facet]');
+      if (!priceRoot) return;
+
+      const minInput = priceRoot.querySelector('[data-price-min]');
+      const maxInput = priceRoot.querySelector('[data-price-max]');
+      const minRange = priceRoot.querySelector('[data-price-range-min]');
+      const maxRange = priceRoot.querySelector('[data-price-range-max]');
+
+      const syncFromRange = () => {
+        if (!minRange || !maxRange || !minInput || !maxInput) return;
+        let minVal = Number(minRange.value);
+        let maxVal = Number(maxRange.value);
+        if (minVal > maxVal) {
+          const swap = minVal;
+          minVal = maxVal;
+          maxVal = swap;
+          minRange.value = String(minVal);
+          maxRange.value = String(maxVal);
+        }
+        minInput.value = String(minVal);
+        maxInput.value = String(maxVal);
+      };
+
+      const syncFromInputs = () => {
+        if (!minRange || !maxRange || !minInput || !maxInput) return;
+        minRange.value = minInput.value;
+        maxRange.value = maxInput.value;
+      };
+
+      minRange?.addEventListener('input', syncFromRange);
+      maxRange?.addEventListener('input', syncFromRange);
+      minInput?.addEventListener('change', () => {
+        syncFromInputs();
+        facetForm.submit();
+      });
+      maxInput?.addEventListener('change', () => {
+        syncFromInputs();
+        facetForm.submit();
+      });
+
+      let rangeTimeout;
+      const submitRange = () => {
+        clearTimeout(rangeTimeout);
+        rangeTimeout = setTimeout(() => facetForm.submit(), 350);
+      };
+      minRange?.addEventListener('change', submitRange);
+      maxRange?.addEventListener('change', submitRange);
+    });
+  };
+
+  initCollectionFilters();
+  document.addEventListener('shopify:section:load', initCollectionFilters);
 })();
