@@ -387,6 +387,17 @@
         "id": "member_deals_collection",
         "label": "t:labels.member_deals_collection",
         "info": "t:labels.member_deals_collection_info"
+      },
+      {
+        "type": "range",
+        "id": "member_discount_percent",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "unit": "%",
+        "label": "t:labels.member_discount_percent",
+        "default": 10,
+        "info": "t:labels.member_discount_percent_info"
       }
     ]
   },

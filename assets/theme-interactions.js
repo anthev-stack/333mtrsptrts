@@ -345,21 +345,27 @@
       if (!priceRoot || !variant) return;
       const price = Number(variant.price || 0);
       const compare = Number(variant.compare_at_price || 0);
-      const onSale = compare > price;
+      const memberDeal = priceRoot.getAttribute('data-member-deal') === 'true';
+      const memberPercent = Number(priceRoot.getAttribute('data-member-discount-percent') || 0);
+      const showMemberPrice = memberDeal && memberPercent > 0;
+      const memberPrice = showMemberPrice
+        ? Math.round((price * (100 - memberPercent)) / 100)
+        : price;
+      const onSale = !showMemberPrice && compare > price;
 
-      priceRoot.classList.toggle('product-price--on-sale', onSale);
+      priceRoot.classList.toggle('product-price--on-sale', showMemberPrice || onSale);
 
       let compareEl = priceRoot.querySelector('[data-product-price-compare]');
       let currentEl = priceRoot.querySelector('[data-product-price-current]');
 
-      if (onSale) {
+      if (showMemberPrice || onSale) {
         if (!compareEl) {
           compareEl = document.createElement('span');
           compareEl.className = 'product-price__compare';
           compareEl.setAttribute('data-product-price-compare', '');
           priceRoot.insertBefore(compareEl, priceRoot.firstChild);
         }
-        compareEl.textContent = formatMoney(compare);
+        compareEl.textContent = formatMoney(showMemberPrice ? price : compare);
         compareEl.hidden = false;
       } else if (compareEl) {
         compareEl.remove();
@@ -371,7 +377,7 @@
         currentEl.setAttribute('data-product-price-current', '');
         priceRoot.appendChild(currentEl);
       }
-      currentEl.textContent = formatMoney(price);
+      currentEl.textContent = formatMoney(showMemberPrice ? memberPrice : price);
     };
 
     const updateAvailability = (variantId) => {
