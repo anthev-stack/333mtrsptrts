@@ -55,6 +55,7 @@
             {% for result in search.results %}
               {% if result.object_type == 'product' %}
                 {% capture is_membership %}{% render 'product-is-membership', product: result %}{% endcapture %}
+                {% assign is_membership = is_membership | strip %}
                 {% if is_membership != 'true' %}
                   {% render 'product-card', product: result %}
                 {% endif %}
@@ -106,6 +107,7 @@
         {% for product in recommend_collection.products %}
           {% if shown >= recommend_limit %}{% break %}{% endif %}
           {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+          {% assign is_membership = is_membership | strip %}
           {% if is_membership != 'true' %}
             {% render 'product-card', product: product %}
             {% assign shown = shown | plus: 1 %}
@@ -117,6 +119,7 @@
         {% for product in collections.all.products %}
           {% if shown >= recommend_limit %}{% break %}{% endif %}
           {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+          {% assign is_membership = is_membership | strip %}
           {% if is_membership != 'true' %}
             {% render 'product-card', product: product %}
             {% assign shown = shown | plus: 1 %}
@@ -197,7 +200,21 @@
     const isMembershipProduct = (product) => {
       const handle = String(product.handle || '').toLowerCase();
       const title = String(product.title || '').toLowerCase();
-      return handle === '333-membership' || handle === '333-memberships' || title === '333 membership';
+      const type = String(product.product_type || product.type || '').toLowerCase();
+      const tags = (product.tags || []).map((tag) => String(tag).toLowerCase());
+      return (
+        handle === '333-membership' ||
+        handle === '333-memberships' ||
+        handle.includes('333-membership') ||
+        title === '333 membership' ||
+        title.includes('333 membership') ||
+        type === 'membership' ||
+        type === 'subscription' ||
+        tags.includes('hide') ||
+        tags.includes('hidden') ||
+        tags.includes('membership-only') ||
+        tags.includes('333-membership')
+      );
     };
 
     const renderProducts = (products) => {

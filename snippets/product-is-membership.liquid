@@ -1,25 +1,41 @@
 {% doc %}
-  Outputs "true" when the given product is the configured membership product.
-  Usage:
-  {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
-  {% assign is_membership = is_membership | strip %}
-  {% if is_membership == 'true' %}
+  Outputs "true" when the given product is the membership product that should be hidden from catalog/search.
 {% enddoc %}
 {%- liquid
   assign matched = false
+
   if product != blank
     assign handle_normalized = product.handle | downcase | strip
     assign title_normalized = product.title | downcase | strip
+    assign type_normalized = product.type | downcase | strip
 
     if settings.membership_product != blank and product.id == settings.membership_product.id
       assign matched = true
-    elsif handle_normalized == '333-membership' or handle_normalized == '333-memberships'
-      assign matched = true
-    elsif title_normalized == '333 membership'
-      assign matched = true
-    elsif title_normalized contains '333 membership'
+    endif
+
+    if handle_normalized == '333-membership' or handle_normalized == '333-memberships'
       assign matched = true
     endif
+
+    if handle_normalized contains '333-membership'
+      assign matched = true
+    endif
+
+    if title_normalized == '333 membership' or title_normalized contains '333 membership'
+      assign matched = true
+    endif
+
+    if type_normalized == 'membership' or type_normalized == 'subscription'
+      assign matched = true
+    endif
+
+    for tag in product.tags
+      assign tag_normalized = tag | strip | downcase
+      if tag_normalized == 'hide' or tag_normalized == 'hidden' or tag_normalized == 'membership-only' or tag_normalized == '333-membership'
+        assign matched = true
+        break
+      endif
+    endfor
   endif
 -%}
 {%- if matched -%}true{%- endif -%}

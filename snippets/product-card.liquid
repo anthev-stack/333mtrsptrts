@@ -4,6 +4,10 @@
   @param {product} product - Product to render
 {% enddoc %}
 
+{% capture is_membership_card %}{% render 'product-is-membership', product: product %}{% endcapture %}
+{% assign is_membership_card = is_membership_card | strip %}
+{% unless is_membership_card == 'true' %}
+
 {% liquid
   assign variant = product.selected_or_first_available_variant
   assign color_option = nil
@@ -77,6 +81,8 @@
     <p class="product-card__price">{{ variant.price | money }}</p>
   </div>
 </article>
+
+{% endunless %}
 
 {% stylesheet %}
   .product-card {

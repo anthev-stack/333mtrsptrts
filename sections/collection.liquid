@@ -83,6 +83,7 @@
           <div class="collection-page__grid">
             {% for product in collection.products %}
               {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+              {% assign is_membership = is_membership | strip %}
               {% if is_membership != 'true' %}
                 {% render 'product-card', product: product %}
               {% endif %}

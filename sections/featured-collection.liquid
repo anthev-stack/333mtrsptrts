@@ -28,6 +28,7 @@
     {% if section.settings.collection != blank %}
       {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
         {% capture is_membership %}{% render 'product-is-membership', product: product %}{% endcapture %}
+        {% assign is_membership = is_membership | strip %}
         {% if is_membership != 'true' %}
           {% render 'product-card', product: product %}
         {% endif %}
