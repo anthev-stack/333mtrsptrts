@@ -208,7 +208,7 @@
       {% render 'partbot-brand-logo', product: product %}
 
       <h1 class="product-page__title">{{ product.title | escape }}</h1>
-      <p class="product-page__price">{{ current_variant.price | money }}</p>
+      {% render 'product-price', product: product, variant: current_variant, class: 'product-page__price product-price', enable_variant_update: true %}
 
       {% if product.vendor != blank %}
         <a
@@ -528,6 +528,11 @@
     margin: 0 0 0.85rem;
     font-size: 1.15rem;
     font-weight: 600;
+  }
+
+  .product-page__price .product-price__compare {
+    font-size: 1rem;
+    font-weight: 400;
   }
 
   .product-page__vendor {

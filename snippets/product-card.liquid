@@ -80,7 +80,7 @@
     <h3 class="product-card__title">
       <a href="{{ product.url }}">{{ product.title | escape }}</a>
     </h3>
-    <p class="product-card__price">{{ variant.price | money }}</p>
+    {% render 'product-price', product: product, variant: variant, class: 'product-card__price product-price' %}
   </div>
 </article>
 
@@ -203,5 +203,10 @@
   .product-card__price {
     font-size: 0.9rem;
     font-weight: 600;
+  }
+
+  .product-card__price .product-price__compare {
+    font-size: 0.82rem;
+    font-weight: 400;
   }
 {% endstylesheet %}

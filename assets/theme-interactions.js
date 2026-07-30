@@ -327,6 +327,52 @@
     const addBtn = form?.querySelector('[data-product-add]');
     const paymentWrap = form?.querySelector('[data-product-payment]');
     const unavailableBtn = form?.querySelector('[data-product-unavailable]');
+    const priceRoot = document.querySelector('[data-product-price]');
+
+    const formatMoney = (cents) => {
+      const currency = priceRoot?.getAttribute('data-money-currency') || 'AUD';
+      try {
+        return new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency,
+        }).format(Number(cents || 0) / 100);
+      } catch (error) {
+        return `$${(Number(cents || 0) / 100).toFixed(2)}`;
+      }
+    };
+
+    const updatePrice = (variant) => {
+      if (!priceRoot || !variant) return;
+      const price = Number(variant.price || 0);
+      const compare = Number(variant.compare_at_price || 0);
+      const onSale = compare > price;
+
+      priceRoot.classList.toggle('product-price--on-sale', onSale);
+
+      let compareEl = priceRoot.querySelector('[data-product-price-compare]');
+      let currentEl = priceRoot.querySelector('[data-product-price-current]');
+
+      if (onSale) {
+        if (!compareEl) {
+          compareEl = document.createElement('span');
+          compareEl.className = 'product-price__compare';
+          compareEl.setAttribute('data-product-price-compare', '');
+          priceRoot.insertBefore(compareEl, priceRoot.firstChild);
+        }
+        compareEl.textContent = formatMoney(compare);
+        compareEl.hidden = false;
+      } else if (compareEl) {
+        compareEl.remove();
+      }
+
+      if (!currentEl) {
+        currentEl = document.createElement('span');
+        currentEl.className = 'product-price__current';
+        currentEl.setAttribute('data-product-price-current', '');
+        priceRoot.appendChild(currentEl);
+      }
+      currentEl.textContent = formatMoney(price);
+    };
 
     const updateAvailability = (variantId) => {
       const variant = variants.find((item) => String(item.id) === String(variantId));
@@ -340,6 +386,7 @@
 
       paymentWrap?.classList.toggle('is-hidden', !available);
       unavailableBtn?.classList.toggle('is-hidden', available);
+      updatePrice(variant);
     };
 
     variantSelect.addEventListener('change', () => {

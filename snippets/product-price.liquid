@@ -1,0 +1,57 @@
+{% doc %}
+  Renders product price with optional compare-at sale styling.
+
+  @param {product} product - Product to price
+  @param {variant} [variant] - Variant to use (defaults to selected or first available)
+  @param {string} [class] - Optional extra class on the price wrapper
+  @param {boolean} [enable_variant_update] - Adds hooks so JS can refresh price on variant change
+{% enddoc %}
+
+{% liquid
+  assign price_variant = variant | default: product.selected_or_first_available_variant
+  assign price_class = class | default: 'product-price'
+  assign on_sale = false
+  if price_variant.compare_at_price > price_variant.price
+    assign on_sale = true
+  endif
+%}
+
+<p
+  class="{{ price_class }}{% if on_sale %} product-price--on-sale{% endif %}"
+  {% if enable_variant_update %}
+    data-product-price
+    data-money-currency="{{ shop.currency }}"
+  {% endif %}
+>
+  {% if on_sale %}
+    <span class="product-price__compare" data-product-price-compare>{{ price_variant.compare_at_price | money }}</span>
+    <span class="product-price__current" data-product-price-current>{{ price_variant.price | money }}</span>
+  {% else %}
+    <span class="product-price__current" data-product-price-current>{{ price_variant.price | money }}</span>
+  {% endif %}
+</p>
+
+{% stylesheet %}
+  .product-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.45rem 0.65rem;
+    margin: 0;
+  }
+
+  .product-price__compare {
+    color: #888;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
+  .product-price__current {
+    color: inherit;
+    font-weight: 600;
+  }
+
+  .product-price--on-sale .product-price__current {
+    color: #111;
+  }
+{% endstylesheet %}
