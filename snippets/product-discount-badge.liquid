@@ -1,0 +1,82 @@
+{% doc %}
+  Renders a product image badge for member deals or regular sales.
+
+  Priority:
+  1. MEMBERS DISCOUNT — logged-in customer with membership tag + product in member deals collection
+  2. SALE — compare-at price is higher than price (visible to everyone)
+
+  @param {product} product - Product to evaluate
+{% enddoc %}
+
+{% liquid
+  assign badge_variant = product.selected_or_first_available_variant
+  assign show_members_badge = false
+  assign show_sale_badge = false
+
+  assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+  assign is_member = false
+  if customer and membership_tag != blank
+    for tag in customer.tags
+      assign tag_down = tag | strip | downcase
+      if tag_down == membership_tag
+        assign is_member = true
+        break
+      endif
+    endfor
+  endif
+
+  assign member_deals = settings.member_deals_collection
+  if is_member and member_deals != blank
+    for collection in product.collections
+      if collection.id == member_deals.id
+        assign show_members_badge = true
+        break
+      endif
+    endfor
+  endif
+
+  if show_members_badge == false and badge_variant.compare_at_price > badge_variant.price
+    assign show_sale_badge = true
+  endif
+%}
+
+{% if show_members_badge %}
+  <span class="product-discount-badge product-discount-badge--members">
+    {{ 'products.members_discount' | t }}
+  </span>
+{% elsif show_sale_badge %}
+  <span class="product-discount-badge product-discount-badge--sale">
+    {{ 'products.sale' | t }}
+  </span>
+{% endif %}
+
+{% stylesheet %}
+  .product-discount-badge {
+    position: absolute;
+    right: 0.45rem;
+    bottom: 0.45rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    max-width: calc(100% - 0.9rem);
+    min-height: 1.35rem;
+    padding: 0.22rem 0.45rem;
+    border: 0;
+    background: #111;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  .product-discount-badge--sale {
+    background: #111;
+  }
+
+  .product-discount-badge--members {
+    background: #111;
+  }
+{% endstylesheet %}

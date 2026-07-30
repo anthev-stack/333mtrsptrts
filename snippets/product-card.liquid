@@ -47,6 +47,8 @@
       {% else %}
         {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder' }}
       {% endif %}
+
+      {% render 'product-discount-badge', product: product %}
     </a>
 
     {% if swatch_value != blank %}

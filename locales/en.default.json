@@ -138,7 +138,9 @@
     "variant": "Options",
     "decrease_quantity": "Decrease quantity",
     "increase_quantity": "Increase quantity",
-    "suggested_products": "Suggested products"
+    "suggested_products": "Suggested products",
+    "sale": "Sale",
+    "members_discount": "Members discount"
   },
   "partbot": {
     "vehicle_applications": "Vehicle applications",

@@ -381,6 +381,12 @@
         "id": "membership_cancel_url",
         "label": "t:labels.membership_cancel_url",
         "info": "t:labels.membership_cancel_url_info"
+      },
+      {
+        "type": "collection",
+        "id": "member_deals_collection",
+        "label": "t:labels.member_deals_collection",
+        "info": "t:labels.member_deals_collection_info"
       }
     ]
   },

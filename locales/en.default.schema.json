@@ -140,6 +140,8 @@
     "membership_price_label": "Price label",
     "membership_cancel_url": "Cancel API URL",
     "membership_cancel_url_info": "HTTPS endpoint on your Vultr app that cancels the subscription. Leave blank until the backend is ready.",
+    "member_deals_collection": "Member deals collection",
+    "member_deals_collection_info": "Products in this collection show a MEMBERS DISCOUNT badge only for logged-in customers with the membership tag. Point your member-only automatic discount at this same collection.",
     "membership_benefits": "Join benefits copy",
     "product_tag_notes": "Product tag notes",
     "product_tag_notes_info": "Add blocks below to show notes when a product has a matching tag. Notes appear under vehicle fitment. Tag matching is case-insensitive.",

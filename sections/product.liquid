@@ -78,6 +78,7 @@
     <div class="product-page__media">
       <div class="product-page__gallery" data-product-gallery>
         {% if product.media.size > 0 %}
+          <div class="product-page__viewer-shell">
           <div class="product-page__viewer" data-gallery-viewer>
             {% for media in product.media %}
               {% assign slide_alt = media.alt | default: product.title %}
@@ -118,6 +119,8 @@
               </div>
             {% endfor %}
           </div>
+          {% render 'product-discount-badge', product: product %}
+          </div>
 
           {% if product.media.size > 1 %}
             <div class="product-page__thumbs" role="list">
@@ -150,25 +153,31 @@
             </div>
           {% endif %}
         {% elsif product.featured_image %}
-          <div class="product-page__viewer">
-            <div class="product-page__slide is-active">
-              {{
-                product.featured_image
-                | image_url: width: 1600
-                | image_tag:
-                  class: 'product-page__image',
-                  widths: '600, 800, 1000, 1200, 1600',
-                  sizes: '(min-width: 990px) 42vw, 100vw',
-                  alt: product.title,
-                  loading: 'eager'
-              }}
+          <div class="product-page__viewer-shell">
+            <div class="product-page__viewer">
+              <div class="product-page__slide is-active">
+                {{
+                  product.featured_image
+                  | image_url: width: 1600
+                  | image_tag:
+                    class: 'product-page__image',
+                    widths: '600, 800, 1000, 1200, 1600',
+                    sizes: '(min-width: 990px) 42vw, 100vw',
+                    alt: product.title,
+                    loading: 'eager'
+                }}
+              </div>
             </div>
+            {% render 'product-discount-badge', product: product %}
           </div>
         {% else %}
-          <div class="product-page__viewer">
-            <div class="product-page__slide is-active">
-              {{ 'product-1' | placeholder_svg_tag: 'product-page__image product-page__image--placeholder' }}
+          <div class="product-page__viewer-shell">
+            <div class="product-page__viewer">
+              <div class="product-page__slide is-active">
+                {{ 'product-1' | placeholder_svg_tag: 'product-page__image product-page__image--placeholder' }}
+              </div>
             </div>
+            {% render 'product-discount-badge', product: product %}
           </div>
         {% endif %}
       </div>
@@ -413,6 +422,11 @@
     flex-direction: column;
     gap: 0.75rem;
     min-width: 0;
+  }
+
+  .product-page__viewer-shell {
+    position: relative;
+    width: 100%;
   }
 
   .product-page__viewer {
