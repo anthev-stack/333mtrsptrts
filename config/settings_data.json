@@ -31,7 +31,7 @@
     "membership_page_url": "shopify://pages/membership",
     "membership_cancel_url": "https://memberships.333mtrsprts.com/api/membership/cancel",
     "member_deals_collection": "members-deals",
-    "member_discount_percent": 10,
+    "member_discount_percent": 0,
     "side_promo_enable": true,
     "side_promo_position": "right",
     "side_promo_width": 180,
