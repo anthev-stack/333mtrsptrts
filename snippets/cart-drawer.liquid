@@ -103,7 +103,23 @@
                       <span class="cart-drawer__qty-value">1</span>
                     </div>
                   {% else %}
-                    <div class="cart-drawer__qty" data-cart-qty>
+                    {% liquid
+                      assign cart_max_qty = blank
+                      if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny'
+                        assign cart_max_qty = item.variant.inventory_quantity
+                        if cart_max_qty < 0
+                          assign cart_max_qty = 0
+                        endif
+                      endif
+                    %}
+                    <div
+                      class="cart-drawer__qty"
+                      data-cart-qty
+                      {% if cart_max_qty != blank %}
+                        data-max-qty="{{ cart_max_qty }}"
+                        data-stock-message="{{ 'cart.quantity_unavailable' | t: count: cart_max_qty | escape }}"
+                      {% endif %}
+                    >
                       <button
                         type="button"
                         class="cart-drawer__qty-btn"
@@ -118,8 +134,10 @@
                         data-cart-qty-change="1"
                         data-line-key="{{ item.key }}"
                         aria-label="{{ 'products.increase_quantity' | t }}"
+                        {% if cart_max_qty != blank and item.quantity >= cart_max_qty %}disabled{% endif %}
                       >+</button>
                     </div>
+                    <p class="cart-drawer__stock-error" data-cart-stock-error hidden></p>
                   {% endif %}
                   <button
                     type="button"
@@ -427,12 +445,25 @@
     cursor: pointer;
   }
 
+  .cart-drawer__qty-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
   .cart-drawer__qty-value {
     min-width: 1.5rem;
     text-align: center;
     font-size: 0.78rem;
     border-inline: 1px solid #111;
     line-height: 1.85rem;
+  }
+
+  .cart-drawer__stock-error {
+    flex-basis: 100%;
+    margin: 0.15rem 0 0;
+    color: #a11;
+    font-size: 0.72rem;
+    line-height: 1.35;
   }
 
   .cart-drawer__remove {
@@ -522,14 +553,62 @@
       }
     };
 
-    const changeQuantity = async (key, quantity) => {
-      await fetch(`${root}cart/change.js`, {
+    const changeQuantity = async (key, quantity, qtyRoot) => {
+      const maxQty = getMaxQty(qtyRoot);
+      if (maxQty != null && quantity > maxQty) {
+        showDrawerStockError(
+          qtyRoot,
+          qtyRoot?.getAttribute('data-stock-message') ||
+            "There isn't enough stock for the quantity you selected.",
+        );
+        return;
+      }
+
+      clearDrawerStockError(qtyRoot);
+
+      const response = await fetch(`${root}cart/change.js`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ id: key, quantity }),
       });
+
+      if (!response.ok) {
+        let message = "There isn't enough stock for the quantity you selected.";
+        try {
+          const payload = await response.json();
+          message = payload.description || payload.message || message;
+        } catch (error) {
+          // keep fallback
+        }
+        showDrawerStockError(qtyRoot, message);
+        return;
+      }
+
       await refreshDrawer();
       openDrawer();
+    };
+
+    const getMaxQty = (el) => {
+      const raw = el?.getAttribute?.('data-max-qty');
+      if (raw == null || raw === '') return null;
+      const max = Number(raw);
+      return Number.isFinite(max) ? max : null;
+    };
+
+    const showDrawerStockError = (qtyRoot, message) => {
+      const host = qtyRoot?.closest('[data-cart-line]') || qtyRoot?.parentElement;
+      const errorEl = host?.querySelector('[data-cart-stock-error]');
+      if (!errorEl) return;
+      errorEl.hidden = false;
+      errorEl.textContent = message;
+    };
+
+    const clearDrawerStockError = (qtyRoot) => {
+      const host = qtyRoot?.closest('[data-cart-line]') || qtyRoot?.parentElement;
+      const errorEl = host?.querySelector('[data-cart-stock-error]');
+      if (!errorEl) return;
+      errorEl.hidden = true;
+      errorEl.textContent = '';
     };
 
     document.querySelectorAll('[data-membership-fix-qty]').forEach((el) => {
@@ -561,10 +640,11 @@
       if (qtyBtn) {
         event.preventDefault();
         const row = qtyBtn.closest('[data-cart-line]');
+        const qtyRoot = qtyBtn.closest('[data-cart-qty]');
         const valueEl = row?.querySelector('.cart-drawer__qty-value');
         const current = Number(valueEl?.textContent || 1);
         const next = Math.max(0, current + Number(qtyBtn.dataset.cartQtyChange));
-        changeQuantity(qtyBtn.dataset.lineKey, next);
+        changeQuantity(qtyBtn.dataset.lineKey, next, qtyRoot);
       }
     });
 

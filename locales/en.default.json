@@ -38,6 +38,8 @@
     "price": "Price",
     "quantity": "Quantity",
     "membership_qty_locked": "Limited to 1 membership",
+    "quantity_unavailable": "There isn't enough stock for the quantity you selected. Only {{ count }} available.",
+    "quantity_unavailable_generic": "There isn't enough stock for the quantity you selected.",
     "order_note": "Order note",
     "taxes_shipping": "Taxes, discounts and shipping calculated at checkout."
   },

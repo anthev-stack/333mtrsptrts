@@ -164,7 +164,53 @@
     input.value = String(next);
   };
 
-  const changeCartLine = async (key, quantity) => {
+  const stockMessageFallback =
+    "There isn't enough stock for the quantity you selected.";
+
+  const showStockError = (rootEl, message) => {
+    if (!rootEl) return;
+    const host =
+      rootEl.closest('[data-cart-line], .cart-page__cell--qty') ||
+      rootEl.closest('[data-cart-page-qty]')?.parentElement ||
+      rootEl.parentElement;
+    const errorEl = host?.querySelector('[data-cart-stock-error]');
+    if (!errorEl) return;
+    errorEl.hidden = false;
+    errorEl.textContent =
+      message ||
+      rootEl.getAttribute('data-stock-message') ||
+      stockMessageFallback;
+  };
+
+  const clearStockError = (rootEl) => {
+    if (!rootEl) return;
+    const host =
+      rootEl.closest('[data-cart-line], .cart-page__cell--qty') ||
+      rootEl.closest('[data-cart-page-qty]')?.parentElement ||
+      rootEl.parentElement;
+    const errorEl = host?.querySelector('[data-cart-stock-error]');
+    if (!errorEl) return;
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  };
+
+  const parseCartError = async (response) => {
+    try {
+      const payload = await response.json();
+      return payload.description || payload.message || stockMessageFallback;
+    } catch (error) {
+      return stockMessageFallback;
+    }
+  };
+
+  const getMaxQty = (el) => {
+    const raw = el?.getAttribute?.('data-max-qty');
+    if (raw == null || raw === '') return null;
+    const max = Number(raw);
+    return Number.isFinite(max) ? max : null;
+  };
+
+  const changeCartLine = async (key, quantity, options = {}) => {
     const response = await fetch(`${root}cart/change.js`, {
       method: 'POST',
       headers: {
@@ -175,10 +221,15 @@
     });
 
     if (!response.ok) {
-      throw new Error('Unable to update cart quantity');
+      const message = await parseCartError(response);
+      const err = new Error(message);
+      err.stockLimited = true;
+      throw err;
     }
 
-    window.location.reload();
+    if (options.reload !== false) {
+      window.location.reload();
+    }
   };
 
   const isMembershipCartItem = (item) => {
@@ -257,6 +308,15 @@
       event.preventDefault();
       const delta = Number(cartPageBtn.getAttribute('data-cart-page-qty-change') || 0);
       const next = Math.max(0, Number(input.value || 0) + delta);
+      const maxQty = getMaxQty(wrap);
+
+      if (maxQty != null && next > maxQty) {
+        input.value = String(maxQty);
+        showStockError(wrap, wrap.getAttribute('data-stock-message'));
+        return;
+      }
+
+      clearStockError(wrap);
       input.value = String(next);
       cartPageBtn.disabled = true;
 
@@ -264,6 +324,7 @@
         await changeCartLine(key, next);
       } catch (error) {
         cartPageBtn.disabled = false;
+        showStockError(wrap, error?.message);
         console.error(error);
       }
     }
@@ -285,15 +346,32 @@
     }
 
     const key = cartInput.getAttribute('data-line-key');
+    const wrap = cartInput.closest('[data-cart-page-qty]');
     if (!key) return;
 
-    const next = Math.max(0, Number(cartInput.value) || 0);
+    let next = Math.max(0, Number(cartInput.value) || 0);
+    const maxQty = getMaxQty(wrap);
+    let blocked = false;
+
+    if (maxQty != null && next > maxQty) {
+      next = maxQty;
+      blocked = true;
+      showStockError(wrap, wrap?.getAttribute('data-stock-message'));
+    } else {
+      clearStockError(wrap);
+    }
+
     cartInput.value = String(next);
 
     try {
       await changeCartLine(key, next);
     } catch (error) {
+      showStockError(wrap, error?.message);
       console.error(error);
+    }
+
+    if (blocked) {
+      // Keep the stock message visible after reload is skipped when unchanged.
     }
   });
 

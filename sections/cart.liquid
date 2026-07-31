@@ -91,7 +91,24 @@
                     </div>
                     <p class="cart-page__qty-note">{{ 'cart.membership_qty_locked' | t }}</p>
                   {% else %}
-                    <div class="cart-page__qty" data-cart-page-qty data-line-key="{{ item.key }}">
+                    {% liquid
+                      assign cart_max_qty = blank
+                      if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny'
+                        assign cart_max_qty = item.variant.inventory_quantity
+                        if cart_max_qty < 0
+                          assign cart_max_qty = 0
+                        endif
+                      endif
+                    %}
+                    <div
+                      class="cart-page__qty"
+                      data-cart-page-qty
+                      data-line-key="{{ item.key }}"
+                      {% if cart_max_qty != blank %}
+                        data-max-qty="{{ cart_max_qty }}"
+                        data-stock-message="{{ 'cart.quantity_unavailable' | t: count: cart_max_qty | escape }}"
+                      {% endif %}
+                    >
                       <button
                         type="button"
                         class="cart-page__qty-btn"
@@ -104,6 +121,7 @@
                         name="updates[{{ item.key }}]"
                         value="{{ item.quantity }}"
                         min="0"
+                        {% if cart_max_qty != blank %}max="{{ cart_max_qty }}"{% endif %}
                         aria-label="{{ 'cart.quantity' | t }}"
                         data-cart-page-qty-input
                         data-line-key="{{ item.key }}"
@@ -113,8 +131,10 @@
                         class="cart-page__qty-btn"
                         data-cart-page-qty-change="1"
                         aria-label="{{ 'products.increase_quantity' | t }}"
+                        {% if cart_max_qty != blank and item.quantity >= cart_max_qty %}disabled{% endif %}
                       >+</button>
                     </div>
+                    <p class="cart-page__stock-error" data-cart-stock-error hidden></p>
                   {% endif %}
                   <a href="{{ item.url_to_remove }}" class="cart-page__remove">
                     {{ 'cart.remove' | t }}
@@ -311,6 +331,18 @@
     font-size: 0.68rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  .cart-page__stock-error {
+    margin: 0.4rem 0 0;
+    color: #a11;
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .cart-page__qty-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   .cart-page__qty-btn,
