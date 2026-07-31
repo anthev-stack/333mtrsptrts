@@ -76,7 +76,8 @@
         <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
         <p class="membership__price">{{ price_label | escape }}</p>
 
-        {% if section.settings.benefits != blank %}
+        {% assign benefits_text = section.settings.benefits | strip_html | strip %}
+        {% if benefits_text != blank %}
           <div class="membership__benefits">
             {{ section.settings.benefits }}
           </div>
@@ -90,7 +91,6 @@
         {% endif %}
 
         <p class="membership__lead membership__lead--guest">{{ 'membership.guest_lead' | t }}</p>
-        <p class="membership__fineprint">{{ 'membership.guest_note' | t }}</p>
 
         <div class="membership__actions">
           <a href="{{ routes.account_register_url }}" class="membership__button membership__button--primary">
@@ -149,7 +149,8 @@
         <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
         <p class="membership__price">{{ price_label | escape }}</p>
 
-        {% if section.settings.benefits != blank %}
+        {% assign benefits_text = section.settings.benefits | strip_html | strip %}
+        {% if benefits_text != blank %}
           <div class="membership__benefits">
             {{ section.settings.benefits }}
           </div>
@@ -185,7 +186,6 @@
           {% endform %}
           <p class="membership__product-ref">
             {{ membership_product.title | escape }}
-            · {{ membership_variant.price | money }}
             {% if membership_selling_plan_id != blank %}
               · {{ 'membership.subscription_ready' | t }}
             {% endif %}
@@ -263,11 +263,15 @@
   }
 
   .membership__lead--guest {
-    margin-top: 0.35rem;
+    margin-top: 0.15rem;
+  }
+
+  .membership__panel--guest .membership__actions {
+    margin-top: 0.25rem;
   }
 
   .membership__panel--guest .membership__fineprint {
-    margin-bottom: 1rem;
+    margin-top: 0.85rem;
   }
 
   .membership__price {
@@ -436,7 +440,7 @@
       "type": "richtext",
       "id": "benefits",
       "label": "t:labels.membership_benefits",
-      "default": "<p>Exclusive member deals, early product drops, member discounts, and in-store shop perks with your membership card.</p>"
+      "info": "t:labels.membership_benefits_info"
     },
     {
       "type": "header",

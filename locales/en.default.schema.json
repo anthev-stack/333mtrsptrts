@@ -153,6 +153,7 @@
     "staff_discount_percent": "Staff discount percent (fallback)",
     "staff_discount_percent_info": "Fallback only. Live % comes from shop metafield membership.staff_discount_percent, synced by the membership app (STAFF_DISCOUNT_TITLE in .env).",
     "membership_benefits": "Join benefits copy",
+    "membership_benefits_info": "Optional. Leave blank to use the default benefit list. Avoid repeating the short intro line above the price.",
     "product_tag_notes": "Product tag notes",
     "product_tag_notes_info": "Add blocks below to show notes when a product has a matching tag. Notes appear under vehicle fitment. Tag matching is case-insensitive.",
     "product_tag_note": "Tag note",

@@ -3,6 +3,7 @@
     "main": {
       "type": "membership",
       "settings": {
+        "benefits": "",
         "padding_top": 40,
         "padding_bottom": 64
       }
