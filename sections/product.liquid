@@ -256,7 +256,24 @@
 
         <div class="product-page__quantity-wrap">
           <label class="product-page__label" for="Quantity-{{ section.id }}">{{ 'products.quantity' | t }}</label>
-          <div class="product-page__quantity" data-quantity>
+          {% liquid
+            assign product_max_qty = blank
+            if current_variant.inventory_management != blank and current_variant.inventory_policy == 'deny'
+              assign product_max_qty = current_variant.inventory_quantity
+              if product_max_qty < 0
+                assign product_max_qty = 0
+              endif
+            endif
+          %}
+          <div
+            class="product-page__quantity"
+            data-quantity
+            data-stock-message-template="{{ 'cart.quantity_unavailable' | t: count: '[[count]]' | escape }}"
+            {% if product_max_qty != blank %}
+              data-max-qty="{{ product_max_qty }}"
+              data-stock-message="{{ 'cart.quantity_unavailable' | t: count: product_max_qty | escape }}"
+            {% endif %}
+          >
             <button type="button" class="product-page__qty-btn" data-quantity-minus aria-label="{{ 'products.decrease_quantity' | t }}">−</button>
             <input
               id="Quantity-{{ section.id }}"
@@ -265,10 +282,18 @@
               name="quantity"
               min="1"
               value="1"
+              {% if product_max_qty != blank %}max="{{ product_max_qty }}"{% endif %}
               data-quantity-input
             >
-            <button type="button" class="product-page__qty-btn" data-quantity-plus aria-label="{{ 'products.increase_quantity' | t }}">+</button>
+            <button
+              type="button"
+              class="product-page__qty-btn"
+              data-quantity-plus
+              aria-label="{{ 'products.increase_quantity' | t }}"
+              {% if product_max_qty != blank and product_max_qty <= 1 %}disabled{% endif %}
+            >+</button>
           </div>
+          <p class="product-page__stock-error" data-cart-stock-error hidden></p>
         </div>
 
         <button
@@ -611,6 +636,19 @@
 
   .product-page__qty-btn:hover {
     background: #f5f5f5;
+  }
+
+  .product-page__qty-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: #fff;
+  }
+
+  .product-page__stock-error {
+    margin: 0.45rem 0 0;
+    color: #a11;
+    font-size: 0.75rem;
+    line-height: 1.35;
   }
 
   .product-page__qty-input {

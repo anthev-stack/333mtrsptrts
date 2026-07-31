@@ -170,6 +170,7 @@
   const showStockError = (rootEl, message) => {
     if (!rootEl) return;
     const host =
+      rootEl.closest('.product-page__quantity-wrap') ||
       rootEl.closest('[data-cart-line], .cart-page__cell--qty') ||
       rootEl.closest('[data-cart-page-qty]')?.parentElement ||
       rootEl.parentElement;
@@ -185,6 +186,7 @@
   const clearStockError = (rootEl) => {
     if (!rootEl) return;
     const host =
+      rootEl.closest('.product-page__quantity-wrap') ||
       rootEl.closest('[data-cart-line], .cart-page__cell--qty') ||
       rootEl.closest('[data-cart-page-qty]')?.parentElement ||
       rootEl.parentElement;
@@ -192,6 +194,70 @@
     if (!errorEl) return;
     errorEl.hidden = true;
     errorEl.textContent = '';
+  };
+
+  const stockMessageForMax = (wrap, max) => {
+    const template = wrap?.getAttribute('data-stock-message-template');
+    if (template && max != null) {
+      return template.replaceAll('[[count]]', String(max));
+    }
+    return wrap?.getAttribute('data-stock-message') || stockMessageFallback;
+  };
+
+  const maxForVariant = (variant) => {
+    if (!variant || !variant.inventory_management) return null;
+    if (String(variant.inventory_policy || '').toLowerCase() === 'continue') return null;
+    const qty = Number(variant.inventory_quantity);
+    if (!Number.isFinite(qty)) return null;
+    return Math.max(0, qty);
+  };
+
+  const applyProductQtyMax = (wrap, max) => {
+    if (!wrap) return;
+    const input = wrap.querySelector('[data-quantity-input]');
+    const plus = wrap.querySelector('[data-quantity-plus]');
+    if (max == null) {
+      wrap.removeAttribute('data-max-qty');
+      wrap.removeAttribute('data-stock-message');
+      input?.removeAttribute('max');
+      if (plus) plus.disabled = false;
+      clearStockError(wrap);
+      return;
+    }
+
+    wrap.setAttribute('data-max-qty', String(max));
+    wrap.setAttribute('data-stock-message', stockMessageForMax(wrap, max));
+    if (input) {
+      input.max = String(max);
+      const current = Math.max(1, Number(input.value) || 1);
+      if (current > max) {
+        input.value = String(Math.max(1, max) || 1);
+        if (max < 1) input.value = '1';
+        showStockError(wrap, stockMessageForMax(wrap, max));
+      } else {
+        clearStockError(wrap);
+      }
+      if (plus) plus.disabled = Number(input.value || 1) >= max;
+    }
+  };
+
+  const clampProductQuantity = (wrap, nextValue, { showError = true } = {}) => {
+    const input = wrap?.querySelector('[data-quantity-input]');
+    if (!input) return 1;
+    let next = Math.max(1, Number(nextValue) || 1);
+    const maxQty = getMaxQty(wrap);
+    const plus = wrap.querySelector('[data-quantity-plus]');
+
+    if (maxQty != null && next > maxQty) {
+      next = Math.max(1, maxQty);
+      if (showError) showStockError(wrap, stockMessageForMax(wrap, maxQty));
+    } else {
+      clearStockError(wrap);
+    }
+
+    input.value = String(next);
+    if (plus) plus.disabled = maxQty != null && next >= maxQty;
+    return next;
   };
 
   const parseCartError = async (response) => {
@@ -284,8 +350,13 @@
       const input = wrap?.querySelector('[data-quantity-input]');
       if (!input) return;
       event.preventDefault();
+      if (productPlus && productPlus.disabled) {
+        const maxQty = getMaxQty(wrap);
+        showStockError(wrap, stockMessageForMax(wrap, maxQty));
+        return;
+      }
       const delta = productPlus ? 1 : -1;
-      setInputValue(input, Number(input.value || 1) + delta, 1);
+      clampProductQuantity(wrap, Number(input.value || 1) + delta);
       return;
     }
 
@@ -333,7 +404,8 @@
   document.addEventListener('change', async (event) => {
     const productInput = event.target.closest('[data-quantity-input]');
     if (productInput && productInput.closest('[data-quantity]')) {
-      setInputValue(productInput, productInput.value, 1);
+      const wrap = productInput.closest('[data-quantity]');
+      clampProductQuantity(wrap, productInput.value);
       return;
     }
 
@@ -393,14 +465,19 @@
 
   const variantSelect = document.querySelector('[data-product-variant-select]');
   const variantsEl = document.querySelector('[data-product-variants]');
-  if (variantSelect && variantsEl) {
-    let variants = [];
+  const productForm = document.querySelector('[data-product-form]');
+  const quantityWrap = productForm?.querySelector('[data-quantity]');
+
+  let variants = [];
+  if (variantsEl) {
     try {
       variants = JSON.parse(variantsEl.textContent || '[]');
     } catch (error) {
       variants = [];
     }
+  }
 
+  if (variantSelect && variants.length) {
     const form = variantSelect.closest('[data-product-form]');
     const addBtn = form?.querySelector('[data-product-add]');
     const paymentWrap = form?.querySelector('[data-product-payment]');
@@ -471,11 +548,20 @@
       paymentWrap?.classList.toggle('is-hidden', !available);
       unavailableBtn?.classList.toggle('is-hidden', available);
       updatePrice(variant);
+      applyProductQtyMax(quantityWrap, maxForVariant(variant));
     };
 
     variantSelect.addEventListener('change', () => {
       updateAvailability(variantSelect.value);
     });
+  } else if (quantityWrap && variants.length === 1) {
+    applyProductQtyMax(quantityWrap, maxForVariant(variants[0]));
+  }
+
+  // Keep plus button state in sync for single-variant products rendered with Liquid max.
+  if (quantityWrap) {
+    const input = quantityWrap.querySelector('[data-quantity-input]');
+    if (input) clampProductQuantity(quantityWrap, input.value, { showError: false });
   }
 
   const initCollectionFilters = () => {

@@ -659,14 +659,62 @@
       if (!form || form.hasAttribute('data-membership-checkout')) return;
 
       event.preventDefault();
+      const qtyWrap = form.querySelector('[data-quantity]');
+      const qtyInput = form.querySelector('[data-quantity-input], input[name="quantity"]');
+      const requested = Math.max(1, Number(qtyInput?.value || 1));
+      const maxRaw = qtyWrap?.getAttribute('data-max-qty');
+      const maxQty = maxRaw == null || maxRaw === '' ? null : Number(maxRaw);
+
+      const showProductStockError = (message) => {
+        const errorEl =
+          form.querySelector('[data-cart-stock-error]') ||
+          qtyWrap?.parentElement?.querySelector('[data-cart-stock-error]');
+        if (!errorEl) {
+          window.alert(message);
+          return;
+        }
+        errorEl.hidden = false;
+        errorEl.textContent = message;
+      };
+
+      if (maxQty != null && Number.isFinite(maxQty) && requested > maxQty) {
+        if (qtyInput) qtyInput.value = String(Math.max(1, maxQty));
+        const template = qtyWrap?.getAttribute('data-stock-message-template');
+        const message =
+          (template && template.replaceAll('[[count]]', String(maxQty))) ||
+          qtyWrap?.getAttribute('data-stock-message') ||
+          "There isn't enough stock for the quantity you selected.";
+        showProductStockError(message);
+        return;
+      }
+
       const formData = new FormData(form);
 
       try {
-        await fetch(`${root}cart/add.js`, {
+        const response = await fetch(`${root}cart/add.js`, {
           method: 'POST',
           headers: { Accept: 'application/json' },
           body: formData,
         });
+
+        if (!response.ok) {
+          let message = "There isn't enough stock for the quantity you selected.";
+          try {
+            const payload = await response.json();
+            message = payload.description || payload.message || message;
+          } catch (error) {
+            // keep fallback
+          }
+          showProductStockError(message);
+          return;
+        }
+
+        const errorEl = form.querySelector('[data-cart-stock-error]');
+        if (errorEl) {
+          errorEl.hidden = true;
+          errorEl.textContent = '';
+        }
+
         await refreshDrawer();
         openDrawer();
       } catch (error) {
