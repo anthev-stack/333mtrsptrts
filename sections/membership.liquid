@@ -82,12 +82,7 @@
             {{ section.settings.benefits }}
           </div>
         {% else %}
-          <ul class="membership__benefits-list">
-            <li>{{ 'membership.benefit_1' | t }}</li>
-            <li>{{ 'membership.benefit_2' | t }}</li>
-            <li>{{ 'membership.benefit_3' | t }}</li>
-            <li>{{ 'membership.benefit_4' | t }}</li>
-          </ul>
+          <p class="membership__benefits">{{ 'membership.benefits_summary' | t }}</p>
         {% endif %}
 
         <p class="membership__lead membership__lead--guest">{{ 'membership.guest_lead' | t }}</p>
@@ -155,12 +150,7 @@
             {{ section.settings.benefits }}
           </div>
         {% else %}
-          <ul class="membership__benefits-list">
-            <li>{{ 'membership.benefit_1' | t }}</li>
-            <li>{{ 'membership.benefit_2' | t }}</li>
-            <li>{{ 'membership.benefit_3' | t }}</li>
-            <li>{{ 'membership.benefit_4' | t }}</li>
-          </ul>
+          <p class="membership__benefits">{{ 'membership.benefits_summary' | t }}</p>
         {% endif %}
 
         {% if membership_product != blank and membership_variant != blank %}
@@ -281,20 +271,11 @@
     letter-spacing: 0.02em;
   }
 
-  .membership__benefits,
-  .membership__benefits-list {
+  .membership__benefits {
     margin: 0 0 1.25rem;
     color: #333;
     font-size: 0.9rem;
     line-height: 1.55;
-  }
-
-  .membership__benefits-list {
-    padding-left: 1.1rem;
-  }
-
-  .membership__benefits-list li + li {
-    margin-top: 0.35rem;
   }
 
   .membership__actions,
