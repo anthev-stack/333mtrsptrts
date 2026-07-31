@@ -402,6 +402,39 @@
     ]
   },
   {
+    "name": "t:general.staff_discounts",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:labels.staff_settings_info"
+      },
+      {
+        "type": "text",
+        "id": "staff_tag",
+        "label": "t:labels.staff_tag",
+        "default": "STAFF",
+        "info": "t:labels.staff_tag_info"
+      },
+      {
+        "type": "collection",
+        "id": "staff_deals_collection",
+        "label": "t:labels.staff_deals_collection",
+        "info": "t:labels.staff_deals_collection_info"
+      },
+      {
+        "type": "range",
+        "id": "staff_discount_percent",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "unit": "%",
+        "label": "t:labels.staff_discount_percent",
+        "default": 0,
+        "info": "t:labels.staff_discount_percent_info"
+      }
+    ]
+  },
+  {
     "name": "t:general.side_promo_banners",
     "settings": [
       {

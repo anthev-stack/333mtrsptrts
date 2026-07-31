@@ -140,7 +140,8 @@
     "increase_quantity": "Increase quantity",
     "suggested_products": "Suggested products",
     "sale": "Sale",
-    "members_discount": "Members discount"
+    "members_discount": "Members discount",
+    "staff_discount": "Staff discount"
   },
   "partbot": {
     "vehicle_applications": "Vehicle applications",

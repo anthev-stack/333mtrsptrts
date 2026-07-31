@@ -1,32 +1,49 @@
 {% doc %}
-  Renders a product image badge for member deals or regular sales.
+  Renders a product image badge for staff deals, member deals, or regular sales.
 
   Priority:
-  1. MEMBERS DISCOUNT — logged-in customer with membership tag + product in member deals collection
-  2. SALE — compare-at price is higher than price (visible to everyone)
+  1. STAFF DISCOUNT — STAFF-tagged customer + product in staff deals collection
+  2. MEMBERS DISCOUNT — MEMBERSHIP-tagged customer + product in member deals collection
+  3. SALE — compare-at price is higher than price
 
   @param {product} product - Product to evaluate
 {% enddoc %}
 
 {% liquid
   assign badge_variant = product.selected_or_first_available_variant
+  assign show_staff_badge = false
   assign show_members_badge = false
   assign show_sale_badge = false
 
+  assign staff_tag = settings.staff_tag | default: 'STAFF' | strip | downcase
   assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+  assign is_staff = false
   assign is_member = false
-  if customer and membership_tag != blank
+
+  if customer
     for tag in customer.tags
       assign tag_down = tag | strip | downcase
-      if tag_down == membership_tag
+      if staff_tag != blank and tag_down == staff_tag
+        assign is_staff = true
+      endif
+      if membership_tag != blank and tag_down == membership_tag
         assign is_member = true
+      endif
+    endfor
+  endif
+
+  assign staff_deals = settings.staff_deals_collection
+  if is_staff and staff_deals != blank
+    for collection in product.collections
+      if collection.id == staff_deals.id
+        assign show_staff_badge = true
         break
       endif
     endfor
   endif
 
   assign member_deals = settings.member_deals_collection
-  if is_member and member_deals != blank
+  if show_staff_badge == false and is_member and member_deals != blank
     for collection in product.collections
       if collection.id == member_deals.id
         assign show_members_badge = true
@@ -35,12 +52,16 @@
     endfor
   endif
 
-  if show_members_badge == false and badge_variant.compare_at_price > badge_variant.price
+  if show_staff_badge == false and show_members_badge == false and badge_variant.compare_at_price > badge_variant.price
     assign show_sale_badge = true
   endif
 %}
 
-{% if show_members_badge %}
+{% if show_staff_badge %}
+  <span class="product-discount-badge product-discount-badge--staff">
+    {{ 'products.staff_discount' | t }}
+  </span>
+{% elsif show_members_badge %}
   <span class="product-discount-badge product-discount-badge--members">
     {{ 'products.members_discount' | t }}
   </span>
@@ -72,11 +93,9 @@
     pointer-events: none;
   }
 
-  .product-discount-badge--sale {
-    background: #111;
-  }
-
-  .product-discount-badge--members {
+  .product-discount-badge--sale,
+  .product-discount-badge--members,
+  .product-discount-badge--staff {
     background: #111;
   }
 {% endstylesheet %}

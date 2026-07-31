@@ -345,27 +345,27 @@
       if (!priceRoot || !variant) return;
       const price = Number(variant.price || 0);
       const compare = Number(variant.compare_at_price || 0);
-      const memberDeal = priceRoot.getAttribute('data-member-deal') === 'true';
-      const memberPercent = Number(priceRoot.getAttribute('data-member-discount-percent') || 0);
-      const showMemberPrice = memberDeal && memberPercent > 0;
-      const memberPrice = showMemberPrice
-        ? Math.round((price * (100 - memberPercent)) / 100)
+      const dealActive = priceRoot.getAttribute('data-deal-active') === 'true';
+      const dealPercent = Number(priceRoot.getAttribute('data-deal-percent') || 0);
+      const showDealPrice = dealActive && dealPercent > 0;
+      const dealPrice = showDealPrice
+        ? Math.round((price * (100 - dealPercent)) / 100)
         : price;
-      const onSale = !showMemberPrice && compare > price;
+      const onSale = !showDealPrice && compare > price;
 
-      priceRoot.classList.toggle('product-price--on-sale', showMemberPrice || onSale);
+      priceRoot.classList.toggle('product-price--on-sale', showDealPrice || onSale);
 
       let compareEl = priceRoot.querySelector('[data-product-price-compare]');
       let currentEl = priceRoot.querySelector('[data-product-price-current]');
 
-      if (showMemberPrice || onSale) {
+      if (showDealPrice || onSale) {
         if (!compareEl) {
           compareEl = document.createElement('span');
           compareEl.className = 'product-price__compare';
           compareEl.setAttribute('data-product-price-compare', '');
           priceRoot.insertBefore(compareEl, priceRoot.firstChild);
         }
-        compareEl.textContent = formatMoney(showMemberPrice ? price : compare);
+        compareEl.textContent = formatMoney(showDealPrice ? price : compare);
         compareEl.hidden = false;
       } else if (compareEl) {
         compareEl.remove();
@@ -377,7 +377,7 @@
         currentEl.setAttribute('data-product-price-current', '');
         priceRoot.appendChild(currentEl);
       }
-      currentEl.textContent = formatMoney(showMemberPrice ? memberPrice : price);
+      currentEl.textContent = formatMoney(showDealPrice ? dealPrice : price);
     };
 
     const updateAvailability = (variantId) => {

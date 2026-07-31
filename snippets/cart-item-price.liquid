@@ -3,7 +3,7 @@
 
   Priority:
   1. Shopify-applied cart discounts (original > final)
-  2. Member deals preview from theme percent (when Shopify has not reduced the line yet)
+  2. Staff / member deals preview from synced percent
   3. Compare-at sale pricing
 
   @param {line_item} item - Cart line item
@@ -15,13 +15,28 @@
   assign price_mode = mode | default: 'line'
   assign price_class = class | default: 'product-price cart-price'
 
+  assign staff_tag = settings.staff_tag | default: 'STAFF' | strip | downcase
   assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+  assign is_staff = false
   assign is_member = false
-  if customer and membership_tag != blank
+  if customer
     for tag in customer.tags
       assign tag_down = tag | strip | downcase
-      if tag_down == membership_tag
+      if staff_tag != blank and tag_down == staff_tag
+        assign is_staff = true
+      endif
+      if membership_tag != blank and tag_down == membership_tag
         assign is_member = true
+      endif
+    endfor
+  endif
+
+  assign in_staff_deals = false
+  assign staff_deals = settings.staff_deals_collection
+  if is_staff and staff_deals != blank
+    for collection in item.product.collections
+      if collection.id == staff_deals.id
+        assign in_staff_deals = true
         break
       endif
     endfor
@@ -29,7 +44,7 @@
 
   assign in_member_deals = false
   assign member_deals = settings.member_deals_collection
-  if is_member and member_deals != blank
+  if in_staff_deals == false and is_member and member_deals != blank
     for collection in item.product.collections
       if collection.id == member_deals.id
         assign in_member_deals = true
@@ -37,8 +52,13 @@
       endif
     endfor
   endif
+%}
 
-  assign member_percent = settings.member_discount_percent | default: 0 | plus: 0
+{% capture staff_percent_raw %}{% render 'discount-percent', kind: 'staff' %}{% endcapture %}
+{% capture member_percent_raw %}{% render 'discount-percent', kind: 'member' %}{% endcapture %}
+{% liquid
+  assign staff_percent = staff_percent_raw | strip | plus: 0
+  assign member_percent = member_percent_raw | strip | plus: 0
 
   if price_mode == 'unit'
     assign current_amount = item.final_price
@@ -52,13 +72,25 @@
 
   if compare_amount > current_amount
     assign show_compare = true
-  elsif in_member_deals and member_percent > 0
-    assign member_keep = 100 | minus: member_percent
+  elsif in_staff_deals and staff_percent > 0
+    assign deal_keep = 100 | minus: staff_percent
     if price_mode == 'unit'
-      assign current_amount = item.original_price | times: member_keep | divided_by: 100
+      assign current_amount = item.original_price | times: deal_keep | divided_by: 100
       assign compare_amount = item.original_price
     else
-      assign current_amount = item.original_line_price | times: member_keep | divided_by: 100
+      assign current_amount = item.original_line_price | times: deal_keep | divided_by: 100
+      assign compare_amount = item.original_line_price
+    endif
+    if compare_amount > current_amount
+      assign show_compare = true
+    endif
+  elsif in_member_deals and member_percent > 0
+    assign deal_keep = 100 | minus: member_percent
+    if price_mode == 'unit'
+      assign current_amount = item.original_price | times: deal_keep | divided_by: 100
+      assign compare_amount = item.original_price
+    else
+      assign current_amount = item.original_line_price | times: deal_keep | divided_by: 100
       assign compare_amount = item.original_line_price
     endif
     if compare_amount > current_amount

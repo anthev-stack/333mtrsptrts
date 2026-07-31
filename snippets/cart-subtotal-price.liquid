@@ -2,7 +2,7 @@
   Cart subtotal with struck-through original when discounted.
 
   Uses Shopify cart totals when discounts are applied; otherwise previews
-  member-deal percent off for eligible lines.
+  staff/member deal percent off for eligible lines.
 
   @param {string} [class] - Wrapper class for the price element
 {% enddoc %}
@@ -16,36 +16,66 @@
   if cart.original_total_price > cart.total_price
     assign show_compare = true
   else
+    assign staff_tag = settings.staff_tag | default: 'STAFF' | strip | downcase
     assign membership_tag = settings.membership_tag | default: 'MEMBERSHIP' | strip | downcase
+    assign is_staff = false
     assign is_member = false
-    if customer and membership_tag != blank
+    if customer
       for tag in customer.tags
         assign tag_down = tag | strip | downcase
-        if tag_down == membership_tag
+        if staff_tag != blank and tag_down == staff_tag
+          assign is_staff = true
+        endif
+        if membership_tag != blank and tag_down == membership_tag
           assign is_member = true
-          break
         endif
       endfor
     endif
+  endif
+%}
 
+{% if show_compare == false %}
+  {% capture staff_percent_raw %}{% render 'discount-percent', kind: 'staff' %}{% endcapture %}
+  {% capture member_percent_raw %}{% render 'discount-percent', kind: 'member' %}{% endcapture %}
+  {% liquid
+    assign staff_percent = staff_percent_raw | strip | plus: 0
+    assign member_percent = member_percent_raw | strip | plus: 0
+    assign staff_deals = settings.staff_deals_collection
     assign member_deals = settings.member_deals_collection
-    assign member_percent = settings.member_discount_percent | default: 0 | plus: 0
 
-    if is_member and member_deals != blank and member_percent > 0
-      assign member_keep = 100 | minus: member_percent
+    if customer
+      if staff_percent > 0 or member_percent > 0
       assign compare_amount = 0
       assign current_amount = 0
       for item in cart.items
-        assign line_in_deals = false
-        for collection in item.product.collections
-          if collection.id == member_deals.id
-            assign line_in_deals = true
-            break
-          endif
-        endfor
-        if line_in_deals
+        assign line_staff = false
+        assign line_member = false
+        if is_staff and staff_deals != blank
+          for collection in item.product.collections
+            if collection.id == staff_deals.id
+              assign line_staff = true
+              break
+            endif
+          endfor
+        endif
+        if line_staff == false and is_member and member_deals != blank
+          for collection in item.product.collections
+            if collection.id == member_deals.id
+              assign line_member = true
+              break
+            endif
+          endfor
+        endif
+
+        if line_staff and staff_percent > 0
+          assign deal_keep = 100 | minus: staff_percent
           assign compare_amount = compare_amount | plus: item.original_line_price
-          assign discounted_line = item.original_line_price | times: member_keep | divided_by: 100
+          assign discounted_line = item.original_line_price | times: deal_keep | divided_by: 100
+          assign current_amount = current_amount | plus: discounted_line
+        elsif line_member and member_percent > 0
+          assign deal_keep = 100 | minus: member_percent
+          assign compare_amount = compare_amount | plus: item.original_line_price
+          assign discounted_line = item.original_line_price | times: deal_keep | divided_by: 100
           assign current_amount = current_amount | plus: discounted_line
         else
           assign compare_amount = compare_amount | plus: item.final_line_price
@@ -57,9 +87,10 @@
       else
         assign current_amount = cart.total_price
       endif
+      endif
     endif
-  endif
-%}
+  %}
+{% endif %}
 
 {% if show_compare %}
   <strong class="{{ subtotal_class }} product-price product-price--on-sale">

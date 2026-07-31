@@ -1,0 +1,22 @@
+{% doc %}
+  Outputs an integer discount percent for member or staff deals.
+  Prefers live shop metafields synced by the membership app; falls back to theme settings.
+
+  @param {string} kind - "member" or "staff"
+{% enddoc %}
+{% liquid
+  assign percent_out = 0
+  if kind == 'staff'
+    assign meta_percent = shop.metafields.membership.staff_discount_percent.value
+    assign fallback_percent = settings.staff_discount_percent | default: 0
+  else
+    assign meta_percent = shop.metafields.membership.member_discount_percent.value
+    assign fallback_percent = settings.member_discount_percent | default: 0
+  endif
+
+  if meta_percent != blank
+    assign percent_out = meta_percent | plus: 0
+  else
+    assign percent_out = fallback_percent | plus: 0
+  endif
+%}{{ percent_out }}
