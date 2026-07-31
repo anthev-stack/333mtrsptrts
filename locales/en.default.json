@@ -95,9 +95,10 @@
   "membership": {
     "eyebrow": "333 Motorsports",
     "title": "Membership",
-    "guest_lead": "Log in to view your membership card, or create an account to become a member.",
+    "guest_lead": "To join, create a free store account first — then you can start the membership subscription from this page.",
+    "guest_note": "Creating an account is free and does not make you a member. Membership starts only after you subscribe at checkout.",
     "log_in": "Log in",
-    "create_account": "Create account",
+    "create_account": "Create free account",
     "active_status": "Active member",
     "member_lead": "Show this card in-store for member discounts at check out.",
     "card_label": "Membership card",

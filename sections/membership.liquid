@@ -73,15 +73,34 @@
 
     {% unless customer %}
       <div class="membership__panel membership__panel--guest">
-        <p class="membership__lead">{{ 'membership.guest_lead' | t }}</p>
+        <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
+        <p class="membership__price">{{ price_label | escape }}</p>
+
+        {% if section.settings.benefits != blank %}
+          <div class="membership__benefits">
+            {{ section.settings.benefits }}
+          </div>
+        {% else %}
+          <ul class="membership__benefits-list">
+            <li>{{ 'membership.benefit_1' | t }}</li>
+            <li>{{ 'membership.benefit_2' | t }}</li>
+            <li>{{ 'membership.benefit_3' | t }}</li>
+            <li>{{ 'membership.benefit_4' | t }}</li>
+          </ul>
+        {% endif %}
+
+        <p class="membership__lead membership__lead--guest">{{ 'membership.guest_lead' | t }}</p>
+        <p class="membership__fineprint">{{ 'membership.guest_note' | t }}</p>
+
         <div class="membership__actions">
-          <a href="{{ routes.storefront_login_url }}" class="membership__button membership__button--primary">
-            {{ 'membership.log_in' | t }}
-          </a>
-          <a href="{{ routes.account_register_url }}" class="membership__button membership__button--secondary">
+          <a href="{{ routes.account_register_url }}" class="membership__button membership__button--primary">
             {{ 'membership.create_account' | t }}
           </a>
+          <a href="{{ routes.storefront_login_url }}" class="membership__button membership__button--secondary">
+            {{ 'membership.log_in' | t }}
+          </a>
         </div>
+        <p class="membership__fineprint">{{ 'membership.subscription_note' | t }}</p>
       </div>
     {% elsif is_member %}
       <div class="membership__panel membership__panel--member">
@@ -241,6 +260,14 @@
     color: #333;
     font-size: 0.95rem;
     line-height: 1.55;
+  }
+
+  .membership__lead--guest {
+    margin-top: 0.35rem;
+  }
+
+  .membership__panel--guest .membership__fineprint {
+    margin-bottom: 1rem;
   }
 
   .membership__price {
