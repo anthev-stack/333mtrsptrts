@@ -24,6 +24,12 @@
       {% if collection.handle == 'frontpage' or collection.handle == 'all' %}
         {% continue %}
       {% endif %}
+      {% if settings.member_deals_collection != blank and collection.id == settings.member_deals_collection.id %}
+        {% continue %}
+      {% endif %}
+      {% if settings.staff_deals_collection != blank and collection.id == settings.staff_deals_collection.id %}
+        {% continue %}
+      {% endif %}
 
       <a class="brand-card" href="{{ collection.url }}">
         <div class="brand-card__media">
