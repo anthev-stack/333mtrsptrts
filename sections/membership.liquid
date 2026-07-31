@@ -73,9 +73,6 @@
 
     {% unless customer %}
       <div class="membership__panel membership__panel--guest">
-        <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
-        <p class="membership__price">{{ price_label | escape }}</p>
-
         {% assign benefits_text = section.settings.benefits | strip_html | strip %}
         {% if benefits_text != blank %}
           <div class="membership__benefits">
@@ -84,6 +81,7 @@
         {% else %}
           <p class="membership__benefits">{{ 'membership.benefits_summary' | t }}</p>
         {% endif %}
+        <p class="membership__price">{{ price_label | escape }}</p>
 
         <p class="membership__lead membership__lead--guest">{{ 'membership.guest_lead' | t }}</p>
 
@@ -141,9 +139,6 @@
       </div>
     {% else %}
       <div class="membership__panel membership__panel--join">
-        <p class="membership__lead">{{ 'membership.join_lead' | t }}</p>
-        <p class="membership__price">{{ price_label | escape }}</p>
-
         {% assign benefits_text = section.settings.benefits | strip_html | strip %}
         {% if benefits_text != blank %}
           <div class="membership__benefits">
@@ -152,6 +147,7 @@
         {% else %}
           <p class="membership__benefits">{{ 'membership.benefits_summary' | t }}</p>
         {% endif %}
+        <p class="membership__price">{{ price_label | escape }}</p>
 
         {% if membership_product != blank and membership_variant != blank %}
           {% form 'product', membership_product, class: 'membership__form', data-membership-checkout: '' %}
@@ -264,18 +260,18 @@
     margin-top: 0.85rem;
   }
 
+  .membership__benefits {
+    margin: 0 0 0.85rem;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
   .membership__price {
-    margin: 0 0 1rem;
+    margin: 0 0 1.15rem;
     font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: 0.02em;
-  }
-
-  .membership__benefits {
-    margin: 0 0 1.25rem;
-    color: #333;
-    font-size: 0.9rem;
-    line-height: 1.55;
   }
 
   .membership__actions,
