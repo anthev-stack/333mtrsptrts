@@ -11,6 +11,11 @@
 {% liquid
   assign variant = product.selected_or_first_available_variant
   assign color_option = nil
+  assign product_blurp = product.metafields.custom.product_blurp.value | default: product.metafields.custom.product_blurp | strip
+
+  if product_blurp == blank
+    assign product_blurp = product.metafields.custom.blurp.value | default: product.metafields.custom.blurp | strip
+  endif
 
   for option in product.options_with_values
     assign option_name = option.name | downcase
@@ -80,6 +85,9 @@
     <h3 class="product-card__title">
       <a href="{{ product.url }}">{{ product.title | escape }}</a>
     </h3>
+    {% if product_blurp != blank %}
+      <p class="product-card__blurp">{{ product_blurp | escape }}</p>
+    {% endif %}
     {% render 'product-price', product: product, variant: variant, class: 'product-card__price product-price' %}
   </div>
 </article>
@@ -198,6 +206,13 @@
 
   .product-card__title a:hover {
     text-decoration: underline;
+  }
+
+  .product-card__blurp {
+    margin: 0;
+    color: #666;
+    font-size: 0.72rem;
+    line-height: 1.4;
   }
 
   .product-card__price {
