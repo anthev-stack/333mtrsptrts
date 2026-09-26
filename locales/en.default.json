@@ -119,6 +119,12 @@
     "subscription_ready": "Subscription plan attached",
     "product_missing": "Membership product is not selected yet. Set it under Theme settings → Membership."
   },
+  "partnership": {
+    "eyebrow": "333 Motorsports",
+    "title": "Partnership",
+    "blurb": "We're open to collaboration with brands, creators, events, and anyone looking to build something with 333. If you've got an idea, feel free to connect with us.",
+    "reach_out": "Reach out"
+  },
   "products": {
     "available": "In stock",
     "add_to_cart": "Add to cart",

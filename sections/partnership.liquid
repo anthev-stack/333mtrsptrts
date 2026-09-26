@@ -1,0 +1,90 @@
+{% comment %}
+  Partnership page — same title, panel, and button styling as membership.
+{% endcomment %}
+
+{% liquid
+  assign partner_email = section.settings.email | default: 'partnerships@333mtrsprts.com' | strip
+  assign mailto_href = 'mailto:' | append: partner_email
+%}
+
+{% render 'section-padding' %}
+
+<section class="membership partnership" data-partnership-page>
+  <div class="membership__inner">
+    <p class="membership__eyebrow">{{ 'partnership.eyebrow' | t }}</p>
+    <h1 class="membership__title">{{ 'partnership.title' | t }}</h1>
+
+    <div class="membership__panel">
+      {% assign custom_blurb = section.settings.blurb | strip_html | strip %}
+      {% if custom_blurb != blank %}
+        <div class="membership__benefits">
+          {{ section.settings.blurb }}
+        </div>
+      {% else %}
+        <p class="membership__benefits">{{ 'partnership.blurb' | t }}</p>
+      {% endif %}
+
+      <div class="membership__actions">
+        <a
+          href="{{ mailto_href }}"
+          class="membership__button membership__button--primary"
+        >
+          {{ 'partnership.reach_out' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .partnership .membership__benefits {
+    margin-bottom: 1.15rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.partnership",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "blurb",
+      "label": "t:labels.partnership_blurb",
+      "info": "t:labels.partnership_blurb_info"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "t:labels.partnership_email",
+      "default": "partnerships@333mtrsprts.com"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}
