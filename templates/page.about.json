@@ -14,7 +14,7 @@
       "settings": {
         "eyebrow": "333 Motorsports",
         "title": "About us",
-        "blurb": "",
+        "blurb": "<p>Welcome to 333 a small, independent business carving our own path in the automotive industry.</p><p>Driven by a passion for cars, quality, and genuine customer service, we’re focused on offering products that are built to last. We believe in doing things properly, building lasting relationships with our customers, and creating a community around a shared passion for car culture.</p>",
         "padding_top": 40,
         "padding_bottom": 40
       }
