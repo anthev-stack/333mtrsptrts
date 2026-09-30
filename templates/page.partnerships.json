@@ -60,12 +60,29 @@
             "extra_url": "",
             "extra_label": ""
           }
+        },
+        "partner_8K3iig": {
+          "type": "partner",
+          "settings": {
+            "name": "Motul",
+            "blurb": "<p>Motul is a global French company which manufactures, develops and distributes lubricants and other specialized products for engines (motorcycles, cars and other vehicles) and for industry.</p>",
+            "url": "",
+            "button_label": "",
+            "instagram": "",
+            "youtube": "",
+            "tiktok": "",
+            "facebook": "",
+            "x_url": "",
+            "extra_url": "",
+            "extra_label": ""
+          }
         }
       },
       "block_order": [
         "partner_1",
         "partner_2",
-        "partner_qRTBmx"
+        "partner_qRTBmx",
+        "partner_8K3iig"
       ],
       "settings": {
         "eyebrow": "333 Motorsports",
