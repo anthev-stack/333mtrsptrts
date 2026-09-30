@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -22,13 +31,17 @@
           }
         }
       },
-      "block_order": ["partner_1", "partner_2"],
+      "block_order": [
+        "partner_1",
+        "partner_2"
+      ],
       "settings": {
         "eyebrow": "333 Motorsports",
         "title": "Partnerships",
-        "intro": "",
-        "featured_name": "",
-        "featured_blurb": "",
+        "intro": "<p>.</p>",
+        "featured_logo": "shopify://shop_images/partbot-wordmark-light.svg",
+        "featured_name": "Partbot",
+        "featured_blurb": "<p><a href=\"https://www.bing.com/ck/a?!&&p=f04d4a5e0e49b3d4bbdfbd42fc5d2cec0a76875b810f458117c433efcb57c3b7JmltdHM9MTc5MDY0MDAwMA&ptn=3&ver=2&hsh=4&fclid=01c45847-9509-6b65-34f6-4efb94e46a9f&u=a1aHR0cHM6Ly9wYXJ0Ym90LmNvbS5hdS9hYm91dA\" target=\"_blank\"><strong>Partbot</strong> is a data integration and e-commerce platform designed for the <strong>automotive aftermarket</strong>. It helps businesses manage automotive parts and accessories by syncing data with supplier catalogs, inventory levels, and pricing changes. Partbot supports over <strong>3000 Australian businesses</strong> by automating the fulfillment process and providing tools for fast, local parts fulfillment. The platform also offers features like vehicle search plugins, inventory management, and product updates to enhance sales and customer experience.</a></p>",
         "featured_url": "",
         "featured_button_label": "",
         "padding_top": 40,
@@ -36,5 +49,7 @@
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
