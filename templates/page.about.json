@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -16,29 +25,46 @@
         "member_1": {
           "type": "member",
           "settings": {
-            "name": "",
-            "position": "",
-            "intro": ""
+            "photo": "shopify://shop_images/434868281_1467009870895955_5336588796236996972_n.jpg",
+            "name": "Cameron",
+            "position": "CEO",
+            "intro": "<p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat.&nbsp;<br/><br/></p>"
           }
         },
         "member_2": {
           "type": "member",
           "settings": {
-            "name": "",
-            "position": "",
-            "intro": ""
+            "photo": "shopify://shop_images/434868281_1467009870895955_5336588796236996972_n.jpg",
+            "name": "Chris",
+            "position": "Business Development Manager",
+            "intro": "<p>Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere.&nbsp;</p>"
           }
         },
         "member_3": {
           "type": "member",
           "settings": {
-            "name": "",
-            "position": "",
-            "intro": ""
+            "photo": "shopify://shop_images/434868281_1467009870895955_5336588796236996972_n.jpg",
+            "name": "Bailey",
+            "position": "Professional sidekick",
+            "intro": "<p>Laculis massa nisl malesuada lacinia integer nunc posuere.&nbsp;Pulvinar vivamus fringilla lacus nec metus bibendum egestas.&nbsp;</p>"
+          }
+        },
+        "member_cxqa8J": {
+          "type": "member",
+          "settings": {
+            "photo": "shopify://shop_images/434868281_1467009870895955_5336588796236996972_n.jpg",
+            "name": "Mitch",
+            "position": "Sales Manager",
+            "intro": "<p>Quisque faucibus ex sapien vitae pellentesque sem placerat.&nbsp;Lorem ipsum dolor sit amet consectetur adipiscing elit.<br/><br/></p>"
           }
         }
       },
-      "block_order": ["member_1", "member_2", "member_3"],
+      "block_order": [
+        "member_1",
+        "member_2",
+        "member_3",
+        "member_cxqa8J"
+      ],
       "settings": {
         "title": "The team",
         "padding_top": 0,
@@ -46,5 +72,8 @@
       }
     }
   },
-  "order": ["main", "team"]
+  "order": [
+    "main",
+    "team"
+  ]
 }
