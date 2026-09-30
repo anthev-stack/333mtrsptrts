@@ -37,7 +37,8 @@
     "side_promo_position": "right",
     "side_promo_width": 180,
     "side_promo_1_image": "shopify://shop_images/download.gif",
-    "side_promo_2_image": "shopify://shop_images/SHOP_NOW.gif",
+    "side_promo_2_image": "shopify://shop_images/download.gif",
+    "side_promo_3_image": "shopify://shop_images/download.gif",
     "content_for_index": [],
     "blocks": {
       "4075766218980289344": {
