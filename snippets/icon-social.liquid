@@ -1,0 +1,17 @@
+{% comment %}
+  Black vector social brand marks. Pass icon: facebook | instagram | youtube | tiktok | x
+{% endcomment %}
+<svg class="partnerships-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+  {% case icon %}
+    {% when 'facebook' %}
+      <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.09 15.84 2 14.67 2 11.95 2 10 3.66 10 6.7V9.5H7v4h3V22h4v-8.5z"/>
+    {% when 'instagram' %}
+      <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm11 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+    {% when 'youtube' %}
+      <path d="M23.5 6.2a3 3 0 0 0-2.12-2.12C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.38.48A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.12 2.12C4.5 20.4 12 20.4 12 20.4s7.5 0 9.38-.48A3 3 0 0 0 23.5 17.8 31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.75 15.02V8.98L15.84 12l-6.09 3.02z"/>
+    {% when 'tiktok' %}
+      <path d="M14.2 2h3.05c.22 1.55.9 2.86 1.97 3.86A7.4 7.4 0 0 0 22.4 7.2v3.12a9.7 9.7 0 0 1-5.15-1.57v7.48A6.73 6.73 0 1 1 8.4 9.6c.28 0 .56.02.83.06v3.3a3.55 3.55 0 1 0 2.5 3.38V2z"/>
+    {% when 'x' %}
+      <path d="M18.24 2h3.4l-7.45 8.51L23 22h-6.17l-4.83-6.31L6.4 22H3l7.97-9.1L1.4 2h6.33l4.36 5.8L18.24 2zm-1.08 18h1.88L7.05 3.9H5.03L17.16 20z"/>
+  {% endcase %}
+</svg>

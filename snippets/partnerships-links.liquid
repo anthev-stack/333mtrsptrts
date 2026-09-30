@@ -1,5 +1,5 @@
 {% comment %}
-  Partner link buttons. Pass website / social URLs; empty ones are skipped.
+  Partner link buttons. Website stays a text button; socials use black brand icons.
 {% endcomment %}
 {% liquid
   assign site_label = website_label | strip
@@ -26,51 +26,56 @@
     {% if instagram != blank %}
       <a
         href="{{ instagram }}"
-        class="membership__button membership__button--secondary"
+        class="partnerships__icon-link"
+        aria-label="{{ 'partnerships.instagram' | t | escape }}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ 'partnerships.instagram' | t }}
+        {% render 'icon-social', icon: 'instagram' %}
       </a>
     {% endif %}
     {% if youtube != blank %}
       <a
         href="{{ youtube }}"
-        class="membership__button membership__button--secondary"
+        class="partnerships__icon-link"
+        aria-label="{{ 'partnerships.youtube' | t | escape }}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ 'partnerships.youtube' | t }}
+        {% render 'icon-social', icon: 'youtube' %}
       </a>
     {% endif %}
     {% if tiktok != blank %}
       <a
         href="{{ tiktok }}"
-        class="membership__button membership__button--secondary"
+        class="partnerships__icon-link"
+        aria-label="{{ 'partnerships.tiktok' | t | escape }}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ 'partnerships.tiktok' | t }}
+        {% render 'icon-social', icon: 'tiktok' %}
       </a>
     {% endif %}
     {% if facebook != blank %}
       <a
         href="{{ facebook }}"
-        class="membership__button membership__button--secondary"
+        class="partnerships__icon-link"
+        aria-label="{{ 'partnerships.facebook' | t | escape }}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ 'partnerships.facebook' | t }}
+        {% render 'icon-social', icon: 'facebook' %}
       </a>
     {% endif %}
     {% if x != blank %}
       <a
         href="{{ x }}"
-        class="membership__button membership__button--secondary"
+        class="partnerships__icon-link"
+        aria-label="{{ 'partnerships.x' | t | escape }}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        {{ 'partnerships.x' | t }}
+        {% render 'icon-social', icon: 'x' %}
       </a>
     {% endif %}
     {% if extra != blank %}
