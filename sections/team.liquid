@@ -23,27 +23,31 @@
         %}
         {% if block.settings.photo != blank or member_name != blank or member_role != blank or member_bio != blank %}
           <article class="membership__panel team__card" {{ block.shopify_attributes }}>
-            {% if block.settings.photo != blank %}
-              {% assign member_alt = member_name | default: shop.name %}
-              <div class="team__photo">
-                {{
-                  block.settings.photo
-                  | image_url: width: 800
-                  | image_tag:
-                    loading: 'lazy',
-                    class: 'team__photo-img',
-                    widths: '200, 400, 600, 800',
-                    sizes: '(min-width: 990px) 18rem, (min-width: 750px) 40vw, 90vw',
-                    alt: member_alt
-                }}
+            <div class="team__top">
+              <div class="team__identity">
+                {% if member_name != blank %}
+                  <h3 class="team__name">{{ member_name | escape }}</h3>
+                {% endif %}
+                {% if member_role != blank %}
+                  <p class="team__role">{{ member_role | escape }}</p>
+                {% endif %}
               </div>
-            {% endif %}
-            {% if member_name != blank %}
-              <h3 class="team__name">{{ member_name | escape }}</h3>
-            {% endif %}
-            {% if member_role != blank %}
-              <p class="team__role">{{ member_role | escape }}</p>
-            {% endif %}
+              {% if block.settings.photo != blank %}
+                {% assign member_alt = member_name | default: shop.name %}
+                <div class="team__photo">
+                  {{
+                    block.settings.photo
+                    | image_url: width: 240
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'team__photo-img',
+                      widths: '96, 160, 240',
+                      sizes: '68px',
+                      alt: member_alt
+                  }}
+                </div>
+              {% endif %}
+            </div>
             {% if member_bio != blank %}
               <div class="membership__benefits team__intro">{{ block.settings.intro }}</div>
             {% endif %}
@@ -70,16 +74,30 @@
     flex-direction: column;
   }
 
+  .team__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .team__identity {
+    min-width: 0;
+    flex: 1;
+  }
+
   .team__photo {
-    margin: 0 0 0.85rem;
+    flex: 0 0 4.25rem;
+    width: 4.25rem;
+    margin: 0;
   }
 
   .team__photo-img,
   .team__photo img {
     display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    height: auto;
+    width: 4.25rem;
+    height: 4.25rem;
+    max-width: 4.25rem;
     object-fit: cover;
   }
 
@@ -93,7 +111,7 @@
   }
 
   .team__role {
-    margin: 0 0 0.65rem;
+    margin: 0;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -102,7 +120,7 @@
   }
 
   .team__intro {
-    margin-bottom: 0;
+    margin: 0.75rem 0 0;
   }
 
   @media screen and (min-width: 750px) {
