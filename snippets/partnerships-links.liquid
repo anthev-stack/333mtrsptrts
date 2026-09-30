@@ -11,14 +11,7 @@
     assign extra_text = 'partnerships.more' | t
   endif
 %}
-{% if website != blank
-  or youtube != blank
-  or instagram != blank
-  or tiktok != blank
-  or facebook != blank
-  or x != blank
-  or extra != blank
-%}
+{% if website != blank or youtube != blank or instagram != blank or tiktok != blank or facebook != blank or x != blank or extra != blank %}
   <div class="membership__actions partnerships__actions">
     {% if website != blank %}
       <a

@@ -7,16 +7,7 @@
   assign featured_name = section.settings.featured_name | strip
   assign featured_blurb_plain = section.settings.featured_blurb | strip_html | strip
   assign show_featured = false
-  if section.settings.featured_logo != blank
-    or featured_name != blank
-    or featured_blurb_plain != blank
-    or section.settings.featured_url != blank
-    or section.settings.featured_instagram != blank
-    or section.settings.featured_youtube != blank
-    or section.settings.featured_tiktok != blank
-    or section.settings.featured_facebook != blank
-    or section.settings.featured_x_url != blank
-    or section.settings.featured_extra_url != blank
+  if section.settings.featured_logo != blank or featured_name != blank or featured_blurb_plain != blank or section.settings.featured_url != blank or section.settings.featured_instagram != blank or section.settings.featured_youtube != blank or section.settings.featured_tiktok != blank or section.settings.featured_facebook != blank or section.settings.featured_x_url != blank or section.settings.featured_extra_url != blank
     assign show_featured = true
   endif
 %}
@@ -100,17 +91,7 @@
           assign pname = block.settings.name | strip
           assign pblurb = block.settings.blurb | strip_html | strip
         %}
-        {% if block.settings.logo != blank
-          or pname != blank
-          or pblurb != blank
-          or block.settings.url != blank
-          or block.settings.instagram != blank
-          or block.settings.youtube != blank
-          or block.settings.tiktok != blank
-          or block.settings.facebook != blank
-          or block.settings.x_url != blank
-          or block.settings.extra_url != blank
-        %}
+        {% if block.settings.logo != blank or pname != blank or pblurb != blank or block.settings.url != blank or block.settings.instagram != blank or block.settings.youtube != blank or block.settings.tiktok != blank or block.settings.facebook != blank or block.settings.x_url != blank or block.settings.extra_url != blank %}
           <article class="membership__panel partnerships__card" {{ block.shopify_attributes }}>
             {% if block.settings.logo != blank %}
               {% assign partner_alt = pname | default: shop.name %}
@@ -265,10 +246,14 @@
       "default": "Partnerships"
     },
     {
+      "type": "header",
+      "content": "t:labels.partnerships_intro"
+    },
+    {
       "type": "checkbox",
       "id": "show_intro",
-      "label": "t:labels.partnerships_show_intro",
-      "info": "t:labels.partnerships_show_intro_info",
+      "label": "Show intro",
+      "info": "Turn this on to show the intro panel above the main partner.",
       "default": false
     },
     {
@@ -406,8 +391,8 @@
           "info": "t:labels.partnerships_button_info"
         },
         {
-          "type": "header",
-          "content": "t:labels.partnerships_links"
+          "type": "paragraph",
+          "content": "Add only the links you want. Empty fields stay hidden."
         },
         {
           "type": "url",
@@ -449,6 +434,11 @@
     }
   ],
   "max_blocks": 24,
+  "presets": [
+    {
+      "name": "t:general.partnerships"
+    }
+  ],
   "disabled_on": {
     "groups": ["header", "footer"]
   }
