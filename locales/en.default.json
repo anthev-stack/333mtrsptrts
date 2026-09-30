@@ -135,7 +135,13 @@
     "title": "Partnerships",
     "intro": "These are the brands and people we work with. Our main partner sits up top. Everyone else is listed below — add a site link when you want shoppers to be able to visit them.",
     "featured_label": "Main partner",
-    "view_site": "View site"
+    "view_site": "View site",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "x": "X",
+    "more": "More"
   },
   "contact": {
     "eyebrow": "333 Motorsports",

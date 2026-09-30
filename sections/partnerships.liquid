@@ -7,12 +7,17 @@
   assign featured_name = section.settings.featured_name | strip
   assign featured_blurb_plain = section.settings.featured_blurb | strip_html | strip
   assign show_featured = false
-  if section.settings.featured_logo != blank or featured_name != blank or featured_blurb_plain != blank
+  if section.settings.featured_logo != blank
+    or featured_name != blank
+    or featured_blurb_plain != blank
+    or section.settings.featured_url != blank
+    or section.settings.featured_instagram != blank
+    or section.settings.featured_youtube != blank
+    or section.settings.featured_tiktok != blank
+    or section.settings.featured_facebook != blank
+    or section.settings.featured_x_url != blank
+    or section.settings.featured_extra_url != blank
     assign show_featured = true
-  endif
-  assign featured_btn = section.settings.featured_button_label | strip
-  if featured_btn == blank
-    assign featured_btn = 'partnerships.view_site' | t
   endif
 %}
 
@@ -35,15 +40,17 @@
       {% endif %}
     </h1>
 
-    {% assign intro_plain = section.settings.intro | strip_html | strip %}
-    {% if intro_plain != blank %}
-      <div class="membership__panel partnerships__intro">
-        <div class="membership__benefits">{{ section.settings.intro }}</div>
-      </div>
-    {% else %}
-      <div class="membership__panel partnerships__intro">
-        <p class="membership__benefits">{{ 'partnerships.intro' | t }}</p>
-      </div>
+    {% if section.settings.show_intro %}
+      {% assign intro_plain = section.settings.intro | strip_html | strip %}
+      {% if intro_plain != blank %}
+        <div class="membership__panel partnerships__intro">
+          <div class="membership__benefits">{{ section.settings.intro }}</div>
+        </div>
+      {% else %}
+        <div class="membership__panel partnerships__intro">
+          <p class="membership__benefits">{{ 'partnerships.intro' | t }}</p>
+        </div>
+      {% endif %}
     {% endif %}
 
     {% if show_featured %}
@@ -71,18 +78,17 @@
             {% if featured_blurb_plain != blank %}
               <div class="membership__benefits">{{ section.settings.featured_blurb }}</div>
             {% endif %}
-            {% if section.settings.featured_url != blank %}
-              <div class="membership__actions">
-                <a
-                  href="{{ section.settings.featured_url }}"
-                  class="membership__button membership__button--primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {{ featured_btn | escape }}
-                </a>
-              </div>
-            {% endif %}
+            {% render 'partnerships-links',
+              website: section.settings.featured_url,
+              website_label: section.settings.featured_button_label,
+              instagram: section.settings.featured_instagram,
+              youtube: section.settings.featured_youtube,
+              tiktok: section.settings.featured_tiktok,
+              facebook: section.settings.featured_facebook,
+              x: section.settings.featured_x_url,
+              extra: section.settings.featured_extra_url,
+              extra_label: section.settings.featured_extra_label
+            %}
           </div>
         </div>
       </article>
@@ -93,12 +99,18 @@
         {% liquid
           assign pname = block.settings.name | strip
           assign pblurb = block.settings.blurb | strip_html | strip
-          assign pbtn = block.settings.button_label | strip
-          if pbtn == blank
-            assign pbtn = 'partnerships.view_site' | t
-          endif
         %}
-        {% if block.settings.logo != blank or pname != blank or pblurb != blank %}
+        {% if block.settings.logo != blank
+          or pname != blank
+          or pblurb != blank
+          or block.settings.url != blank
+          or block.settings.instagram != blank
+          or block.settings.youtube != blank
+          or block.settings.tiktok != blank
+          or block.settings.facebook != blank
+          or block.settings.x_url != blank
+          or block.settings.extra_url != blank
+        %}
           <article class="membership__panel partnerships__card" {{ block.shopify_attributes }}>
             {% if block.settings.logo != blank %}
               {% assign partner_alt = pname | default: shop.name %}
@@ -120,18 +132,17 @@
             {% if pblurb != blank %}
               <div class="membership__benefits">{{ block.settings.blurb }}</div>
             {% endif %}
-            {% if block.settings.url != blank %}
-              <div class="membership__actions">
-                <a
-                  href="{{ block.settings.url }}"
-                  class="membership__button membership__button--primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {{ pbtn | escape }}
-                </a>
-              </div>
-            {% endif %}
+            {% render 'partnerships-links',
+              website: block.settings.url,
+              website_label: block.settings.button_label,
+              instagram: block.settings.instagram,
+              youtube: block.settings.youtube,
+              tiktok: block.settings.tiktok,
+              facebook: block.settings.facebook,
+              x: block.settings.x_url,
+              extra: block.settings.extra_url,
+              extra_label: block.settings.extra_label
+            %}
           </article>
         {% endif %}
       {% endfor %}
@@ -254,6 +265,13 @@
       "default": "Partnerships"
     },
     {
+      "type": "checkbox",
+      "id": "show_intro",
+      "label": "t:labels.partnerships_show_intro",
+      "info": "t:labels.partnerships_show_intro_info",
+      "default": false
+    },
+    {
       "type": "richtext",
       "id": "intro",
       "label": "t:labels.partnerships_intro",
@@ -289,6 +307,46 @@
       "id": "featured_button_label",
       "label": "t:labels.button_label",
       "info": "t:labels.partnerships_button_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.partnerships_links"
+    },
+    {
+      "type": "url",
+      "id": "featured_instagram",
+      "label": "t:labels.instagram_url"
+    },
+    {
+      "type": "url",
+      "id": "featured_youtube",
+      "label": "t:labels.youtube_url"
+    },
+    {
+      "type": "url",
+      "id": "featured_tiktok",
+      "label": "t:labels.tiktok_url"
+    },
+    {
+      "type": "url",
+      "id": "featured_facebook",
+      "label": "t:labels.facebook_url"
+    },
+    {
+      "type": "url",
+      "id": "featured_x_url",
+      "label": "t:labels.x_url"
+    },
+    {
+      "type": "url",
+      "id": "featured_extra_url",
+      "label": "t:labels.partnerships_extra_url"
+    },
+    {
+      "type": "text",
+      "id": "featured_extra_label",
+      "label": "t:labels.partnerships_extra_label",
+      "info": "t:labels.partnerships_extra_label_info"
     },
     {
       "type": "header",
@@ -346,6 +404,46 @@
           "id": "button_label",
           "label": "t:labels.button_label",
           "info": "t:labels.partnerships_button_info"
+        },
+        {
+          "type": "header",
+          "content": "t:labels.partnerships_links"
+        },
+        {
+          "type": "url",
+          "id": "instagram",
+          "label": "t:labels.instagram_url"
+        },
+        {
+          "type": "url",
+          "id": "youtube",
+          "label": "t:labels.youtube_url"
+        },
+        {
+          "type": "url",
+          "id": "tiktok",
+          "label": "t:labels.tiktok_url"
+        },
+        {
+          "type": "url",
+          "id": "facebook",
+          "label": "t:labels.facebook_url"
+        },
+        {
+          "type": "url",
+          "id": "x_url",
+          "label": "t:labels.x_url"
+        },
+        {
+          "type": "url",
+          "id": "extra_url",
+          "label": "t:labels.partnerships_extra_url"
+        },
+        {
+          "type": "text",
+          "id": "extra_label",
+          "label": "t:labels.partnerships_extra_label",
+          "info": "t:labels.partnerships_extra_label_info"
         }
       ]
     }

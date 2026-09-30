@@ -1,0 +1,94 @@
+{% comment %}
+  Partner link buttons. Pass website / social URLs; empty ones are skipped.
+{% endcomment %}
+{% liquid
+  assign site_label = website_label | strip
+  if site_label == blank
+    assign site_label = 'partnerships.view_site' | t
+  endif
+  assign extra_text = extra_label | strip
+  if extra_text == blank
+    assign extra_text = 'partnerships.more' | t
+  endif
+%}
+{% if website != blank
+  or youtube != blank
+  or instagram != blank
+  or tiktok != blank
+  or facebook != blank
+  or x != blank
+  or extra != blank
+%}
+  <div class="membership__actions partnerships__actions">
+    {% if website != blank %}
+      <a
+        href="{{ website }}"
+        class="membership__button membership__button--primary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ site_label | escape }}
+      </a>
+    {% endif %}
+    {% if instagram != blank %}
+      <a
+        href="{{ instagram }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ 'partnerships.instagram' | t }}
+      </a>
+    {% endif %}
+    {% if youtube != blank %}
+      <a
+        href="{{ youtube }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ 'partnerships.youtube' | t }}
+      </a>
+    {% endif %}
+    {% if tiktok != blank %}
+      <a
+        href="{{ tiktok }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ 'partnerships.tiktok' | t }}
+      </a>
+    {% endif %}
+    {% if facebook != blank %}
+      <a
+        href="{{ facebook }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ 'partnerships.facebook' | t }}
+      </a>
+    {% endif %}
+    {% if x != blank %}
+      <a
+        href="{{ x }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ 'partnerships.x' | t }}
+      </a>
+    {% endif %}
+    {% if extra != blank %}
+      <a
+        href="{{ extra }}"
+        class="membership__button membership__button--secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ extra_text | escape }}
+      </a>
+    {% endif %}
+  </div>
+{% endif %}

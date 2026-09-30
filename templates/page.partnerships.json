@@ -38,6 +38,7 @@
       "settings": {
         "eyebrow": "333 Motorsports",
         "title": "Partnerships",
+        "show_intro": false,
         "intro": "",
         "featured_logo": "shopify://shop_images/partbot-wordmark-dark.png",
         "featured_name": "Partbot",
