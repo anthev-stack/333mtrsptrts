@@ -24,10 +24,10 @@
         "partner_2": {
           "type": "partner",
           "settings": {
-            "name": "",
-            "blurb": "",
-            "url": "",
-            "button_label": ""
+            "name": "DeWalt",
+            "blurb": "<p>Globally recognised brand known for its professional-grade power tools, hand tools and equipment, engineered to deliver the durability, reliability and performance that demanding trades and industries expect.</p>",
+            "url": "https://www.dewalt.com.au/",
+            "button_label": "Visit site"
           }
         }
       },
