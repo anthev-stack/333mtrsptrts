@@ -66,10 +66,10 @@
             {% if featured_name != blank %}
               <h2 class="partnerships__name partnerships__name--featured">{{ featured_name | escape }}</h2>
             {% endif %}
-            <div class="partnerships__textwrap">
+            <div class="partnerships__textwrap{% if section.settings.featured_profile != blank %} partnerships__textwrap--profile{% endif %}">
               {% if section.settings.featured_profile != blank %}
                 {% assign featured_profile_alt = featured_name | default: shop.name %}
-                <div class="partnerships__profile">
+                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 1.6em 0 0 12px;">
                   {{
                     section.settings.featured_profile
                     | image_url: width: 320
@@ -127,10 +127,10 @@
             {% if pname != blank %}
               <h2 class="partnerships__name">{{ pname | escape }}</h2>
             {% endif %}
-            <div class="partnerships__textwrap">
+            <div class="partnerships__textwrap{% if block.settings.profile_image != blank %} partnerships__textwrap--profile{% endif %}">
               {% if block.settings.profile_image != blank %}
                 {% assign profile_alt = pname | default: shop.name %}
-                <div class="partnerships__profile">
+                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 1.6em 0 0 12px;">
                   {{
                     block.settings.profile_image
                     | image_url: width: 320
@@ -239,38 +239,41 @@
     min-width: 0;
   }
 
-  .partnerships__textwrap:has(.partnerships__profile) {
+  .partnerships__textwrap--profile {
     position: relative;
-    display: flow-root;
-    min-height: calc(1.55em + 6.5rem);
+    display: block;
+    overflow: hidden;
+    min-height: calc(1.6em + 104px);
   }
 
-  .partnerships__textwrap:has(.partnerships__profile) .partnerships__profile {
+  .partnerships__textwrap--profile .partnerships__profile {
     float: right;
-    width: 6.5rem;
-    height: 6.5rem;
-    margin: 1.55em 0 0 0.9rem;
+    width: 104px;
+    height: 104px;
+    margin: 1.6em 0 0 12px;
   }
 
-  .partnerships__textwrap:has(.partnerships__profile) .membership__benefits {
+  .partnerships__textwrap--profile .membership__benefits {
+    display: block;
     margin-bottom: 0;
-    padding-bottom: 1.85rem;
+    padding-bottom: 28px;
+    overflow: visible;
   }
 
-  .partnerships__textwrap:has(.partnerships__profile) .partnerships__actions {
+  .partnerships__textwrap--profile .partnerships__actions {
     position: absolute;
     left: 0;
     bottom: 0;
-    right: 7.4rem;
+    right: 116px;
     margin-top: 0;
   }
 
   .partnerships__profile-img,
   .partnerships__profile img {
     display: block;
-    width: 6.5rem;
-    height: 6.5rem;
-    max-width: 6.5rem;
+    width: 104px;
+    height: 104px;
+    max-width: 104px;
     object-fit: cover;
   }
 
@@ -297,8 +300,7 @@
   }
 
   .partnerships__card {
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
 
   @media screen and (min-width: 750px) {
