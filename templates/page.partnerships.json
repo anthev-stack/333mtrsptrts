@@ -29,16 +29,25 @@
             "url": "https://www.dewalt.com.au/",
             "button_label": "Visit site"
           }
+        },
+        "partner_qRTBmx": {
+          "type": "partner",
+          "settings": {
+            "name": "Cameron Anthev",
+            "blurb": "<p>Honda enthusiast and content creator, sharing builds, meets, modifications and everything I love about the car scene.<br/><br/></p>",
+            "url": "",
+            "button_label": ""
+          }
         }
       },
       "block_order": [
         "partner_1",
-        "partner_2"
+        "partner_2",
+        "partner_qRTBmx"
       ],
       "settings": {
         "eyebrow": "333 Motorsports",
         "title": "Partnerships",
-        "show_intro": false,
         "intro": "",
         "featured_logo": "shopify://shop_images/partbot-wordmark-dark.png",
         "featured_name": "Partbot",
