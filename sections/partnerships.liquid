@@ -69,7 +69,7 @@
             <div class="partnerships__textwrap{% if section.settings.featured_profile != blank %} partnerships__textwrap--profile{% endif %}">
               {% if section.settings.featured_profile != blank %}
                 {% assign featured_profile_alt = featured_name | default: shop.name %}
-                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 1.6em 0 0 12px;">
+                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 0 0 0 12px;">
                   {{
                     section.settings.featured_profile
                     | image_url: width: 320
@@ -130,7 +130,7 @@
             <div class="partnerships__textwrap{% if block.settings.profile_image != blank %} partnerships__textwrap--profile{% endif %}">
               {% if block.settings.profile_image != blank %}
                 {% assign profile_alt = pname | default: shop.name %}
-                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 1.6em 0 0 12px;">
+                <div class="partnerships__profile" style="float: right; width: 104px; height: 104px; margin: 0 0 0 12px;">
                   {{
                     block.settings.profile_image
                     | image_url: width: 320
@@ -240,32 +240,21 @@
   }
 
   .partnerships__textwrap--profile {
-    position: relative;
     display: block;
     overflow: hidden;
-    min-height: calc(1.6em + 104px);
   }
 
   .partnerships__textwrap--profile .partnerships__profile {
     float: right;
     width: 104px;
     height: 104px;
-    margin: 1.6em 0 0 12px;
+    margin: 0 0 0.35rem 12px;
   }
 
   .partnerships__textwrap--profile .membership__benefits {
     display: block;
-    margin-bottom: 0;
-    padding-bottom: 28px;
+    margin-bottom: 0.5rem;
     overflow: visible;
-  }
-
-  .partnerships__textwrap--profile .partnerships__actions {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 116px;
-    margin-top: 0;
   }
 
   .partnerships__profile-img,
