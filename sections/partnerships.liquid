@@ -72,11 +72,12 @@
                 <div class="partnerships__profile">
                   {{
                     section.settings.featured_profile
-                    | image_url: width: 480
+                    | image_url: width: 320
                     | image_tag:
                       loading: 'lazy',
-                      widths: '160, 240, 320, 480',
-                      sizes: '6.5rem',
+                      class: 'partnerships__profile-img',
+                      widths: '160, 240, 320',
+                      sizes: '104px',
                       alt: featured_profile_alt
                   }}
                 </div>
@@ -132,11 +133,12 @@
                 <div class="partnerships__profile">
                   {{
                     block.settings.profile_image
-                    | image_url: width: 480
+                    | image_url: width: 320
                     | image_tag:
                       loading: 'lazy',
-                      widths: '160, 240, 320, 480',
-                      sizes: '6.5rem',
+                      class: 'partnerships__profile-img',
+                      widths: '160, 240, 320',
+                      sizes: '104px',
                       alt: profile_alt
                   }}
                 </div>
@@ -229,30 +231,45 @@
   }
 
   .partnerships .membership__actions {
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     align-items: center;
-    overflow: hidden;
   }
 
   .partnerships__textwrap {
     min-width: 0;
   }
 
-  .partnerships__textwrap::after {
-    content: "";
-    display: table;
-    clear: both;
+  .partnerships__textwrap:has(.partnerships__profile) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+    column-gap: 0.85rem;
+    align-items: end;
   }
 
-  .partnerships__textwrap:not(:has(.membership__benefits)) .partnerships__profile {
-    margin-top: 0;
+  .partnerships__textwrap:has(.partnerships__profile) .membership__benefits {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
   }
 
+  .partnerships__textwrap:has(.partnerships__profile) .partnerships__actions {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .partnerships__profile {
+    grid-column: 2;
+    grid-row: 1;
+    width: 6.5rem;
+    margin: 0;
+  }
+
+  .partnerships__profile-img,
   .partnerships__profile img {
     display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    height: auto;
+    width: 6.5rem;
+    height: 6.5rem;
+    max-width: 6.5rem;
     object-fit: cover;
   }
 
