@@ -76,13 +76,30 @@
             "extra_url": "",
             "extra_label": ""
           }
+        },
+        "partner_Mh8GtA": {
+          "type": "partner",
+          "settings": {
+            "name": "BECOME A PARTNER",
+            "blurb": "<p>We're open to collaboration with brands, creators, events, and anyone looking to build something with 333. If you've got an idea, feel free to connect with us check out below page.</p>",
+            "url": "shopify://pages/partnership",
+            "button_label": "Become a partner",
+            "instagram": "",
+            "youtube": "",
+            "tiktok": "",
+            "facebook": "",
+            "x_url": "",
+            "extra_url": "",
+            "extra_label": ""
+          }
         }
       },
       "block_order": [
         "partner_1",
         "partner_2",
         "partner_qRTBmx",
-        "partner_8K3iig"
+        "partner_8K3iig",
+        "partner_Mh8GtA"
       ],
       "settings": {
         "eyebrow": "333 Motorsports",
