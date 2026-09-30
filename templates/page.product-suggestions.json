@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-suggestions",
+      "settings": {
+        "blurb": "",
+        "portal_url": "https://portal.333mtrsprts.com",
+        "portal_key": "",
+        "padding_top": 40,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["main"]
+}

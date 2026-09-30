@@ -125,6 +125,22 @@
     "blurb": "We're open to collaboration with brands, creators, events, and anyone looking to build something with 333. If you've got an idea, feel free to connect with us.",
     "reach_out": "Reach out"
   },
+  "product_suggestions": {
+    "eyebrow": "333 Motorsports",
+    "title": "Product suggestions",
+    "blurb": "We want to hear from you. 333 is community driven, and we want to stay connected with customers and members. If there's a product you can't find easily, or you're struggling to get it at the quality you need, send a photo, a short description, and anything extra you want us to know. We'll take a look — if enough people suggest the same thing, or we simply like the product, we'll be in touch and let you know we're working on it.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "product_name": "Product name (optional)",
+    "description": "Product description",
+    "extra": "Anything extra — access, quality, where you have looked",
+    "photo": "Photo (optional)",
+    "submit": "Send suggestion",
+    "success": "Thanks — we have your suggestion and will take a look.",
+    "error": "Could not send your suggestion. Please try again.",
+    "offline": "Could not reach the portal. Please try again in a moment."
+  },
   "products": {
     "available": "In stock",
     "add_to_cart": "Add to cart",

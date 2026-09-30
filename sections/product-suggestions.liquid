@@ -1,0 +1,266 @@
+{% comment %}
+  Product suggestions — membership-style panel with a form that posts to the 333 portal.
+{% endcomment %}
+
+{% liquid
+  assign portal_url = section.settings.portal_url | default: 'https://portal.333mtrsprts.com' | strip
+  assign portal_key = section.settings.portal_key | strip
+  assign customer_name = ''
+  if customer
+    assign customer_name = customer.name | default: customer.first_name
+  endif
+%}
+
+{% render 'section-padding' %}
+
+<section
+  class="membership product-suggestions"
+  data-product-suggestions
+  data-portal-url="{{ portal_url | escape }}"
+  data-success="{{ 'product_suggestions.success' | t | escape }}"
+  data-error="{{ 'product_suggestions.error' | t | escape }}"
+  data-offline="{{ 'product_suggestions.offline' | t | escape }}"
+  {% if portal_key != blank %}data-portal-key="{{ portal_key | escape }}"{% endif %}
+>
+  <div class="membership__inner">
+    <p class="membership__eyebrow">{{ 'product_suggestions.eyebrow' | t }}</p>
+    <h1 class="membership__title">{{ 'product_suggestions.title' | t }}</h1>
+
+    <div class="membership__panel">
+      {% assign custom_blurb = section.settings.blurb | strip_html | strip %}
+      {% if custom_blurb != blank %}
+        <div class="membership__benefits">
+          {{ section.settings.blurb }}
+        </div>
+      {% else %}
+        <p class="membership__benefits">{{ 'product_suggestions.blurb' | t }}</p>
+      {% endif %}
+
+      <form class="product-suggestions__form" data-suggestions-form>
+        <input
+          type="text"
+          name="company_website"
+          class="product-suggestions__honeypot"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        >
+
+        {% if customer %}
+          <input type="hidden" name="shopifyCustomerId" value="{{ customer.id }}">
+        {% endif %}
+
+        <label class="product-suggestions__label" for="SuggestionName-{{ section.id }}">
+          {{ 'product_suggestions.name' | t }}
+        </label>
+        <input
+          id="SuggestionName-{{ section.id }}"
+          class="product-suggestions__input"
+          type="text"
+          name="name"
+          required
+          value="{{ customer_name | escape }}"
+          autocomplete="name"
+        >
+
+        <label class="product-suggestions__label" for="SuggestionEmail-{{ section.id }}">
+          {{ 'product_suggestions.email' | t }}
+        </label>
+        <input
+          id="SuggestionEmail-{{ section.id }}"
+          class="product-suggestions__input"
+          type="email"
+          name="email"
+          required
+          value="{{ customer.email | escape }}"
+          autocomplete="email"
+        >
+
+        <label class="product-suggestions__label" for="SuggestionPhone-{{ section.id }}">
+          {{ 'product_suggestions.phone' | t }}
+        </label>
+        <input
+          id="SuggestionPhone-{{ section.id }}"
+          class="product-suggestions__input"
+          type="tel"
+          name="phone"
+          value="{{ customer.phone | escape }}"
+          autocomplete="tel"
+        >
+
+        <label class="product-suggestions__label" for="SuggestionProduct-{{ section.id }}">
+          {{ 'product_suggestions.product_name' | t }}
+        </label>
+        <input
+          id="SuggestionProduct-{{ section.id }}"
+          class="product-suggestions__input"
+          type="text"
+          name="productName"
+        >
+
+        <label class="product-suggestions__label" for="SuggestionDescription-{{ section.id }}">
+          {{ 'product_suggestions.description' | t }}
+        </label>
+        <textarea
+          id="SuggestionDescription-{{ section.id }}"
+          class="product-suggestions__input product-suggestions__textarea"
+          name="description"
+          rows="4"
+          required
+        ></textarea>
+
+        <label class="product-suggestions__label" for="SuggestionExtra-{{ section.id }}">
+          {{ 'product_suggestions.extra' | t }}
+        </label>
+        <textarea
+          id="SuggestionExtra-{{ section.id }}"
+          class="product-suggestions__input product-suggestions__textarea"
+          name="extraNotes"
+          rows="3"
+        ></textarea>
+
+        <label class="product-suggestions__label" for="SuggestionPhoto-{{ section.id }}">
+          {{ 'product_suggestions.photo' | t }}
+        </label>
+        <input
+          id="SuggestionPhoto-{{ section.id }}"
+          class="product-suggestions__file"
+          type="file"
+          name="photo"
+          accept="image/*"
+        >
+
+        <p class="product-suggestions__status" data-suggestions-status hidden></p>
+
+        <div class="membership__actions">
+          <button type="submit" class="membership__button membership__button--primary" data-suggestions-submit>
+            {{ 'product_suggestions.submit' | t }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script src="{{ 'product-suggestions.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .product-suggestions .membership__benefits {
+    margin-bottom: 1.15rem;
+  }
+
+  .product-suggestions__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .product-suggestions__label {
+    margin-top: 0.65rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .product-suggestions__input,
+  .product-suggestions__file {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #111;
+    border-radius: 0;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .product-suggestions__textarea {
+    min-height: 6rem;
+    resize: vertical;
+  }
+
+  .product-suggestions__file {
+    padding: 0.4rem;
+  }
+
+  .product-suggestions__honeypot {
+    position: absolute;
+    left: -9999px;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+  }
+
+  .product-suggestions__status {
+    margin: 0.75rem 0 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .product-suggestions__status.is-error {
+    color: #a11f1f;
+  }
+
+  .product-suggestions__status.is-ok {
+    color: #1f7a3a;
+  }
+
+  .product-suggestions .membership__actions {
+    margin-top: 1rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.product_suggestions",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "blurb",
+      "label": "t:labels.product_suggestions_blurb",
+      "info": "t:labels.product_suggestions_blurb_info"
+    },
+    {
+      "type": "text",
+      "id": "portal_url",
+      "label": "t:labels.product_suggestions_portal_url",
+      "default": "https://portal.333mtrsprts.com",
+      "info": "t:labels.product_suggestions_portal_url_info"
+    },
+    {
+      "type": "text",
+      "id": "portal_key",
+      "label": "t:labels.product_suggestions_portal_key",
+      "info": "t:labels.product_suggestions_portal_key_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}
