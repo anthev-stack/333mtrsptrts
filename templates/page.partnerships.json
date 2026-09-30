@@ -15,10 +15,10 @@
         "partner_1": {
           "type": "partner",
           "settings": {
-            "name": "",
-            "blurb": "",
-            "url": "",
-            "button_label": ""
+            "name": "333 DISTRIBUTIONS",
+            "blurb": "<p>is the distribution heart of <strong>333 MOTORSPORTS</strong>, supplying quality products and brands to retailers, workshops, teams and industry partners across Australia. Focused on supporting our trade and wholesale partners with reliable supply, competitive pricing and industry-focused service.</p>",
+            "url": "https://333distributions.com",
+            "button_label": "Visit site"
           }
         },
         "partner_2": {
