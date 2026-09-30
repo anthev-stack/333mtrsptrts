@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "contact",
+      "settings": {
+        "eyebrow": "333 Motorsports",
+        "title": "Contact",
+        "blurb": "",
+        "email": "hello@333mtrsprts.com",
+        "show_email_button": true,
+        "padding_top": 40,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["main"]
+}

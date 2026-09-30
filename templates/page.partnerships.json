@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "main": {
+      "type": "partnerships",
+      "blocks": {
+        "partner_1": {
+          "type": "partner",
+          "settings": {
+            "name": "",
+            "blurb": "",
+            "url": "",
+            "button_label": ""
+          }
+        },
+        "partner_2": {
+          "type": "partner",
+          "settings": {
+            "name": "",
+            "blurb": "",
+            "url": "",
+            "button_label": ""
+          }
+        }
+      },
+      "block_order": ["partner_1", "partner_2"],
+      "settings": {
+        "eyebrow": "333 Motorsports",
+        "title": "Partnerships",
+        "intro": "",
+        "featured_name": "",
+        "featured_blurb": "",
+        "featured_url": "",
+        "featured_button_label": "",
+        "padding_top": 40,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["main"]
+}

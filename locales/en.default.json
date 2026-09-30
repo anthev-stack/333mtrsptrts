@@ -119,11 +119,34 @@
     "subscription_ready": "Subscription plan attached",
     "product_missing": "Membership product is not selected yet. Set it under Theme settings → Membership."
   },
+  "about": {
+    "eyebrow": "333 Motorsports",
+    "title": "About us",
+    "blurb": "333 Motorsports is an independent motorsport shop built around community. We source quality parts, back the people who use them, and keep growing with the drivers, members, and partners who show up with us."
+  },
   "partnership": {
     "eyebrow": "333 Motorsports",
     "title": "Partnership",
     "blurb": "We're open to collaboration with brands, creators, events, and anyone looking to build something with 333. If you've got an idea, feel free to connect with us.",
     "reach_out": "Reach out"
+  },
+  "partnerships": {
+    "eyebrow": "333 Motorsports",
+    "title": "Partnerships",
+    "intro": "These are the brands and people we work with. Our main partner sits up top. Everyone else is listed below — add a site link when you want shoppers to be able to visit them.",
+    "featured_label": "Main partner",
+    "view_site": "View site"
+  },
+  "contact": {
+    "eyebrow": "333 Motorsports",
+    "title": "Contact",
+    "blurb": "Got a question, an order note, or something we should know? Send it through and we’ll get back to you.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "message": "Message",
+    "submit": "Send message",
+    "success": "Thanks — we got your message and will be in touch."
   },
   "product_suggestions": {
     "eyebrow": "333 Motorsports",

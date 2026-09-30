@@ -1,0 +1,235 @@
+{% comment %}
+  Contact — membership-style panel with Shopify contact form.
+{% endcomment %}
+
+{% liquid
+  assign contact_email = section.settings.email | default: 'hello@333mtrsprts.com' | strip
+  assign mailto_href = 'mailto:' | append: contact_email
+  assign customer_name = ''
+  if customer
+    assign customer_name = customer.name | default: customer.first_name
+  endif
+%}
+
+{% render 'section-padding' %}
+
+<section class="membership contact-page" data-contact-page>
+  <div class="membership__inner">
+    <p class="membership__eyebrow">
+      {% if section.settings.eyebrow != blank %}
+        {{ section.settings.eyebrow | escape }}
+      {% else %}
+        {{ 'contact.eyebrow' | t }}
+      {% endif %}
+    </p>
+    <h1 class="membership__title">
+      {% if section.settings.title != blank %}
+        {{ section.settings.title | escape }}
+      {% else %}
+        {{ 'contact.title' | t }}
+      {% endif %}
+    </h1>
+
+    <div class="membership__panel">
+      {% assign custom_blurb = section.settings.blurb | strip_html | strip %}
+      {% if custom_blurb != blank %}
+        <div class="membership__benefits">
+          {{ section.settings.blurb }}
+        </div>
+      {% else %}
+        <p class="membership__benefits">{{ 'contact.blurb' | t }}</p>
+      {% endif %}
+
+      {% form 'contact', class: 'contact-page__form' %}
+        {% if form.posted_successfully? %}
+          <p class="contact-page__status is-ok">{{ 'contact.success' | t }}</p>
+        {% else %}
+          {% if form.errors %}
+            <div class="contact-page__status is-error">{{ form.errors | default_errors }}</div>
+          {% endif %}
+
+          <label class="contact-page__label" for="ContactName-{{ section.id }}">
+            {{ 'contact.name' | t }}
+          </label>
+          <input
+            id="ContactName-{{ section.id }}"
+            class="contact-page__input"
+            type="text"
+            name="contact[name]"
+            required
+            value="{% if form.name %}{{ form.name | escape }}{% else %}{{ customer_name | escape }}{% endif %}"
+            autocomplete="name"
+          >
+
+          <label class="contact-page__label" for="ContactEmail-{{ section.id }}">
+            {{ 'contact.email' | t }}
+          </label>
+          <input
+            id="ContactEmail-{{ section.id }}"
+            class="contact-page__input"
+            type="email"
+            name="contact[email]"
+            required
+            autocorrect="off"
+            autocapitalize="off"
+            value="{% if form.email %}{{ form.email | escape }}{% else %}{{ customer.email | escape }}{% endif %}"
+            autocomplete="email"
+          >
+
+          <label class="contact-page__label" for="ContactPhone-{{ section.id }}">
+            {{ 'contact.phone' | t }}
+          </label>
+          <input
+            id="ContactPhone-{{ section.id }}"
+            class="contact-page__input"
+            type="tel"
+            name="contact[phone]"
+            value="{% if form.phone %}{{ form.phone | escape }}{% else %}{{ customer.phone | escape }}{% endif %}"
+            autocomplete="tel"
+          >
+
+          <label class="contact-page__label" for="ContactBody-{{ section.id }}">
+            {{ 'contact.message' | t }}
+          </label>
+          <textarea
+            id="ContactBody-{{ section.id }}"
+            class="contact-page__input contact-page__textarea"
+            name="contact[body]"
+            rows="5"
+            required
+          >{% if form.body %}{{ form.body | escape }}{% endif %}</textarea>
+
+          <div class="membership__actions">
+            <button type="submit" class="membership__button membership__button--primary">
+              {{ 'contact.submit' | t }}
+            </button>
+            {% if section.settings.show_email_button %}
+              <a href="{{ mailto_href }}" class="membership__button membership__button--secondary">
+                {{ contact_email | escape }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .contact-page .membership__benefits {
+    margin-bottom: 1.15rem;
+  }
+
+  .contact-page__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .contact-page__label {
+    margin-top: 0.65rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .contact-page__input {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #111;
+    border-radius: 0;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .contact-page__textarea {
+    min-height: 7rem;
+    resize: vertical;
+  }
+
+  .contact-page__status {
+    margin: 0 0 0.75rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .contact-page__status.is-error {
+    color: #a11f1f;
+  }
+
+  .contact-page__status.is-ok {
+    color: #1f7a3a;
+  }
+
+  .contact-page .membership__actions {
+    margin-top: 1rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.contact",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "333 Motorsports"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.title",
+      "default": "Contact"
+    },
+    {
+      "type": "richtext",
+      "id": "blurb",
+      "label": "t:labels.contact_blurb",
+      "info": "t:labels.contact_blurb_info"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "t:labels.contact_email",
+      "default": "hello@333mtrsprts.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email_button",
+      "label": "t:labels.contact_show_email",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

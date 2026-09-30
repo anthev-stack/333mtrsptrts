@@ -1,0 +1,358 @@
+{% comment %}
+  Current partners — featured main partner, then a 2-column grid. Edited in Shopify.
+  Distinct from the Partnership inquiry page (become a partner).
+{% endcomment %}
+
+{% liquid
+  assign featured_name = section.settings.featured_name | strip
+  assign featured_blurb_plain = section.settings.featured_blurb | strip_html | strip
+  assign show_featured = false
+  if section.settings.featured_logo != blank or featured_name != blank or featured_blurb_plain != blank
+    assign show_featured = true
+  endif
+  assign featured_btn = section.settings.featured_button_label | strip
+  if featured_btn == blank
+    assign featured_btn = 'partnerships.view_site' | t
+  endif
+%}
+
+{% render 'section-padding' %}
+
+<section class="membership partnerships" data-partnerships-page>
+  <div class="membership__inner partnerships__inner">
+    <p class="membership__eyebrow">
+      {% if section.settings.eyebrow != blank %}
+        {{ section.settings.eyebrow | escape }}
+      {% else %}
+        {{ 'partnerships.eyebrow' | t }}
+      {% endif %}
+    </p>
+    <h1 class="membership__title">
+      {% if section.settings.title != blank %}
+        {{ section.settings.title | escape }}
+      {% else %}
+        {{ 'partnerships.title' | t }}
+      {% endif %}
+    </h1>
+
+    {% assign intro_plain = section.settings.intro | strip_html | strip %}
+    {% if intro_plain != blank %}
+      <div class="membership__panel partnerships__intro">
+        <div class="membership__benefits">{{ section.settings.intro }}</div>
+      </div>
+    {% else %}
+      <div class="membership__panel partnerships__intro">
+        <p class="membership__benefits">{{ 'partnerships.intro' | t }}</p>
+      </div>
+    {% endif %}
+
+    {% if show_featured %}
+      <article class="membership__panel partnerships__featured">
+        <p class="partnerships__kicker">{{ 'partnerships.featured_label' | t }}</p>
+        <div class="partnerships__featured-row">
+          {% if section.settings.featured_logo != blank %}
+            {% assign featured_alt = featured_name | default: shop.name %}
+            <div class="partnerships__logo partnerships__logo--featured">
+              {{
+                section.settings.featured_logo
+                | image_url: width: 800
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '200, 400, 600, 800',
+                  sizes: '(min-width: 750px) 16rem, 70vw',
+                  alt: featured_alt
+              }}
+            </div>
+          {% endif %}
+          <div class="partnerships__copy">
+            {% if featured_name != blank %}
+              <h2 class="partnerships__name partnerships__name--featured">{{ featured_name | escape }}</h2>
+            {% endif %}
+            {% if featured_blurb_plain != blank %}
+              <div class="membership__benefits">{{ section.settings.featured_blurb }}</div>
+            {% endif %}
+            {% if section.settings.featured_url != blank %}
+              <div class="membership__actions">
+                <a
+                  href="{{ section.settings.featured_url }}"
+                  class="membership__button membership__button--primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ featured_btn | escape }}
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    {% endif %}
+
+    <div class="partnerships__grid">
+      {% for block in section.blocks %}
+        {% liquid
+          assign pname = block.settings.name | strip
+          assign pblurb = block.settings.blurb | strip_html | strip
+          assign pbtn = block.settings.button_label | strip
+          if pbtn == blank
+            assign pbtn = 'partnerships.view_site' | t
+          endif
+        %}
+        {% if block.settings.logo != blank or pname != blank or pblurb != blank %}
+          <article class="membership__panel partnerships__card" {{ block.shopify_attributes }}>
+            {% if block.settings.logo != blank %}
+              {% assign partner_alt = pname | default: shop.name %}
+              <div class="partnerships__logo">
+                {{
+                  block.settings.logo
+                  | image_url: width: 600
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '160, 320, 480, 600',
+                    sizes: '(min-width: 750px) 14rem, 70vw',
+                    alt: partner_alt
+                }}
+              </div>
+            {% endif %}
+            {% if pname != blank %}
+              <h2 class="partnerships__name">{{ pname | escape }}</h2>
+            {% endif %}
+            {% if pblurb != blank %}
+              <div class="membership__benefits">{{ block.settings.blurb }}</div>
+            {% endif %}
+            {% if block.settings.url != blank %}
+              <div class="membership__actions">
+                <a
+                  href="{{ block.settings.url }}"
+                  class="membership__button membership__button--primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ pbtn | escape }}
+                </a>
+              </div>
+            {% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .partnerships__inner {
+    max-width: 52rem;
+  }
+
+  .partnerships__intro {
+    margin-bottom: 1rem;
+  }
+
+  .partnerships__kicker {
+    margin: 0 0 0.85rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #666;
+  }
+
+  .partnerships__featured {
+    margin-bottom: 1rem;
+  }
+
+  .partnerships__featured-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .partnerships__logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 4.5rem;
+  }
+
+  .partnerships__logo img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 4.5rem;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .partnerships__logo--featured img {
+    max-height: 7.5rem;
+  }
+
+  .partnerships__name {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .partnerships__name--featured {
+    font-size: 1.25rem;
+  }
+
+  .partnerships .membership__benefits {
+    margin-bottom: 0.85rem;
+  }
+
+  .partnerships .membership__actions {
+    margin-top: 0.25rem;
+  }
+
+  .partnerships__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .partnerships__card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media screen and (min-width: 750px) {
+    .partnerships__featured-row {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .partnerships__logo--featured {
+      flex: 0 0 16rem;
+      min-height: 7.5rem;
+    }
+
+    .partnerships__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.partnerships",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "333 Motorsports"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.title",
+      "default": "Partnerships"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "t:labels.partnerships_intro",
+      "info": "t:labels.partnerships_intro_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.partnerships_featured"
+    },
+    {
+      "type": "image_picker",
+      "id": "featured_logo",
+      "label": "t:labels.logo"
+    },
+    {
+      "type": "text",
+      "id": "featured_name",
+      "label": "t:labels.partnerships_name"
+    },
+    {
+      "type": "richtext",
+      "id": "featured_blurb",
+      "label": "t:labels.partnerships_blurb"
+    },
+    {
+      "type": "url",
+      "id": "featured_url",
+      "label": "t:labels.partnerships_site_url",
+      "info": "t:labels.partnerships_site_url_info"
+    },
+    {
+      "type": "text",
+      "id": "featured_button_label",
+      "label": "t:labels.button_label",
+      "info": "t:labels.partnerships_button_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "partner",
+      "name": "t:labels.partnerships_partner",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "t:labels.logo"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:labels.partnerships_name"
+        },
+        {
+          "type": "richtext",
+          "id": "blurb",
+          "label": "t:labels.partnerships_blurb"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "t:labels.partnerships_site_url",
+          "info": "t:labels.partnerships_site_url_info"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:labels.button_label",
+          "info": "t:labels.partnerships_button_info"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 24,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

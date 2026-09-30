@@ -1,0 +1,190 @@
+{% comment %}
+  About us — membership-style panel. Extra story blocks are editable in the theme editor.
+{% endcomment %}
+
+{% render 'section-padding' %}
+
+<section class="membership about" data-about-page>
+  <div class="membership__inner">
+    <p class="membership__eyebrow">
+      {% if section.settings.eyebrow != blank %}
+        {{ section.settings.eyebrow | escape }}
+      {% else %}
+        {{ 'about.eyebrow' | t }}
+      {% endif %}
+    </p>
+    <h1 class="membership__title">
+      {% if section.settings.title != blank %}
+        {{ section.settings.title | escape }}
+      {% else %}
+        {{ 'about.title' | t }}
+      {% endif %}
+    </h1>
+
+    <div class="membership__panel">
+      {% if section.settings.image != blank %}
+        {% assign about_image_alt = section.settings.image.alt | default: shop.name %}
+        <div class="about__image">
+          {{
+            section.settings.image
+            | image_url: width: 1400
+            | image_tag:
+              loading: 'lazy',
+              widths: '400, 700, 1000, 1400',
+              sizes: '(min-width: 750px) 36rem, 100vw',
+              alt: about_image_alt
+          }}
+        </div>
+      {% endif %}
+
+      {% assign custom_blurb = section.settings.blurb | strip_html | strip %}
+      {% if custom_blurb != blank %}
+        <div class="membership__benefits">
+          {{ section.settings.blurb }}
+        </div>
+      {% else %}
+        <p class="membership__benefits">{{ 'about.blurb' | t }}</p>
+      {% endif %}
+    </div>
+
+    {% for block in section.blocks %}
+      {% assign heading = block.settings.heading | strip %}
+      {% assign body_plain = block.settings.text | strip_html | strip %}
+      {% if heading != blank or body_plain != blank or block.settings.image != blank %}
+        <div class="membership__panel about__block" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            {% assign block_image_alt = heading | default: shop.name %}
+            <div class="about__image">
+              {{
+                block.settings.image
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '400, 700, 1000, 1400',
+                  sizes: '(min-width: 750px) 36rem, 100vw',
+                  alt: block_image_alt
+              }}
+            </div>
+          {% endif %}
+          {% if heading != blank %}
+            <h2 class="about__heading">{{ heading | escape }}</h2>
+          {% endif %}
+          {% if body_plain != blank %}
+            <div class="membership__benefits">
+              {{ block.settings.text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+{% stylesheet %}
+  .about .membership__panel + .about__block {
+    margin-top: 1rem;
+  }
+
+  .about__image {
+    margin: 0 0 1rem;
+  }
+
+  .about__image img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .about__heading {
+    margin: 0 0 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .about .membership__benefits {
+    margin-bottom: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.about",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "333 Motorsports"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.title",
+      "default": "About us"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:labels.image"
+    },
+    {
+      "type": "richtext",
+      "id": "blurb",
+      "label": "t:labels.about_blurb",
+      "info": "t:labels.about_blurb_info"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "passage",
+      "name": "t:labels.about_passage",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:labels.image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:labels.heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:labels.text"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}
