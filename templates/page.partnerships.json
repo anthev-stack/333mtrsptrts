@@ -18,7 +18,14 @@
             "name": "333 DISTRIBUTIONS",
             "blurb": "<p>is the distribution heart of <strong>333 MOTORSPORTS</strong>, supplying quality products and brands to retailers, workshops, teams and industry partners across Australia. Focused on supporting our trade and wholesale partners with reliable supply, competitive pricing and industry-focused service.</p>",
             "url": "https://333distributions.com",
-            "button_label": "Visit site"
+            "button_label": "Visit site",
+            "instagram": "",
+            "youtube": "",
+            "tiktok": "",
+            "facebook": "",
+            "x_url": "",
+            "extra_url": "",
+            "extra_label": ""
           }
         },
         "partner_2": {
@@ -27,7 +34,14 @@
             "name": "DeWalt",
             "blurb": "<p>Globally recognised brand known for its professional-grade power tools, hand tools and equipment, engineered to deliver the durability, reliability and performance that demanding trades and industries expect.</p>",
             "url": "https://www.dewalt.com.au/",
-            "button_label": "Visit site"
+            "button_label": "Visit site",
+            "instagram": "",
+            "youtube": "",
+            "tiktok": "",
+            "facebook": "",
+            "x_url": "",
+            "extra_url": "",
+            "extra_label": ""
           }
         },
         "partner_qRTBmx": {
@@ -36,7 +50,14 @@
             "name": "Cameron Anthev",
             "blurb": "<p>Honda enthusiast and content creator, sharing builds, meets, modifications and everything I love about the car scene.<br/><br/></p>",
             "url": "",
-            "button_label": ""
+            "button_label": "",
+            "instagram": "https://instagram.com/cameronanthev",
+            "youtube": "https://youtube.com/cameronanthev",
+            "tiktok": "https://tiktok.com/cameronanthev",
+            "facebook": "",
+            "x_url": "",
+            "extra_url": "",
+            "extra_label": ""
           }
         }
       },
@@ -48,12 +69,20 @@
       "settings": {
         "eyebrow": "333 Motorsports",
         "title": "Partnerships",
+        "show_intro": false,
         "intro": "",
         "featured_logo": "shopify://shop_images/partbot-wordmark-dark.png",
         "featured_name": "Partbot",
         "featured_blurb": "<p>Partbot is a data integration and e-commerce platform designed for the automotive aftermarket. It helps businesses manage automotive parts and accessories by syncing data with supplier catalogs, inventory levels, and pricing changes. Partbot supports over 3000 Australian businesses by automating the fulfillment process and providing tools for fast, local parts fulfillment. The platform also offers features like vehicle search plugins, inventory management, and product updates to enhance sales and customer experience.</p>",
         "featured_url": "https://use.partbot.io/",
         "featured_button_label": "Visit site",
+        "featured_instagram": "",
+        "featured_youtube": "",
+        "featured_tiktok": "",
+        "featured_facebook": "",
+        "featured_x_url": "",
+        "featured_extra_url": "",
+        "featured_extra_label": "",
         "padding_top": 40,
         "padding_bottom": 64
       }
