@@ -181,6 +181,8 @@
     "tiktok_url": "TikTok URL",
     "x_url": "X URL",
     "partnerships_partner": "Partner",
+    "partnerships_profile": "Profile picture",
+    "partnerships_profile_info": "Square image of the creator. Sits bottom-right of the blurb.",
     "contact_blurb": "Contact copy",
     "contact_blurb_info": "Optional. Leave blank to use the default contact copy.",
     "contact_email": "Contact email",
