@@ -15,7 +15,7 @@
 {% render 'section-padding' %}
 
 <section class="membership partnerships" data-partnerships-page>
-  <div class="membership__inner partnerships__inner">
+  <div class="membership__inner">
     <p class="membership__eyebrow">
       {% if section.settings.eyebrow != blank %}
         {{ section.settings.eyebrow | escape }}
@@ -166,10 +166,6 @@
 </section>
 
 {% stylesheet %}
-  .partnerships__inner {
-    max-width: 52rem;
-  }
-
   .partnerships__intro {
     margin-bottom: 1rem;
   }
